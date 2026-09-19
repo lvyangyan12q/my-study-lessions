@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>词汇表 · 手搓 agent</title>
+<link rel="stylesheet" href="../assets/course.css">
+<script src="../../workspace.config.js"></script>
+<script src="../assets/workspace-links.js" defer></script>
+</head>
+<body>
+<div class="page">
+
+<p class="kicker">参考 · 手搓 agent</p>
+<h1>词汇表</h1>
+<p class="subtitle">课程里出现的术语，统一按这里的定义使用。新术语随课程追加。</p>
+
+<p>读法：每条先给一句人话定义，再给一个"在代码里长什么样"的落点。定义与落点都来自 <a data-pi="packages/agent/src/agent-loop.ts" href="https://github.com/earendil-works/pi/blob/main/packages/agent/src/agent-loop.ts">packages/agent/src/agent-loop.ts</a> 与 <a data-pi="packages/agent/README.md" href="https://github.com/earendil-works/pi/blob/main/packages/agent/README.md">packages/agent/README.md</a>，不是我的记忆。</p>
+
+<dl class="glossary">
+
+<dt>agent（智能体）</dt>
+<dd>一个循环：把消息列表发给模型，执行模型要求的工具，把结果写回消息列表，直到模型不再要求工具。除此之外没有别的本体。
+<span class="src">落点：<code>runLoop()</code></span></dd>
+
+<dt>agent loop（agent 循环）</dt>
+<dd>上面那个循环本身。任务里的"手搓 agent"，手搓的就是它。
+<span class="src">落点：<code>runAgentLoop()</code> / <code>runLoop()</code></span></dd>
+
+<dt>turn（轮）</dt>
+<dd>一次"模型回复 + 执行它要求的全部工具"。一轮结束的标志是 <code>turn_end</code> 事件。
+<span class="src">落点：<code>emit({ type: "turn_end", ... })</code></span></dd>
+
+<dt>toolCall（工具调用）</dt>
+<dd>模型输出里的一个内容块，写着要调用哪个工具、参数是什么。它<b>不是</b>独立事件，只是 assistant 消息内容的一部分，所以要用 <code>filter</code> 从 <code>message.content</code> 里挑出来。
+<span class="src">落点：<code>message.content.filter((c) =&gt; c.type === "toolCall")</code></span></dd>
+
+<dt>toolResult（工具结果）</dt>
+<dd>一条独立的、role 为 <code>toolResult</code> 的消息，回灌进 messages。模型看不到工具的副作用，只能读这条消息，所以结果必须写成消息。
+<span class="src">落点：<code>createToolResultMessage()</code></span></dd>
+
+<dt>stopReason（停止原因）</dt>
+<dd>assistant 消息上的字段，说明模型为什么停下：正常结束、输出被 token 上限截断（<code>length</code>）、出错（<code>error</code>）、被中断（<code>aborted</code>）。循环用它决定继续还是退出。
+<span class="src">落点：<code>message.stopReason === "length"</code></span></dd>
+
+<dt>streaming（流式）</dt>
+<dd>模型不是一次性返回整条消息，而是逐块吐字、吐思考、吐工具调用。循环把中间态也 emit 出去，UI 才能边生成边显示。
+<span class="src">落点：<code>streamAssistantResponse()</code> 里的 <code>text_delta</code> / <code>toolcall_delta</code></span></dd>
+
+<dt>compaction（上下文压缩）</dt>
+<dd>messages 越来越长会撑爆上下文窗口，于是把早期的对话总结成一段摘要再替换掉。它存在的原因正是"模型无记忆，每轮都要重发全部消息"。
+<span class="src">落点：<code>packages/agent/src/harness/compaction/</code></span></dd>
+
+<dt>AgentMessage vs LLM Message</dt>
+<dd>两套消息类型。agent 内部用更宽的 <code>AgentMessage</code>（可以塞 UI 专用消息），发给模型前必须经 <code>convertToLlm()</code> 过滤成模型认识的 <code>user</code> / <code>assistant</code> / <code>toolResult</code>。
+<span class="src">落点：<code>config.convertToLlm(messages)</code></span></dd>
+
+<dt>extension（扩展）</dt>
+<dd>一个 TypeScript 模块，注册自定义工具/命令、订阅生命周期事件。它是"改 pi 行为"的正规入口，不必碰核心源码。
+<span class="src">落点：<a data-pi="packages/coding-agent/docs/extensions.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/extensions.md">packages/coding-agent/docs/extensions.md</a></span></dd>
+
+<dt>isError（工具结果上的错误标记）</dt>
+<dd>toolResult 消息上的布尔字段。错误结果与正常结果共用同一种消息类型，只靠这个标记区分。模型据此判断"拿到了内容"还是"出错了"。
+<span class="src">落点：<code>createToolResultMessage()</code> 里的 <code>isError: finalized.isError</code></span></dd>
+
+<dt>validateToolArguments()</dt>
+<dd>执行前用工具的 schema 校验模型给的参数。校验失败会抛错，循环把它接住、转成一条 isError 消息回灌，所以参数不合法不会中断 agent。
+<span class="src">落点：<code>prepareToolCall()</code> 的 try 块</span></dd>
+
+<dt>toolExecution（工具执行模式）</dt>
+<dd><code>sequential</code> 或 <code>parallel</code>。默认并行，但只要有任一被调用的工具声明为 sequential，整批都退化成顺序执行。
+<span class="src">落点：<code>executeToolCalls()</code> 里的 <code>hasSequentialToolCall</code></span></dd>
+
+<dt>beforeToolCall / afterToolCall</dt>
+<dd>官方给的两个插手点。before 可以 block（拦截调用，转成错误结果），after 可以改写结果的 content / isError / terminate。扩展想做权限门禁就走这里。
+<span class="src">落点：<code>prepareToolCall()</code> 与 <code>finalizeExecutedToolCall()</code></span></dd>
+
+<dt>截断保护（truncated tool call）</dt>
+<dd>stopReason 为 length 时，工具参数可能被 token 上限截半。这类调用能解析、能过校验，但语义残缺，所以整批不执行、全部报错，逼模型重新发起。
+<span class="src">落点：<code>failToolCallsFromTruncatedMessage()</code></span></dd>
+
+</dl>
+
+<hr>
+
+<p>相关：<a href="../lessons/0001-agent-loop.html">第 1 课 · Agent 就是一个 while 循环</a> ｜ <a href="../lessons/0002-tool-failures.html">第 2 课 · 工具的四种失败</a> ｜ <a href="../RESOURCES.md">资源清单</a> ｜ <a href="../MISSION.md">任务书</a></p>
+
+</div>
+</body>
+</html>

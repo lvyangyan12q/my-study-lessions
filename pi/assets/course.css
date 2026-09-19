@@ -1,0 +1,543 @@
+/* ============================================================
+   教学课程共享样式 —— assets/course.css
+   所有 lessons/*.html 与 reference/*.html 都链接本文件。
+   目标是：屏幕与打印都好看；组件样式集中在这里，JS 只负责行为。
+   ============================================================ */
+
+:root {
+	--ink: #17140f;
+	--ink-soft: #46402f;
+	--muted: #7d7666;
+	--rule: #e1dbd0;
+	--paper: #fdfcf8;
+	--paper-2: #f5f1e8;
+	--accent: #a13d1c;
+	--accent-soft: #f2e4dc;
+	--ok: #2f6b3a;
+	--ok-soft: #e3efe4;
+	--bad: #9b2c2c;
+	--bad-soft: #f7e3e3;
+	--mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+	--serif: Georgia, "Iowan Old Style", "Songti SC", "Source Han Serif SC", "Noto Serif CJK SC", serif;
+	--sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+	--measure: 42rem;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--ink: #eae4d8;
+		--ink-soft: #c3bcac;
+		--muted: #918a7b;
+		--rule: #302b24;
+		--paper: #14120f;
+		--paper-2: #1c1916;
+		--accent: #e0925f;
+		--accent-soft: #2b211a;
+		--ok: #7fbe8b;
+		--ok-soft: #1b2a1e;
+		--bad: #e08a8a;
+		--bad-soft: #2c1b1b;
+	}
+}
+
+* { box-sizing: border-box; }
+
+html {
+	font-size: 17px;
+	-webkit-text-size-adjust: 100%;
+}
+
+body {
+	margin: 0;
+	padding: 3rem 1.5rem 6rem;
+	background: var(--paper);
+	color: var(--ink);
+	font-family: var(--serif);
+	line-height: 1.65;
+}
+
+.page {
+	max-width: var(--measure);
+	margin: 0 auto;
+}
+
+/* ---------- 标题 ---------- */
+
+.kicker {
+	font-family: var(--sans);
+	font-size: 0.75rem;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--muted);
+	margin: 0 0 0.5rem;
+}
+
+h1 {
+	font-size: 1.9rem;
+	line-height: 1.25;
+	margin: 0 0 0.75rem;
+	font-weight: 600;
+}
+
+.subtitle {
+	font-size: 1.05rem;
+	color: var(--ink-soft);
+	font-style: italic;
+	margin: 0 0 2rem;
+}
+
+h2 {
+	font-size: 1.2rem;
+	margin: 2.6rem 0 0.75rem;
+	padding-bottom: 0.35rem;
+	border-bottom: 1px solid var(--rule);
+	font-weight: 600;
+}
+
+h3 {
+	font-size: 1rem;
+	margin: 1.8rem 0 0.5rem;
+	font-weight: 600;
+}
+
+p { margin: 0 0 1rem; }
+
+a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+
+ul, ol { margin: 0 0 1rem; padding-left: 1.4rem; }
+li { margin-bottom: 0.4rem; }
+
+strong { font-weight: 600; }
+
+hr {
+	border: 0;
+	border-top: 1px solid var(--rule);
+	margin: 2.5rem 0;
+}
+
+/* ---------- 目标框 ---------- */
+
+.goal {
+	border-left: 3px solid var(--accent);
+	background: var(--accent-soft);
+	padding: 1rem 1.25rem;
+	margin: 0 0 2rem;
+	border-radius: 0 3px 3px 0;
+}
+
+.goal h2 {
+	border: 0;
+	margin: 0 0 0.5rem;
+	padding: 0;
+	font-size: 0.8rem;
+	font-family: var(--sans);
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--accent);
+}
+
+.goal p:last-child { margin-bottom: 0; }
+
+/* ---------- 提示框 ---------- */
+
+.callout {
+	border: 1px solid var(--rule);
+	border-radius: 3px;
+	padding: 0.9rem 1.1rem;
+	margin: 1.5rem 0;
+	background: var(--paper-2);
+	font-size: 0.95rem;
+}
+
+.callout p:last-child { margin-bottom: 0; }
+
+.callout__label {
+	font-family: var(--sans);
+	font-size: 0.7rem;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--muted);
+	display: block;
+	margin-bottom: 0.35rem;
+}
+
+/* ---------- 代码 ---------- */
+
+code {
+	font-family: var(--mono);
+	font-size: 0.85em;
+	background: var(--paper-2);
+	padding: 0.1em 0.35em;
+	border-radius: 2px;
+}
+
+pre {
+	background: var(--paper-2);
+	border: 1px solid var(--rule);
+	border-radius: 3px;
+	padding: 1rem 1.1rem;
+	overflow-x: auto;
+	font-family: var(--mono);
+	font-size: 0.82rem;
+	line-height: 1.55;
+	margin: 0 0 1.25rem;
+}
+
+pre code {
+	background: none;
+	padding: 0;
+	font-size: inherit;
+}
+
+.cmt { color: var(--muted); }
+
+/* ---------- 出处引用 ---------- */
+
+.src {
+	font-family: var(--sans);
+	font-size: 0.78rem;
+	color: var(--muted);
+	margin: -0.5rem 0 1.5rem;
+}
+
+.src a { color: var(--muted); }
+
+a[data-resolved="local"]::after {
+	content: " 本机";
+	font-size: 0.7em;
+	color: var(--ok);
+	vertical-align: super;
+}
+
+/* ---------- 教材出处（主源推荐） ---------- */
+
+.primary-source {
+	border: 1px solid var(--accent);
+	border-radius: 3px;
+	padding: 1rem 1.25rem;
+	margin: 2.5rem 0 1.5rem;
+}
+
+.primary-source h2 {
+	border: 0;
+	margin: 0 0 0.5rem;
+	padding: 0;
+	font-size: 0.8rem;
+	font-family: var(--sans);
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--accent);
+}
+
+/* ---------- 回忆卡（quiz.js 增强） ---------- */
+
+.recall, .mcq {
+	border: 1px solid var(--rule);
+	border-radius: 3px;
+	padding: 1rem 1.1rem;
+	margin: 0 0 1rem;
+	background: var(--paper);
+}
+
+.q {
+	font-weight: 600;
+	margin: 0 0 0.75rem;
+}
+
+.recall button.reveal, .stepper button {
+	font-family: var(--sans);
+	font-size: 0.85rem;
+	padding: 0.35rem 0.8rem;
+	border: 1px solid var(--rule);
+	border-radius: 3px;
+	background: var(--paper-2);
+	color: var(--ink);
+	cursor: pointer;
+}
+
+.recall button.reveal:hover, .stepper button:hover:not(:disabled) {
+	border-color: var(--accent);
+	color: var(--accent);
+}
+
+.stepper button:disabled { opacity: 0.4; cursor: default; }
+
+.answer {
+	margin-top: 0.9rem;
+	padding-top: 0.9rem;
+	border-top: 1px dashed var(--rule);
+	font-size: 0.95rem;
+}
+
+.answer p:last-child { margin-bottom: 0; }
+
+/* ---------- 选择题（quiz.js 增强） ---------- */
+
+.mcq-options {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	gap: 0.4rem;
+}
+
+.mcq-options li { margin: 0; }
+
+.mcq-options button {
+	width: 100%;
+	text-align: left;
+	font-family: var(--sans);
+	font-size: 0.9rem;
+	padding: 0.5rem 0.8rem;
+	border: 1px solid var(--rule);
+	border-radius: 3px;
+	background: var(--paper-2);
+	color: var(--ink);
+	cursor: pointer;
+}
+
+.mcq-options button:hover:not(:disabled) { border-color: var(--accent); }
+.mcq-options button:disabled { cursor: default; }
+
+.mcq-options button.is-correct {
+	background: var(--ok-soft);
+	border-color: var(--ok);
+	color: var(--ok);
+	font-weight: 600;
+}
+
+.mcq-options button.is-wrong {
+	background: var(--bad-soft);
+	border-color: var(--bad);
+	color: var(--bad);
+}
+
+.quiz-explain {
+	margin-top: 0.9rem;
+	padding-top: 0.9rem;
+	border-top: 1px dashed var(--rule);
+	font-size: 0.95rem;
+}
+
+/* ---------- 循环步进器（loop-stepper.js） ---------- */
+
+.stepper {
+	border: 1px solid var(--rule);
+	border-radius: 3px;
+	padding: 1rem;
+	margin: 0 0 1rem;
+	background: var(--paper);
+}
+
+.stepper__grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 1rem;
+}
+
+@media (min-width: 46rem) {
+	.stepper__grid { grid-template-columns: 1.05fr 0.95fr; }
+}
+
+.stepper__panel-title {
+	font-family: var(--sans);
+	font-size: 0.7rem;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--muted);
+	margin: 0 0 0.5rem;
+}
+
+.stepper__code {
+	font-family: var(--mono);
+	font-size: 0.78rem;
+	line-height: 1.7;
+	background: var(--paper-2);
+	border: 1px solid var(--rule);
+	border-radius: 3px;
+	padding: 0.6rem 0.7rem;
+	overflow-x: auto;
+	margin: 0;
+}
+
+.stepper__line {
+	display: block;
+	padding: 0 0.3rem;
+	border-radius: 2px;
+	white-space: pre;
+	color: var(--ink-soft);
+}
+
+.stepper__line.is-active {
+	background: var(--accent-soft);
+	color: var(--accent);
+	font-weight: 600;
+}
+
+.stepper__msgs {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	font-family: var(--sans);
+	font-size: 0.78rem;
+	min-height: 5rem;
+}
+
+.stepper__msg {
+	display: grid;
+	grid-template-columns: 5.5rem 1fr;
+	gap: 0.5rem;
+	padding: 0.3rem 0.4rem;
+	border-bottom: 1px solid var(--rule);
+	align-items: baseline;
+}
+
+.stepper__role {
+	font-family: var(--mono);
+	font-size: 0.7rem;
+	color: var(--muted);
+	overflow-wrap: anywhere;
+}
+
+.stepper__msg.is-new { background: var(--accent-soft); }
+
+.stepper__msg.is-new .stepper__role { color: var(--accent); }
+
+.stepper__empty { color: var(--muted); font-style: italic; }
+
+.stepper__note {
+	font-size: 0.92rem;
+	margin: 1rem 0 0.75rem;
+	min-height: 2.6rem;
+}
+
+.stepper__controls {
+	display: flex;
+	gap: 0.5rem;
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+.stepper__counter {
+	font-family: var(--sans);
+	font-size: 0.78rem;
+	color: var(--muted);
+	margin-left: auto;
+}
+
+/* ---------- 练习 ---------- */
+
+.exercise {
+	border-left: 3px solid var(--ok);
+	background: var(--ok-soft);
+	padding: 1rem 1.25rem;
+	margin: 1.5rem 0;
+	border-radius: 0 3px 3px 0;
+}
+
+.exercise h3 { margin-top: 0; }
+.exercise p:last-child { margin-bottom: 0; }
+
+/* ---------- 页脚导航 ---------- */
+
+.lesson-nav {
+	margin-top: 3.5rem;
+	padding-top: 1rem;
+	border-top: 1px solid var(--rule);
+	font-family: var(--sans);
+	font-size: 0.82rem;
+	color: var(--muted);
+	display: flex;
+	justify-content: space-between;
+	gap: 1rem;
+	flex-wrap: wrap;
+}
+
+.ask-teacher {
+	margin-top: 2rem;
+	padding: 0.9rem 1.1rem;
+	border: 1px dashed var(--rule);
+	border-radius: 3px;
+	font-size: 0.9rem;
+	color: var(--ink-soft);
+}
+
+.ask-teacher p:last-child { margin-bottom: 0; }
+
+/* ---------- 表格 ---------- */
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	margin: 0 0 1.5rem;
+	font-size: 0.9rem;
+}
+
+th, td {
+	text-align: left;
+	padding: 0.5rem 0.6rem;
+	border-bottom: 1px solid var(--rule);
+	vertical-align: top;
+}
+
+th {
+	font-family: var(--sans);
+	font-size: 0.72rem;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--muted);
+	border-bottom: 2px solid var(--rule);
+}
+
+tbody tr:hover { background: var(--paper-2); }
+
+/* ---------- 词汇表 ---------- */
+
+.glossary { margin: 0; }
+
+.glossary dt {
+	font-family: var(--mono);
+	font-size: 0.85rem;
+	font-weight: 600;
+	margin-top: 1.2rem;
+}
+
+.glossary dd {
+	margin: 0.25rem 0 0;
+	padding-left: 0;
+	font-size: 0.95rem;
+}
+
+.glossary dd .src { display: block; margin: 0.3rem 0 0; }
+
+/* ---------- 打印 ---------- */
+
+@media print {
+	:root {
+		--ink: #000;
+		--ink-soft: #222;
+		--muted: #555;
+		--rule: #bbb;
+		--paper: #fff;
+		--paper-2: #f7f7f7;
+		--accent: #000;
+		--accent-soft: #f0f0f0;
+		--ok: #000;
+		--ok-soft: #f4f4f4;
+		--bad: #000;
+		--bad-soft: #f4f4f4;
+	}
+
+	html { font-size: 11pt; }
+	body { padding: 0; }
+
+	.stepper__controls,
+	.recall button.reveal,
+	.mcq-options button { display: none; }
+
+	.answer[hidden] { display: block !important; }
+
+	pre, .callout, .goal, .stepper, .recall, .mcq, .exercise, table { break-inside: avoid; }
+	h2, h3 { break-after: avoid; }
+	a { text-decoration: none; }
+}

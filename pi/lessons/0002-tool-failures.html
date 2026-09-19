@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 2 课 · 工具的四种失败</title>
+<link rel="stylesheet" href="../assets/course.css">
+<script src="../../workspace.config.js"></script>
+<script src="../assets/workspace-links.js" defer></script>
+<script src="../assets/quiz.js" defer></script>
+<script src="../assets/loop-stepper.js" defer></script>
+</head>
+<body>
+<div class="page">
+
+<p class="kicker">手搓 agent · 第 2 课</p>
+<h1>工具的四种失败</h1>
+<p class="subtitle">失败不是异常，是一条消息。</p>
+
+<div class="goal">
+	<h2>这节课结束时你能做到</h2>
+	<p>说出工具失败的四种情形、它们的共同处置方式，并解释为什么"输出被截断"必须和另外三种分开处理。</p>
+	<p>前置（第 1 课）：循环里工具调用的结果必须写成一条 <code>toolResult</code> 消息回灌进 messages，因为模型只能读到这个数组。</p>
+</div>
+
+<h2>一、一条原则</h2>
+
+<p>新手写 agent 最容易犯的错，是给工具执行套一个 <code>try/catch</code>，出错就 <code>throw</code> 出去。这样写出来的 agent 有致命缺陷：</p>
+
+<div class="callout">
+	<span class="callout__label">反面对照</span>
+	<p>把错误抛到循环外面，外层的 catch 只能打印一行日志然后结束。结果是：<strong>模型永远不知道发生了什么。</strong>它看不到"工具失败了"这件事，因为你没把它写进 messages。用户拿到的是一个半成品答案，而模型还以为自己干完了。</p>
+</div>
+
+<p>正确的做法只有一句：<strong>把失败包装成一条消息，回灌给模型。</strong></p>
+
+<p>为什么？因为模型的全部输入就是 messages 数组。错误信息不在数组里，模型就看不见。把错误变成消息之后，模型下一轮有机会自己修正——换工具名、补参数、换个思路。</p>
+
+<p class="src">依据：<a data-pi="packages/agent/src/agent-loop.ts" href="https://github.com/earendil-works/pi/blob/main/packages/agent/src/agent-loop.ts">packages/agent/src/agent-loop.ts</a> 里的 <code>createErrorToolResult()</code> 与 <code>createToolResultMessage()</code>——错误结果和正常结果走的是<b>同一个消息类型</b>，只多一个 <code>isError</code> 标记。</p>
+
+<h2>二、四种失败</h2>
+
+<table>
+	<thead>
+		<tr><th>失败</th><th>什么时候发生</th><th>循环怎么处置</th></tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>工具不存在</td>
+			<td>模型把工具名拼错，或者幻觉出一个没有的工具</td>
+			<td>返回 <code>Tool X not found</code> 错误结果</td>
+		</tr>
+		<tr>
+			<td>参数不合法</td>
+			<td>缺字段、类型不对、多传了东西</td>
+			<td>校验失败，返回校验器的报错文本</td>
+		</tr>
+		<tr>
+			<td>工具自己抛错</td>
+			<td>文件不存在、权限不足、命令返回非零</td>
+			<td>捕获异常，返回 <code>error.message</code></td>
+		</tr>
+		<tr>
+			<td>参数被截断</td>
+			<td>模型输出撞上 token 上限（<code>stopReason === "length"</code>），工具参数可能只写了一半</td>
+			<td><strong>整批不执行</strong>，全部返回错误，要求模型重新发起</td>
+		</tr>
+	</tbody>
+</table>
+
+<p>前三种的处置完全一样：<em>包成消息回灌</em>。第四种不同，原因在下面的源码小节里。</p>
+
+<h2>三、逐帧看一次失败与自我修正</h2>
+
+<p>下面是工具层面的伪代码，以及它处理一次"工具名拼错"的全过程。注意 messages 数组：三次失败全部以消息形式留在里面，模型因此能一路修正。</p>
+
+<loop-stepper>
+<script type="application/json">
+{
+  "code": [
+    "const tool = tools[call.name]",
+    "if (!tool) return errorResult(`Tool ${call.name} not found`)",
+    "const args = validate(tool, call.arguments)",
+    "if (!args) return errorResult(校验失败原因)",
+    "try { return await tool.run(args) }",
+    "catch (error) { return errorResult(error.message) }"
+  ],
+  "steps": [
+    {
+      "line": 0,
+      "note": "循环从 assistant 消息里取出一个 toolCall，拿它的名字去工具表里查。",
+      "messages": [
+        { "role": "user", "text": "统计 README.md 有多少行" },
+        { "role": "assistant", "text": "[toolCall] read_fil({ path: \"README.md\" })" }
+      ]
+    },
+    {
+      "line": 1,
+      "note": "表里没有 read_fil——模型把 read_file 拼错了。这不是异常情况，是可预期的失败。",
+      "messages": [
+        { "role": "user", "text": "统计 README.md 有多少行" },
+        { "role": "assistant", "text": "[toolCall] read_fil({ path: \"README.md\" })" }
+      ]
+    },
+    {
+      "line": 1,
+      "note": "生成一条带 isError 标记的 toolResult 回灌。它和成功结果走同一条消息通道，只多一个标记。",
+      "messages": [
+        { "role": "user", "text": "统计 README.md 有多少行" },
+        { "role": "assistant", "text": "[toolCall] read_fil({ path: \"README.md\" })" },
+        { "role": "toolResult", "text": "isError · Tool read_fil not found" }
+      ]
+    },
+    {
+      "line": 0,
+      "note": "模型第二轮读到了这条错误消息，自己改成 read_file——但忘了给参数。",
+      "messages": [
+        { "role": "user", "text": "统计 README.md 有多少行" },
+        { "role": "assistant", "text": "[toolCall] read_fil({ path: \"README.md\" })" },
+        { "role": "toolResult", "text": "isError · Tool read_fil not found" },
+        { "role": "assistant", "text": "[toolCall] read_file({})" }
+      ]
+    },
+    {
+      "line": 2,
+      "note": "工具存在，进入参数校验。这一步必须在执行之前——参数是模型生成的，不能信。",
+      "messages": [
+        { "role": "user", "text": "统计 README.md 有多少行" },
+        { "role": "assistant", "text": "[toolCall] read_fil({ path: \"README.md\" })" },
+        { "role": "toolResult", "text": "isError · Tool read_fil not found" },
+        { "role": "assistant", "text": "[toolCall] read_file({})" }
+      ]
+    },
+    {
+      "line": 3,
+      "note": "校验失败：缺少 path。同样回灌一条错误消息，不抛异常。",
+      "messages": [
+        { "role": "user", "text": "统计 README.md 有多少行" },
+        { "role": "assistant", "text": "[toolCall] read_fil({ path: \"README.md\" })" },
+        { "role": "toolResult", "text": "isError · Tool read_fil not found" },
+        { "role": "assistant", "text": "[toolCall] read_file({})" },
+        { "role": "toolResult", "text": "isError · 参数不合法：缺少 path" }
+      ]
+    },
+    {
+      "line": 4,
+      "note": "第三轮参数正确，工具第一次真正开始执行。前面两次失败没有任何副作用——因为压根没执行。",
+      "messages": [
+        { "role": "user", "text": "统计 README.md 有多少行" },
+        { "role": "assistant", "text": "[toolCall] read_fil({ path: \"README.md\" })" },
+        { "role": "toolResult", "text": "isError · Tool read_fil not found" },
+        { "role": "assistant", "text": "[toolCall] read_file({})" },
+        { "role": "toolResult", "text": "isError · 参数不合法：缺少 path" },
+        { "role": "assistant", "text": "[toolCall] read_file({ path: \"README.md\" })" }
+      ]
+    },
+    {
+      "line": 5,
+      "note": "工具返回成功结果，回灌。注意 isError 是 false：模型必须能区分\"拿到了内容\"和\"出错了\"。",
+      "messages": [
+        { "role": "user", "text": "统计 README.md 有多少行" },
+        { "role": "assistant", "text": "[toolCall] read_fil({ path: \"README.md\" })" },
+        { "role": "toolResult", "text": "isError · Tool read_fil not found" },
+        { "role": "assistant", "text": "[toolCall] read_file({})" },
+        { "role": "toolResult", "text": "isError · 参数不合法：缺少 path" },
+        { "role": "assistant", "text": "[toolCall] read_file({ path: \"README.md\" })" },
+        { "role": "toolResult", "text": "128 行" }
+      ]
+    },
+    {
+      "line": 0,
+      "note": "模型直接回答，不再要求工具。循环下一轮判断 calls.length === 0，退出。全程没有一次异常冒泡到循环外面。",
+      "messages": [
+        { "role": "user", "text": "统计 README.md 有多少行" },
+        { "role": "assistant", "text": "[toolCall] read_fil({ path: \"README.md\" })" },
+        { "role": "toolResult", "text": "isError · Tool read_fil not found" },
+        { "role": "assistant", "text": "[toolCall] read_file({})" },
+        { "role": "toolResult", "text": "isError · 参数不合法：缺少 path" },
+        { "role": "assistant", "text": "[toolCall] read_file({ path: \"README.md\" })" },
+        { "role": "toolResult", "text": "128 行" },
+        { "role": "assistant", "text": "README.md 有 128 行。" }
+      ]
+    }
+  ]
+}
+</script>
+</loop-stepper>
+
+<h2>四、源码里的四条分支</h2>
+
+<p>pi 把这些处置集中在两个函数里。第一段是工具查找与校验，第二段是执行，第三段是截断保护。</p>
+
+<pre><code><span class="cmt">// prepareToolCall()：前三种失败</span>
+const tool = currentContext.tools?.find((t) =&gt; t.name === toolCall.name);
+if (!tool) {
+  return { kind: "immediate",
+           result: createErrorToolResult(`Tool ${toolCall.name} not found`),
+           isError: true };
+}
+try {
+  const validatedArgs = validateToolArguments(tool, preparedToolCall);
+  ...
+} catch (error) {
+  return { kind: "immediate",
+           result: createErrorToolResult(error instanceof Error ? error.message : String(error)),
+           isError: true };
+}</code></pre>
+
+<p class="src">摘自 <a data-pi="packages/agent/src/agent-loop.ts" href="https://github.com/earendil-works/pi/blob/main/packages/agent/src/agent-loop.ts">packages/agent/src/agent-loop.ts</a> 的 <code>prepareToolCall()</code>。省略了 <code>beforeToolCall</code> 拦截与中断检查。</p>
+
+<pre><code><span class="cmt">// executePreparedToolCall()：工具自己抛错</span>
+try {
+  const result = await prepared.tool.execute(...);
+  return { result, isError: false };
+} catch (error) {
+  return { result: createErrorToolResult(error.message), isError: true };
+}</code></pre>
+
+<pre><code><span class="cmt">// runLoop()：截断保护，注意它不走 executeToolCalls</span>
+const executedToolBatch =
+  message.stopReason === "length"
+    ? await failToolCallsFromTruncatedMessage(toolCalls, emit)
+    : await executeToolCalls(currentContext, message, config, signal, emit);</code></pre>
+
+<div class="callout">
+	<span class="callout__label">为什么截断要单独处理</span>
+	<p><code>stopReason === "length"</code> 表示模型的输出被 token 上限砍断了。工具调用是流式拼出来的，拼到一半停下时，参数的 JSON 可能刚好合法——<strong>能解析、能过校验，但内容残缺</strong>。比如要写 500 字只写进来 200 字。</p>
+	<p>前三种失败是"明显错了"，模型一看就知道；这种失败是<strong>静默错误</strong>，执行下去会产生看似正常实则错误的结果。所以 pi 一个都不执行，全部返回错误，逼模型重新发起。</p>
+</div>
+
+<p class="src">pi 为此写的错误文案很直白：<code>Tool call "X" was not executed: the response hit the output token limit, so its arguments may be truncated. Re-issue the tool call with complete arguments.</code>——把"为什么"和"怎么办"都告诉模型，它才能自我修正。</p>
+
+<h2>五、检验</h2>
+
+<p>先别看上面的表格和源码。</p>
+
+<div class="recall">
+	<p class="q">1. 说出四种工具失败，以及它们的共同处置方式。</p>
+	<button class="reveal">想好了，看答案</button>
+	<div class="answer" hidden>
+		<p>工具不存在、参数不合法、工具自己抛错、参数被截断。</p>
+		<p>前三种的共同处置是：包成一条带 <code>isError</code> 标记的 toolResult 消息回灌给模型，绝不让异常冒泡出循环。第四种是整批不执行、全部返回错误，要求模型重新发起。</p>
+	</div>
+</div>
+
+<div class="recall">
+	<p class="q">2. 为什么"工具失败"不该用 throw 让循环崩溃？</p>
+	<button class="reveal">想好了，看答案</button>
+	<div class="answer" hidden>
+		<p>因为模型能看到的东西只有 messages 数组。异常抛到循环外面，错误信息就没进数组，模型下一轮完全不知道刚才失败了——它会以为任务已经完成，或者不停重复同一个坏调用。</p>
+		<p>把失败变成消息，等于给模型一次自我修正的机会。这是 agent 能自己修 bug 的唯一机制。</p>
+	</div>
+</div>
+
+<div class="mcq" data-answer="1" data-explain="工具抛异常时，循环捕获它并把 error.message 包成 isError 的 toolResult 回灌，执行继续。中断整个循环会让用户拿到半成品；忽略错误会让模型以为成功；盲目重试对权限不足这类确定性失败没有意义。">
+	<p class="q">3. 工具执行时抛了异常，循环应该怎么做？</p>
+	<ul class="mcq-options">
+		<li>中断循环</li>
+		<li>回灌错误</li>
+		<li>忽略错误</li>
+		<li>重试一次</li>
+	</ul>
+</div>
+
+<div class="mcq" data-answer="0" data-explain="参数是流式拼出来的，输出被截断时 JSON 可能刚好合法但内容残缺，校验器拦不住这种错误。执行它会产生看似正常、实则错误的副作用，且难以察觉。所以 pi 整批判失败，让模型带着完整参数重新发起。">
+	<p class="q">4. stopReason 是 length 时，为什么这批工具调用一个都不能执行？</p>
+	<ul class="mcq-options">
+		<li>参数残缺</li>
+		<li>工具缺失</li>
+		<li>网络超时</li>
+		<li>用户中断</li>
+	</ul>
+</div>
+
+<h2>六、练习（可选，自己对照）</h2>
+
+<div class="exercise">
+	<h3>任务</h3>
+	<p>打开 <a href="../exercises/0002-tool-failures.mjs">pi/exercises/0002-tool-failures.mjs</a>。这一课循环已经写好了，你只需要补 <code>runToolCall()</code>：把四种失败里的前三种（不存在、参数不合法、工具抛错）各自包成一条 <code>isError</code> 结果。</p>
+	<p>脚本自带判定：假模型会依次发起"拼错的名字""缺参数""会抛错的路径""正确调用"四次请求。做对了会打印每一步的 <code>isError</code> 序列（应当是真、真、真、假）并报通过；没有判定，就说明你漏了某条分支或把错误吞了。</p>
+	<p>这个练习不用发给我，自己看输出就好。</p>
+</div>
+
+<div class="primary-source">
+	<h2>主源推荐</h2>
+	<p><a data-pi="packages/agent/src/agent-loop.ts" href="https://github.com/earendil-works/pi/blob/main/packages/agent/src/agent-loop.ts">packages/agent/src/agent-loop.ts</a> 里的 <code>prepareToolCall()</code> 和 <code>failToolCallsFromTruncatedMessage()</code> 两个函数，一共不到 120 行，是"错误处理即数据"这个原则最干净的实现。</p>
+	<p>配套读 <a data-pi="packages/agent/src/types.ts" href="https://github.com/earendil-works/pi/blob/main/packages/agent/src/types.ts">packages/agent/src/types.ts</a> 里的 <code>BeforeToolCallResult</code> 与 <code>AfterToolCallResult</code>——它们回答了"如果想在工具前后插手，官方给了哪两个口子"。</p>
+</div>
+
+<div class="ask-teacher">
+	<p><strong>有不清楚的地方直接问我。</strong>这一课最容易含糊的一点是：错误消息的<em>文案</em>到底写给谁看。答案是写给模型看，所以它必须包含"为什么失败"和"应该怎么重试"——这是提示工程的一部分，不是日志。下一课讲流式输出与事件流。</p>
+</div>
+
+<div class="lesson-nav">
+	<span>第 2 课 / 共 2 课</span>
+	<span><a href="0001-agent-loop.html">第 1 课</a> ｜ <a href="../reference/glossary.html">词汇表</a> ｜ <a href="../RESOURCES.md">资源清单</a></span>
+</div>
+
+</div>
+</body>
+</html>

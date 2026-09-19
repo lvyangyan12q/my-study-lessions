@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 1 课 · Agent 就是一个 while 循环</title>
+<link rel="stylesheet" href="../assets/course.css">
+<script src="../../workspace.config.js"></script>
+<script src="../assets/workspace-links.js" defer></script>
+<script src="../assets/quiz.js" defer></script>
+<script src="../assets/loop-stepper.js" defer></script>
+</head>
+<body>
+<div class="page">
+
+<p class="kicker">手搓 agent · 第 1 课</p>
+<h1>Agent 就是一个 while 循环</h1>
+<p class="subtitle">7 行伪代码，加上它在真实源码里的样子。</p>
+
+<div class="goal">
+	<h2>这节课结束时你能做到</h2>
+	<p>不看任何资料，写出最小 agent 循环的 7 行；并在 <a data-pi="packages/agent/src/agent-loop.ts" href="https://github.com/earendil-works/pi/blob/main/packages/agent/src/agent-loop.ts">packages/agent/src/agent-loop.ts</a> 里逐个指出那 7 行分别落在哪。</p>
+</div>
+
+<h2>一、agent 只有三样东西</h2>
+
+<p>把 "agent" 这个词拆掉之后，剩下的东西少得让人失望：</p>
+
+<ol>
+	<li><strong>一个 messages 数组</strong>。这是模型唯一能看到的世界。</li>
+	<li><strong>一次模型调用</strong>。流式返回文字，或者返回"我要调用某个工具"。</li>
+	<li><strong>一次工具执行</strong>。跑完，把结果<em>写成消息</em>塞回数组。</li>
+</ol>
+
+<div class="callout">
+	<span class="callout__label">关键事实</span>
+	<p>模型是<strong>无状态</strong>的。它不记得上一次调用。所谓"上下文""记忆"，就是你每次把整个数组再发一遍。</p>
+	<p>这也解释了为什么会有上下文压缩（compaction）：数组只会变长，总有一天撑爆窗口。</p>
+</div>
+
+<p class="src">依据：<a data-pi="packages/agent/README.md" href="https://github.com/earendil-works/pi/blob/main/packages/agent/README.md">packages/agent/README.md</a> 的 "Message Flow" 一节；<a href="../reference/glossary.html">词汇表</a>里的 <code>compaction</code>。</p>
+
+<h2>二、7 行</h2>
+
+<p>去掉重试、中断、排队消息、事件通知，循环本体就是这些：</p>
+
+<pre><code>while (true) {
+  const msg = await callModel(messages)      <span class="cmt">// 把整个数组发出去</span>
+  messages.push(msg)                         <span class="cmt">// 模型说的话先入栈</span>
+  const calls = msg.content.filter(isToolCall)<span class="cmt">// 它要求用工具了吗</span>
+  if (calls.length === 0) return             <span class="cmt">// 没有 -> 唯一正常的出口</span>
+  for (const call of calls) messages.push(await runTool(call))
+}                                            <span class="cmt">// 结果入栈，再转一圈</span></code></pre>
+
+<p>下面把它逐帧播放一遍。注意右侧 messages 数组怎么长——那是整个 agent 的全部状态。</p>
+
+<loop-stepper>
+<script type="application/json">
+{
+  "code": [
+    "while (true) {",
+    "  const msg = await callModel(messages)",
+    "  messages.push(msg)",
+    "  const calls = msg.content.filter(isToolCall)",
+    "  if (calls.length === 0) return",
+    "  for (const call of calls) messages.push(await runTool(call))",
+    "}"
+  ],
+  "steps": [
+    {
+      "line": 0,
+      "note": "入口。messages 里现在只有用户这一句话。注意：模型看不到别的任何东西——没有文件系统，没有终端，只有这个数组。",
+      "messages": [{ "role": "user", "text": "统计 README.md 有多少行" }]
+    },
+    {
+      "line": 1,
+      "note": "把整个数组发给模型。这是唯一花钱、花时间的一步。",
+      "messages": [{ "role": "user", "text": "统计 README.md 有多少行" }]
+    },
+    {
+      "line": 2,
+      "note": "模型没有回答问题，而是要求调用 read_file。这条 assistant 消息里带了一个 toolCall 内容块。",
+      "messages": [
+        { "role": "user", "text": "统计 README.md 有多少行" },
+        { "role": "assistant", "text": "[toolCall] read_file({ path: \"README.md\" })" }
+      ]
+    },
+    {
+      "line": 3,
+      "note": "从消息内容里挑出 toolCall 块。工具调用不是独立事件，它就是消息内容的一部分。",
+      "messages": [
+        { "role": "user", "text": "统计 README.md 有多少行" },
+        { "role": "assistant", "text": "[toolCall] read_file({ path: \"README.md\" })" }
+      ]
+    },
+    {
+      "line": 4,
+      "note": "calls 不为空，所以不退出。记住：这一步是循环的出口，也是 agent 唯一正常的结束方式。",
+      "messages": [
+        { "role": "user", "text": "统计 README.md 有多少行" },
+        { "role": "assistant", "text": "[toolCall] read_file({ path: \"README.md\" })" }
+      ]
+    },
+    {
+      "line": 5,
+      "note": "工具跑完，结果作为一条新消息入栈。模型自己看不到工具做了什么副作用，只能读到这条消息。",
+      "messages": [
+        { "role": "user", "text": "统计 README.md 有多少行" },
+        { "role": "assistant", "text": "[toolCall] read_file({ path: \"README.md\" })" },
+        { "role": "toolResult", "text": "128 行" }
+      ]
+    },
+    {
+      "line": 1,
+      "note": "转回第 2 行，三条消息一起重新发出去。模型这才\"知道\"工具返回了什么。",
+      "messages": [
+        { "role": "user", "text": "统计 README.md 有多少行" },
+        { "role": "assistant", "text": "[toolCall] read_file({ path: \"README.md\" })" },
+        { "role": "toolResult", "text": "128 行" }
+      ]
+    },
+    {
+      "line": 2,
+      "note": "这次模型直接回答，没有 toolCall。数组变成四条。",
+      "messages": [
+        { "role": "user", "text": "统计 README.md 有多少行" },
+        { "role": "assistant", "text": "[toolCall] read_file({ path: \"README.md\" })" },
+        { "role": "toolResult", "text": "128 行" },
+        { "role": "assistant", "text": "README.md 有 128 行。" }
+      ]
+    },
+    {
+      "line": 4,
+      "note": "calls.length === 0，return。agent 到此结束——没有别的收尾逻辑，也没有\"任务完成\"的判定。",
+      "messages": [
+        { "role": "user", "text": "统计 README.md 有多少行" },
+        { "role": "assistant", "text": "[toolCall] read_file({ path: \"README.md\" })" },
+        { "role": "toolResult", "text": "128 行" },
+        { "role": "assistant", "text": "README.md 有 128 行。" }
+      ]
+    }
+  ]
+}
+</script>
+</loop-stepper>
+
+<h2>三、真实源码里的样子</h2>
+
+<p>上面那 7 行，在 pi 里对应 <code>runLoop()</code> 的内层循环。骨架几乎一样：</p>
+
+<pre><code>while (hasMoreToolCalls || pendingMessages.length &gt; 0) {
+  const message = await streamAssistantResponse(...);
+  if (message.stopReason === "error" || message.stopReason === "aborted") { ... return; }
+
+  const toolCalls = message.content.filter((c) =&gt; c.type === "toolCall");
+  hasMoreToolCalls = false;
+  if (toolCalls.length &gt; 0) {
+    ...
+    hasMoreToolCalls = !executedToolBatch.terminate;
+  }
+}</code></pre>
+
+<p class="src">摘自 <a data-pi="packages/agent/src/agent-loop.ts" href="https://github.com/earendil-works/pi/blob/main/packages/agent/src/agent-loop.ts">packages/agent/src/agent-loop.ts</a>，<code>runLoop()</code>。为了读起来清楚，省略了 emit 与错误处理。</p>
+
+<p>差别只有三处，都是"不信任环境"换来的：</p>
+
+<ol>
+	<li><strong>用标志位代替 <code>return</code></strong>。因为循环条件里还有 <code>pendingMessages</code>——用户在你思考的时候又打了字，那些话要插进来。</li>
+	<li><strong>多包一层外层循环</strong>，专门处理"agent 本来要停了，但队列里又来了消息"。</li>
+	<li><strong>提前退出与截断保护</strong>。<code>error</code> / <code>aborted</code> 直接结束；<code>stopReason === "length"</code> 说明输出被 token 上限截断，此时所有工具调用的参数都可能被切半，于是整批判为失败，让模型重新发起。</li>
+</ol>
+
+<div class="callout">
+	<span class="callout__label">记住这个形状</span>
+	<p>生产级 agent 的复杂度几乎全部堆在循环的<strong>入口和出口</strong>（排队消息、中断、故障、压缩）。循环体本身，永远是那 7 行。</p>
+</div>
+
+<h2>四、检验</h2>
+
+<p>先别看上面的代码。凭记忆回答。</p>
+
+<div class="recall">
+	<p class="q">1. 最小 agent 循环有哪四个必要动作？（顺序也要）</p>
+	<button class="reveal">想好了，看答案</button>
+	<div class="answer" hidden>
+		<p>调模型 → 把模型消息入栈 → 判断有没有 toolCall → 执行工具并把结果入栈。第四步之后回到第一步。</p>
+		<p>容易漏的是第二步：很多人先判断再入栈，结果工具调用凭空消失。</p>
+	</div>
+</div>
+
+<div class="recall">
+	<p class="q">2. 工具执行完，为什么必须把结果写回 messages？不写回会怎样？</p>
+	<button class="reveal">想好了，看答案</button>
+	<div class="answer" hidden>
+		<p>因为模型无状态，它只能读到 messages 数组。工具执行的副作用（文件内容、命令输出）对模型完全不可见。</p>
+		<p>不写回的结果是：下一轮模型收不到任何反馈，只能重复同一个工具调用，或者干脆开始编。</p>
+	</div>
+</div>
+
+<div class="mcq" data-answer="0" data-explain="参数是模型生成的，可能不合法（字段缺失、类型不对）。先校验再执行，把不合法当成一条 toolResult 错误消息回灌，模型下一轮就能自己改。pi 里对应 prepareToolCall() 中的 validateToolArguments()。">
+	<p class="q">3. 下面哪一步最应该在"执行工具"之前做？</p>
+	<ul class="mcq-options">
+		<li>校验参数</li>
+		<li>调用模型</li>
+		<li>追加结果</li>
+		<li>记录耗时</li>
+	</ul>
+</div>
+
+<div class="mcq" data-answer="2" data-explain="stopReason 为 length 表示输出被 token 上限截断了，工具调用的参数可能是半截的 JSON。这些调用看起来能解析、能过校验，但语义是残缺的，执行下去会产生静默错误。pi 的做法是整批标记失败（failToolCallsFromTruncatedMessage），让模型重新发起。">
+	<p class="q">4. 模型的 stopReason 是 length 时，pi 怎么处理这条消息里的工具调用？</p>
+	<ul class="mcq-options">
+		<li>逐个执行</li>
+		<li>直接忽略</li>
+		<li>全部失败</li>
+		<li>截断重试</li>
+	</ul>
+</div>
+
+<h2>五、练习：把它写出来</h2>
+
+<div class="exercise">
+	<h3>任务</h3>
+	<p>打开 <a href="../exercises/0001-agent-loop.mjs">pi/exercises/0001-agent-loop.mjs</a>，补齐那个 <code>runLoop()</code>。假模型和假工具已经写好，不需要 API key。</p>
+	<pre><code>node exercises/0001-agent-loop.mjs</code></pre>
+	<p><strong>反馈是自动的</strong>：循环停不下来会被守卫打断并报错；messages 形状不对会打印"还没通过"；全对会打印"通过"并退出码 0。</p>
+	<p>通过之后，对照你自己的实现和上面那 7 行，标出你多写的、少写的。多写的那部分，就是你对循环的真实误解。</p>
+	<p>注意：这个 pi 会话里没有可用的 shell，命令要在你自己的终端里跑。</p>
+</div>
+
+<div class="primary-source">
+	<h2>主源推荐</h2>
+	<p><a data-pi="packages/agent/src/agent-loop.ts" href="https://github.com/earendil-works/pi/blob/main/packages/agent/src/agent-loop.ts">packages/agent/src/agent-loop.ts</a> —— 花 15 分钟只读 <code>runLoop()</code> 这一个函数，跳过 <code>declareToolChanges()</code> 和并行执行那两段。它是"手搓 agent"最好的教材：真实、完整、没有营销。</p>
+	<p>配合 <a data-pi="packages/agent/README.md" href="https://github.com/earendil-works/pi/blob/main/packages/agent/README.md">packages/agent/README.md</a> 的 "Event Flow" 一节读，能看清同一件事的两种叙述——状态变化（messages）与对外通知（events）。</p>
+</div>
+
+<div class="ask-teacher">
+	<p><strong>有不清楚的地方直接问我。</strong>我是你的老师，不是文档搬运工。特别是：为什么消息要分 AgentMessage 和 LLM Message 两套类型、工具结果为什么不能塞进 assistant 消息、循环里那些 emit 到底给谁看——这些现在不懂很正常，下一课会逐个拆。</p>
+</div>
+
+<div class="lesson-nav">
+	<span>第 1 课 / 共 2 课</span>
+	<span><a href="0002-tool-failures.html">第 2 课 · 工具的四种失败</a> ｜ <a href="../reference/glossary.html">词汇表</a> ｜ <a href="../MISSION.md">任务书</a></span>
+</div>
+
+</div>
+</body>
+</html>

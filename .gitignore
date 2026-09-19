@@ -1,0 +1,12 @@
+# 本机配置，每台机器一份，不上传
+workspace.config.js
+
+# 系统垃圾
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 日志与临时文件
+*.log
+*.tmp
+*~

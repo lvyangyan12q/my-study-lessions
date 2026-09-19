@@ -1,0 +1,250 @@
+{
+  "userName": "",
+  "permissionMode": "yolo",
+  "model": "haiku",
+  "thinkingBudget": "off",
+  "effortLevel": "high",
+  "serviceTier": "default",
+  "enableAutoTitleGeneration": true,
+  "titleGenerationLocale": "",
+  "titleGenerationModel": "",
+  "excludedTags": [],
+  "mediaFolder": "",
+  "systemPrompt": "",
+  "sharedEnvironmentVariables": "",
+  "envSnippets": [],
+  "customContextLimits": {},
+  "customModelAliases": {},
+  "keyboardNavigation": {
+    "scrollUpKey": "w",
+    "scrollDownKey": "s",
+    "focusInputKey": "i"
+  },
+  "requireCommandOrControlEnterToSend": false,
+  "locale": "en",
+  "providerConfigs": {
+    "claude": {
+      "enabled": false,
+      "responseStyle": "Default",
+      "safeMode": "acceptEdits",
+      "cliPath": "",
+      "cliPathsByHost": {},
+      "loadUserSettings": true,
+      "enableChrome": false,
+      "customModels": "",
+      "defaultModel": "opus",
+      "lastModel": "haiku",
+      "modelEnvironmentType": "",
+      "titleModelEnvironmentType": "",
+      "environmentVariables": "",
+      "environmentHash": ""
+    },
+    "codex": {
+      "enabled": false,
+      "safeMode": "workspace-write",
+      "cliPath": "",
+      "cliPathsByHost": {},
+      "customModels": "",
+      "discoveredModels": [],
+      "modelAliases": {},
+      "visibleModels": null,
+      "enableUltraEffort": false,
+      "responseStyle": "pragmatic",
+      "reasoningSummary": "detailed",
+      "environmentVariables": "",
+      "environmentHash": "",
+      "catalogTimestamp": 0,
+      "catalogFingerprint": "",
+      "installationMethodsByHost": {},
+      "wslDistroOverridesByHost": {}
+    },
+    "grok": {
+      "catalogsByHost": {},
+      "cliPath": "",
+      "cliPathsByHost": {},
+      "enabled": false,
+      "environmentHash": "",
+      "environmentVariables": "",
+      "modelAliases": {},
+      "preferredReasoningByModel": {},
+      "visibleModels": null
+    },
+    "opencode": {
+      "cliPath": "",
+      "cliPathsByHost": {},
+      "enabled": false,
+      "environmentHash": "",
+      "environmentVariables": "OPENCODE_ENABLE_EXA=1",
+      "modelAliases": {},
+      "preferredThinkingByModel": {},
+      "selectedMode": "",
+      "thinkingOptionsByModel": {},
+      "visibleModels": []
+    },
+    "pi": {
+      "cliPath": "",
+      "cliPathsByHost": {},
+      "discoveredModels": [
+        {
+          "api": "anthropic-messages",
+          "contextWindow": 1048576,
+          "encodedId": "pi:kimi-coding/k3",
+          "id": "k3",
+          "input": [
+            "text",
+            "image"
+          ],
+          "label": "Kimi K3",
+          "maxTokens": 131072,
+          "provider": "kimi-coding",
+          "reasoning": true,
+          "thinkingLevels": [
+            "low",
+            "high",
+            "max"
+          ]
+        },
+        {
+          "api": "anthropic-messages",
+          "contextWindow": 262144,
+          "encodedId": "pi:kimi-coding/k3-256k",
+          "id": "k3-256k",
+          "input": [
+            "text",
+            "image"
+          ],
+          "label": "Kimi K3-256K",
+          "maxTokens": 131072,
+          "provider": "kimi-coding",
+          "reasoning": true,
+          "thinkingLevels": [
+            "low",
+            "high",
+            "max"
+          ]
+        },
+        {
+          "api": "anthropic-messages",
+          "contextWindow": 1048576,
+          "encodedId": "pi:kimi-coding/kimi-for-coding",
+          "id": "kimi-for-coding",
+          "input": [
+            "text",
+            "image"
+          ],
+          "label": "kimi-for-coding",
+          "maxTokens": 32768,
+          "provider": "kimi-coding",
+          "reasoning": true,
+          "thinkingLevels": [
+            "low",
+            "high",
+            "max"
+          ]
+        },
+        {
+          "api": "anthropic-messages",
+          "contextWindow": 262144,
+          "encodedId": "pi:kimi-coding/kimi-for-coding-highspeed",
+          "id": "kimi-for-coding-highspeed",
+          "input": [
+            "text",
+            "image"
+          ],
+          "label": "Kimi For Coding HighSpeed",
+          "maxTokens": 32768,
+          "provider": "kimi-coding",
+          "reasoning": true,
+          "thinkingLevels": [
+            "off",
+            "minimal",
+            "low",
+            "medium",
+            "high"
+          ]
+        },
+        {
+          "api": "openai-completions",
+          "contextWindow": 1000000,
+          "encodedId": "pi:cc-switch-open-code-go/gpt-5.6-luna",
+          "id": "gpt-5.6-luna",
+          "input": [
+            "text"
+          ],
+          "label": "gpt-5.6-luna",
+          "maxTokens": 131072,
+          "provider": "cc-switch-open-code-go",
+          "reasoning": true,
+          "thinkingLevels": [
+            "high",
+            "max"
+          ]
+        },
+        {
+          "api": "openai-completions",
+          "contextWindow": 1000000,
+          "encodedId": "pi:cc-switch-open-code-go/deepseek-v4.1-flash",
+          "id": "deepseek-v4.1-flash",
+          "input": [
+            "text"
+          ],
+          "label": "deepseek-v4.1-flash",
+          "maxTokens": 384000,
+          "provider": "cc-switch-open-code-go",
+          "reasoning": true,
+          "thinkingLevels": [
+            "off",
+            "high",
+            "max"
+          ]
+        }
+      ],
+      "enabled": true,
+      "environmentHash": "",
+      "environmentVariables": "",
+      "modelAliases": {},
+      "preferredThinkingByModel": {},
+      "toolMode": "all",
+      "visibleModels": [
+        "pi:cc-switch-open-code-go/deepseek-v4.1-flash",
+        "pi:cc-switch-open-code-go/gpt-5.6-luna"
+      ]
+    }
+  },
+  "settingsProvider": "pi",
+  "lastSelectedChatModel": null,
+  "savedProviderModel": {
+    "claude": "haiku",
+    "pi": "haiku"
+  },
+  "savedProviderEffort": {
+    "claude": "high",
+    "pi": "high"
+  },
+  "savedProviderServiceTier": {},
+  "savedProviderThinkingBudget": {
+    "pi": "off"
+  },
+  "savedProviderPermissionMode": {
+    "claude": "yolo",
+    "pi": "yolo"
+  },
+  "pendingProviderSessionInvalidations": {},
+  "lastCustomModel": "",
+  "maxWarmAgentProcesses": 5,
+  "enableAutoScroll": true,
+  "showMessageTimestamps": false,
+  "deferMathRenderingDuringStreaming": true,
+  "expandFileEditsByDefault": false,
+  "chatViewPlacement": "right-sidebar",
+  "enableDualPane": true,
+  "dualPaneSide": "right",
+  "restoreTabsOnStartup": true,
+  "collabEnabled": false,
+  "collabProjectsFolder": "workspace",
+  "collabGitPath": "",
+  "sessionManagerOrganization": "list",
+  "sessionManagerSort": "last-updated",
+  "pinnedLinkedContentPaths": [],
+  "hiddenProviderCommands": {}
+}

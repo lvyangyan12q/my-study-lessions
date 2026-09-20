@@ -1,120 +1,312 @@
-/* ============================================================
-   教学课程共享样式 —— assets/course.css
-   所有 lessons/*.html 与 reference/*.html 都链接本文件。
-   目标是：屏幕与打印都好看；组件样式集中在这里，JS 只负责行为。
-   ============================================================ */
+/* Pi 二次开发课程 · 共享样式
+   设计目标：Tufte 风格、长文可读、打印友好、深色模式不刺眼。
+   Lesson 或 Reference 一律 <link rel="stylesheet" href="../assets/course.css">。 */
 
 :root {
-	--ink: #17140f;
-	--ink-soft: #46402f;
-	--muted: #7d7666;
-	--rule: #e1dbd0;
-	--paper: #fdfcf8;
-	--paper-2: #f5f1e8;
-	--accent: #a13d1c;
-	--accent-soft: #f2e4dc;
-	--ok: #2f6b3a;
-	--ok-soft: #e3efe4;
-	--bad: #9b2c2c;
-	--bad-soft: #f7e3e3;
-	--mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
-	--serif: Georgia, "Iowan Old Style", "Songti SC", "Source Han Serif SC", "Noto Serif CJK SC", serif;
-	--sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-	--measure: 42rem;
+  --ink: #1a1a1a;
+  --ink-soft: #4a4a4a;
+  --ink-faint: #767676;
+  --paper: #fdfcf9;
+  --rule: #d8d4cc;
+  --rule-strong: #b8b2a7;
+  --accent: #8a5a2b;
+  --accent-soft: #f3ece1;
+  --code-bg: #f0ede6;
+  --ok: #2f6b3f;
+  --bad: #9b3b2f;
+  --measure: 46rem;
+  --muted: #7d7666;
+  --paper-2: #f5f1e8;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --serif: Georgia, "Iowan Old Style", "Songti SC", "Source Han Serif SC", "Noto Serif CJK SC", serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
-	:root {
-		--ink: #eae4d8;
-		--ink-soft: #c3bcac;
-		--muted: #918a7b;
-		--rule: #302b24;
-		--paper: #14120f;
-		--paper-2: #1c1916;
-		--accent: #e0925f;
-		--accent-soft: #2b211a;
-		--ok: #7fbe8b;
-		--ok-soft: #1b2a1e;
-		--bad: #e08a8a;
-		--bad-soft: #2c1b1b;
-	}
+  :root {
+    --ink: #e6e2d8;
+    --ink-soft: #b6b1a6;
+    --ink-faint: #8b867c;
+    --paper: #171614;
+    --rule: #3a3833;
+    --rule-strong: #56524a;
+    --accent: #d9a86c;
+    --accent-soft: #2a251d;
+    --code-bg: #24221e;
+    --ok: #8fbf9a;
+    --bad: #e0907f;
+    --muted: #918a7b;
+    --paper-2: #1c1916;
+  }
 }
 
-* { box-sizing: border-box; }
-
 html {
-	font-size: 17px;
-	-webkit-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-	margin: 0;
-	padding: 3rem 1.5rem 6rem;
-	background: var(--paper);
-	color: var(--ink);
-	font-family: var(--serif);
-	line-height: 1.65;
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Songti SC",
+    "Noto Serif SC", Georgia, serif;
+  font-size: 18px;
+  line-height: 1.62;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
-.page {
-	max-width: var(--measure);
-	margin: 0 auto;
+main {
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding: 4.5rem 1.5rem 6rem;
 }
 
-/* ---------- 标题 ---------- */
-
-.kicker {
-	font-family: var(--sans);
-	font-size: 0.75rem;
-	letter-spacing: 0.14em;
-	text-transform: uppercase;
-	color: var(--muted);
-	margin: 0 0 0.5rem;
-}
-
+/* 标题层级 */
 h1 {
-	font-size: 1.9rem;
-	line-height: 1.25;
-	margin: 0 0 0.75rem;
-	font-weight: 600;
-}
-
-.subtitle {
-	font-size: 1.05rem;
-	color: var(--ink-soft);
-	font-style: italic;
-	margin: 0 0 2rem;
+  font-size: 2.05rem;
+  line-height: 1.15;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.6rem;
 }
 
 h2 {
-	font-size: 1.2rem;
-	margin: 2.6rem 0 0.75rem;
-	padding-bottom: 0.35rem;
-	border-bottom: 1px solid var(--rule);
-	font-weight: 600;
+  font-size: 1.32rem;
+  font-weight: 600;
+  margin: 2.6rem 0 0.7rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--rule);
 }
 
 h3 {
-	font-size: 1rem;
-	margin: 1.8rem 0 0.5rem;
-	font-weight: 600;
+  font-size: 1.06rem;
+  font-weight: 600;
+  margin: 1.8rem 0 0.4rem;
 }
 
-p { margin: 0 0 1rem; }
-
-a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
-
-ul, ol { margin: 0 0 1rem; padding-left: 1.4rem; }
-li { margin-bottom: 0.4rem; }
-
-strong { font-weight: 600; }
-
-hr {
-	border: 0;
-	border-top: 1px solid var(--rule);
-	margin: 2.5rem 0;
+p {
+  margin: 0.7rem 0;
 }
 
+/* 导语与眉标 */
+.eyebrow {
+  font-family: ui-sans-serif, system-ui, "Segoe UI", "PingFang SC", sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 0.8rem;
+}
+
+.lead {
+  font-size: 1.14rem;
+  color: var(--ink-soft);
+  margin: 0 0 1.6rem;
+}
+
+/* 强调块 */
+.card {
+  background: var(--accent-soft);
+  border-left: 3px solid var(--accent);
+  padding: 0.85rem 1.05rem;
+  margin: 1.4rem 0;
+  font-size: 0.97rem;
+}
+
+.card > :first-child { margin-top: 0; }
+.card > :last-child { margin-bottom: 0; }
+
+/* 表格 */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.2rem 0;
+  font-size: 0.95rem;
+}
+
+th, td {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.5rem 0.7rem 0.5rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+thead th {
+  font-family: ui-sans-serif, system-ui, "Segoe UI", "PingFang SC", sans-serif;
+  font-size: 0.76rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  border-bottom: 1px solid var(--rule-strong);
+}
+
+tbody tr:last-child td { border-bottom: none; }
+
+/* 代码 */
+code, kbd, pre {
+  font-family: "SFMono-Regular", ui-monospace, "Cascadia Mono", Consolas,
+    "Liberation Mono", monospace;
+  font-size: 0.86em;
+}
+
+code {
+  background: var(--code-bg);
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
+}
+
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 0.9rem 1rem;
+  overflow-x: auto;
+  line-height: 1.5;
+}
+
+pre code {
+  background: none;
+  padding: 0;
+}
+
+/* 链接 */
+a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+a:hover {
+  border-bottom-color: var(--accent);
+}
+
+/* 列表 */
+ul, ol { padding-left: 1.35rem; }
+li { margin: 0.3rem 0; }
+
+/* 交互测验组件（后续课程复用） */
+.quiz {
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 1rem 1.1rem;
+  margin: 1.4rem 0;
+}
+
+.quiz .opt {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid var(--rule-strong);
+  border-radius: 4px;
+  padding: 0.55rem 0.75rem;
+  margin: 0.4rem 0;
+  cursor: pointer;
+}
+
+.quiz .opt:hover { background: var(--accent-soft); }
+.quiz .opt[data-result="ok"] { border-color: var(--ok); color: var(--ok); }
+.quiz .opt[data-result="bad"] { border-color: var(--bad); color: var(--bad); }
+
+.feedback {
+  display: none;
+  margin-top: 0.6rem;
+  font-size: 0.94rem;
+  color: var(--ink-soft);
+}
+
+.feedback.shown { display: block; }
+
+.ok { color: var(--ok); }
+.bad { color: var(--bad); }
+
+/* 中英对照条目（Bilingual pair）：英文原文 + 中文译文 */
+.bi {
+  margin: 1rem 0;
+  padding: 0.1rem 0 0.1rem 0.95rem;
+  border-left: 2px solid var(--rule);
+}
+
+.bi .en {
+  color: var(--ink-soft);
+  font-size: 0.93rem;
+}
+
+.bi .zh {
+  margin-top: 0.28rem;
+}
+
+.bi .zh::before {
+  content: "译";
+  font-family: ui-sans-serif, system-ui, "Segoe UI", "PingFang SC", sans-serif;
+  font-size: 0.66rem;
+  color: var(--accent);
+  border: 1px solid var(--rule-strong);
+  border-radius: 3px;
+  padding: 0 0.28em;
+  margin-right: 0.4em;
+  vertical-align: 0.08em;
+}
+
+/* 页脚导航 */
+footer, .nav {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--rule);
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+
+/* 打印：去底色、防拆块 */
+@media print {
+  :root {
+    --ink: #000;
+    --ink-soft: #222;
+    --ink-faint: #444;
+    --paper: #fff;
+    --rule: #bbb;
+    --rule-strong: #888;
+    --accent: #000;
+    --accent-soft: #f2f2f2;
+    --code-bg: #f2f2f2;
+  }
+  body { font-size: 11.5pt; }
+  main { padding: 0; max-width: none; }
+  a { color: #000; border-bottom: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #444; }
+  .quiz, .card, table, pre { break-inside: avoid; }
+  .bi { break-inside: avoid; }
+  h2 { break-after: avoid; }
+}
+
+/* ============================================================
+   并入旧工作区（手搓 agent 课程，0003/0004 课）所用组件
+   .page 兼容旧页面的容器；.kicker/.subtitle 与我的 .eyebrow/.lead 同族
+   ============================================================ */
+.page {
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding: 3rem 1.5rem 6rem;
+}
+
+.kicker {
+  font-family: ui-sans-serif, system-ui, "Segoe UI", "PingFang SC", sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 0.8rem;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: var(--ink-soft);
+  font-style: italic;
+  margin: 0 0 1.6rem;
+}
 /* ---------- 目标框 ---------- */
 
 .goal {
@@ -510,34 +702,8 @@ tbody tr:hover { background: var(--paper-2); }
 
 .glossary dd .src { display: block; margin: 0.3rem 0 0; }
 
-/* ---------- 打印 ---------- */
 
+/* 打印：并入的旧组件防拆块 */
 @media print {
-	:root {
-		--ink: #000;
-		--ink-soft: #222;
-		--muted: #555;
-		--rule: #bbb;
-		--paper: #fff;
-		--paper-2: #f7f7f7;
-		--accent: #000;
-		--accent-soft: #f0f0f0;
-		--ok: #000;
-		--ok-soft: #f4f4f4;
-		--bad: #000;
-		--bad-soft: #f4f4f4;
-	}
-
-	html { font-size: 11pt; }
-	body { padding: 0; }
-
-	.stepper__controls,
-	.recall button.reveal,
-	.mcq-options button { display: none; }
-
-	.answer[hidden] { display: block !important; }
-
-	pre, .callout, .goal, .stepper, .recall, .mcq, .exercise, table { break-inside: avoid; }
-	h2, h3 { break-after: avoid; }
-	a { text-decoration: none; }
+  .goal, .callout, .recall, .mcq, .stepper, .exercise, .glossary, table, pre { break-inside: avoid; }
 }

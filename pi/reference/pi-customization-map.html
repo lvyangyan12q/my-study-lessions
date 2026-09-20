@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Pi 速查：运行模式与定制阶梯</title>
+  <link rel="stylesheet" href="../assets/course.css">
+  <script src="../../workspace.config.js"></script>
+  <script src="../assets/workspace-links.js" defer></script>
+</head>
+<body><main>
+  <p class="eyebrow">Reference · 随查随用</p>
+  <h1>运行模式与定制阶梯</h1>
+  <p class="lead">两个最高频的判断：用哪种方式运行 Pi；一个需求落在定制阶梯的哪一层。</p>
+
+  <h2>四种运行模式</h2>
+  <table>
+    <thead><tr><th>模式</th><th>入口</th><th>接口</th><th>何时用</th></tr></thead>
+    <tbody>
+      <tr><td>interactive</td><td><code>pi</code></td><td>TUI</td><td>人机对话、日常开发</td></tr>
+      <tr><td>print</td><td><code>pi -p "&lt;prompt&gt;"</code></td><td>一次性文本</td><td>脚本里拿一段回答</td></tr>
+      <tr><td>JSON</td><td><code>pi --mode json</code></td><td>一次性 JSON 事件流</td><td>脚本要结构化事件</td></tr>
+      <tr><td>RPC</td><td><code>pi --mode rpc</code></td><td>stdin/stdout JSONL，<strong>仅按 <code>\n</code> 分帧</strong></td><td>跨进程、非 Node 客户端</td></tr>
+      <tr><td>SDK</td><td><code>import { createAgentSession } from "@earendil-works/pi-coding-agent"</code></td><td>进程内 TS API</td><td>嵌入自己的程序</td></tr>
+    </tbody>
+  </table>
+  <p>README 口径：「四种模式」= interactive、print 或 JSON（合并计为一类）、RPC、SDK。</p>
+
+  <h2>定制阶梯（从轻到重）</h2>
+  <table>
+    <thead><tr><th>层</th><th>形态</th><th>触发</th><th>目录</th></tr></thead>
+    <tbody>
+      <tr><td>Prompt Template</td><td>Markdown</td><td><code>/name</code></td><td><code>~/.pi/agent/prompts/</code> · <code>.pi/prompts/</code></td></tr>
+      <tr><td>Skill</td><td>SKILL.md（Agent Skills 标准）</td><td><code>/skill:name</code> / 自动</td><td><code>~/.pi/agent/skills/</code> · <code>~/.agents/skills/</code> · <code>.pi/skills/</code> · <code>.agents/skills/</code>（cwd 向上）</td></tr>
+      <tr><td>Theme</td><td>JSON，热重载</td><td>设置选用</td><td><code>~/.pi/agent/themes/</code> · <code>.pi/themes/</code></td></tr>
+      <tr><td>Extension</td><td>TypeScript 模块</td><td>启动自动加载</td><td><code>~/.pi/agent/extensions/</code> · <code>.pi/extensions/</code></td></tr>
+      <tr><td>Pi Package</td><td>以上任意组合的包</td><td><code>pi install</code></td><td>npm / git；装到 <code>~/.pi/agent/npm|git/</code>，<code>-l</code> 装到项目 <code>.pi/</code></td></tr>
+    </tbody>
+  </table>
+
+  <h2>选层口诀</h2>
+  <div class="card">提示词 → 说明 → 代码 → 打包分发 → 进程外调度 → 内核。能用轻的不用重的；能装包不自写；能扩展不 fork。</div>
+  <p>内建没有的（MCP、子代理、计划模式……）都用 Extension 补；Package 以完整系统权限运行，装前必读源码。</p>
+
+  <p><a href="../lessons/0002-readme-modes-and-ladder.html">← 第二课</a> · <a href="pi-package-map.html">包结构速查</a></p>
+</main></body>
+</html>

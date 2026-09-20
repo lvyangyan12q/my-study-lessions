@@ -1,57 +1,48 @@
-# Teaching Notes
+# Teaching Notes（合并自两期教学）
 
-## 仓库与工作区位置
+## 工作区位置（2026-09-20 起生效）
 
-- 仓库根：`D:/learning-lessons`（用户的个人学习仓库，推到 `https://github.com/lvyangyan12q/my-study-lessions`）。**仓库根 = 学习总目录，`pi/` 只是其中一门学科。**
-- 本门学科的工作区：`D:/learning-lessons/pi/`。
-- 原始位置是 `D:/programming/workspace/pi/learning/`（pi 源码仓库内部）。后来用户要求独立成仓库，2025 那轮搬迁过程中丢了内容，由我在新位置按上下文重建。
-- 因此：**不要假设任何文件还在旧路径**。`D:/programming/workspace/pi/learning/` 下只剩一个我误建的 `assets/workspace-links.js`，属于残留，可以忽略或删掉。
-- 仓库外还躺着几个已经作废的脚本（用户可自行删除）：`workspace/scan-old-study.mjs`、`workspace/import-old-study.mjs`、`workspace/publish-study.mjs`、`workspace/study/`（空的旧目标目录）。
+- 学习仓库根：`F:/lessons-study`（用户自理的 git 仓库，原 `D:/learning-lessons` 迁来，推 GitHub `lvyangyan12q/my-study-lessions`）。**仓库根 = 学习总目录，`pi/` 是其中一门学科。**
+- 本学科工作区：**`F:/lessons-study/pi/`**（2026-09-20 从 `F:/ai-project/pi/study/` 整体迁入，与旧工作区合并）。
+- 课程里指向 pi 源码的链接一律走「GitHub 地址 + `data-pi` 属性」约定：`assets/workspace-links.js` + 仓库根 `workspace.config.js`（gitignore，每机一份，当前 `piSourceRoot = "F:/ai-project/pi"`）在页面加载时改写成 `file:///` 本地直达。**不要在课程中写死本机绝对路径。**
+- 旧路径 `F:/ai-project/pi/study/` 已删除；源码仓库本体在 `F:/ai-project/pi`。
 
-## 跨机器路径配置（重要设计）
+## 教学流程（主线，阶段 0–13）
 
-课程里指向 pi 源码/文档的链接**不写死本机路径**：
+- 按文件推进（`LEARNING_PATH.md`）；每读完一个文件用户回报，`learning-qa/<文件名>.md` 中 3 题（概念/执行流程/最小修改）起步。
+- 用户在对话里作答 → 教师写入文件（闭卷，避免用户看到相邻批改）。
+- 有错题追加 2 道强化题只练薄弱点；全对才收口并在 `LEARNING_PATH.md` 打勾。
+- **用户会把源文件原文整段粘贴当回答**：推理类题目需显式要求「给出判断过程」，否则视为未答。用户主动要答案（未学先问）时：给答案+讲解，但状态记「未考核」，换问法复测。
+- 已排间隔复测（混入后续 QA，不预告）：exports 白名单性质、cli.js 去向（~2026-09-11 前后，部分已通过）；**CHANGELOG 一课（2026-09-15 直接给答案）复测未做**。
 
-- HTML 里一律写 GitHub 地址（`https://github.com/earendil-works/pi/blob/main/<path>`）+ `data-pi="<仓库内相对路径>"`。
-- `<script src="../../workspace.config.js">` 设置 `window.LEARNING_WORKSPACE.piSourceRoot`。
-- `pi/assets/workspace-links.js` 在页面加载时把带 `data-pi` 的链接改写成 `file:///<piSourceRoot>/<相对路径>`。
-- 配置缺失（新电脑、刚 clone）→ 保持 GitHub 链接，页面照常可用。
+## 手搓 agent 并入主线（2026-09-20 二次整合）
 
-`workspace.config.js` 在 `.gitignore` 里，每台机器一份；`workspace.config.example.js` 入库作模板。
+- 用户要求不再分主线/支线：`LEARNING_PATH.md` 重写为单一主线，`packages/agent` 内容按主题嵌在各阶段（阶段 2 最小循环、阶段 5 StreamFn/事件点、阶段 7 压缩实现、阶段 15 毕业任务「手搓 ≤150 行 agent」）。
+- 旧课 `lessons/0003-agent-loop.html`、`0004-tool-failures.html`、`exercises/`、`reference/glossary.html` 全部保留在主序列里，编号顺延（后续课程 0005 起）。
+- 该线原本的样式/组件决策（quiz.js 回忆卡/选择题、loop-stepper、练习单文件单命令自判）继续适用；新增可复用组件写进 `assets/`。
 
-## Machine facts (probed)
+## 用户偏好
 
-- **没有 shell**：bash 工具报 "No bash shell found"（搜过 `C:\Program Files\Git\bin\bash.exe` 与 x86 版）。我无法执行任何命令、无法列目录、无法打开文件给用户。目录是否存在只能用 `read` 探测（`EISDIR` = 存在，`ENOENT` = 不存在）。
-- 后果：练习必须由用户在自己终端跑；我写的脚本我无法执行验证，只能逐行通读。发脚本前要把风险面写清楚。
-- git 不在 `C:\Program Files\Git\cmd`，也不在 `C:\Program Files\GitHub CLI`、`%LOCALAPPDATA%\Programs\Git`。但 `D:/programming/workspace/pi/.git` 存在（origin = earendil-works/pi），说明 git 在用户 PATH 的某个位置可用。
-- `C:\Program Files\nodejs` 不存在，但 `%APPDATA%\npm` 存在 → node 用了非默认前缀（大概率 nvm-windows）。pi 本身跑在 node 上，所以用户终端有 node。
-- 仓库 `D:/programming/workspace/pi` 的 docs 在 `packages/coding-agent/docs/`，**根目录没有 docs/**。引用文档要走这个路径。
-
-## 用户偏好（重要）
-
-- **不要让他跑命令、不要等他回报输出。** 用户原话："你不需要写这些命令，你直接生成对应文件和资料就好了"。他要的是课程与资料本身。
-- 因此：每节课的反馈必须内置在 HTML 里（选择题 / 回忆卡 / 步进器自判），不依赖终端。
-- 练习文件照旧产出（那是技能练习的载体），但不要附带"跑完把输出贴给我"的要求，也不要用它作为开下一课的前置条件。写作时用"做完自己对照"的语气。
-- 不要因为缺少证据就停下来不发下一课。没有证据时按上一课的内容顺势往下教，并在课内把前置知识简要重申一遍。
-
-## 教学决策（续）
-
-- 用户写中文，课程用中文；代码与标识符保持英文。
-- 共享样式 `pi/assets/course.css`（无外部字体、离线可用、含打印规则）。
-- 已组件化：`course.css`、`quiz.js`（`.recall` 回忆卡 + `.mcq` 选择题）、`loop-stepper.js`（`<loop-stepper>` JSON 驱动的循环轨迹播放器）、`workspace-links.js`（跨机器链接）。
+- 中文教学；代码与标识符保持英文。
+- **不要为了「获取证据」就催用户跑命令或回报输出**：资料与课程直接生成；练习自判成败，措辞用「做完自己对照」。用户会主动汇报进度或提问。
+- 每天约 1 小时；内容宁可短。
 - 选择题选项等长（全部 4 个汉字），避免格式泄题。
-- 时间预算每天 1 小时：每课必须能在 60 分钟内"读完 + 做完练习"。
-- 练习一律单文件 `.mjs`、单条 `node` 命令、自动判定成败。
-- 不引入构建链；Node 基础（ESM、`process.argv`、`for await`）在真实代码里顺路讲，不单独开课。
 
-## 已放弃的方向（不要再提，除非用户主动问）
+## 机器事实（历史记录，已过时 → 现况）
 
-- `D:/迅雷下载/study`：用户曾提出把这批旧 pi 学习材料合并进仓库，随后自己收回（"算了，你不要这部分了"）。**不要再主动提议导入。**
-- 教训：不要为了"看一眼目录"就让用户去跑扫描脚本。读不了目录时，先用已有信息推进教学，或者用最少的一条命令解决，且要说明为什么。
+- ~~没有 shell、无法执行命令~~ → 现环境（`F:/lessons-study`）bash 可用，`node` 可用（Node v22）。
+- ~~仓库在 `D:/programming/workspace/pi`~~ → 现为 `F:/ai-project/pi`，是完整 monorepo（含 `packages/coding-agent/src/`、`packages/agent/`）。
+- 当时「引用文档走 `packages/coding-agent/docs/`，根目录没有 docs/」→ 现在同样成立。
+
+
 
 ## Open items
 
-- **git 与推送由用户自理**（用户原话："推送你不用管了，我配置好了"）。不要再催他跑发布命令。
-- 第 2 课已出（`lessons/0002-tool-failures.html`），按"已能写出循环"的假设写，课内重申了前置知识。
-- 仍没有学习证据（练习未跑、回忆题未答），且用户不要我做这件事。后续按内容主线推进，不再以证据为前置条件。
-- 第 3 课之后应调研外部高质量材料（"从零构建 agent"），不要在没找到一手来源时引用。
+- 主线 checkpoint：`CHANGELOG.md` 未考核（待复测）；`docs/index.md` 第一轮问题已出、待用户作答；`package.json`/`README.md`/`examples-README.md` 已收口。
+- 合并主线后：`LEARNING_PATH.md` 已重写为单一顺序（阶段 0–15）；下一步作业仍是 `docs/index.md` 三题。
+
+## 2026-09-20 迁移记录
+
+- 目录合并操作与编号：我的学习记录 0001–0005 保留；旧线上 0001 → `learning-records/0006-starting-point-and-constraints.md`；旧课 0001/0002 → `lessons/0003-agent-loop.html`/`0004-tool-failures.html`（交叉链接已同步）。
+- 样式：`assets/course.css` 合并 = 我的主题为基础 + 旧课组件类（.page/.kicker/.subtitle/.goal/.callout/.recall/.mcq/.stepper 等）+ 兼容变量（--muted/--paper-2/--mono/--serif/--sans）。旧 course.css 曾被我误覆盖，已从 git HEAD 恢复后合并。
+- 链接：我的 5 个 HTML 改为 GitHub+data-pi 约定（22 处），脚本 `tools/convert-html-links.cjs` 保留备查。

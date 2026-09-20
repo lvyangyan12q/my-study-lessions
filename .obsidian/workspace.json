@@ -1,20 +1,24 @@
 {
   "main": {
-    "id": "37428aee9f4d779a",
+    "id": "e7f943d10dacb8b0",
     "type": "split",
     "children": [
       {
-        "id": "84f91aef087e3143",
+        "id": "59890d3a3ba1ac23",
         "type": "tabs",
         "children": [
           {
-            "id": "80f8d86dcf446722",
+            "id": "68792838a0b08030",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "关系图谱"
+              "type": "markdown",
+              "state": {
+                "file": "pi/NOTES.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "NOTES"
             }
           }
         ]
@@ -23,15 +27,15 @@
     "direction": "vertical"
   },
   "left": {
-    "id": "6625222aaf47494e",
+    "id": "53871cc4f5e8d16a",
     "type": "split",
     "children": [
       {
-        "id": "c1841d98e07028f7",
+        "id": "7fa2d2c6ecee7359",
         "type": "tabs",
         "children": [
           {
-            "id": "4101fabd9d20ddb2",
+            "id": "de9035bf14ad4d69",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -46,7 +50,7 @@
             }
           },
           {
-            "id": "e6901aaad05a0ab6",
+            "id": "76ca4f54cc05159c",
             "type": "leaf",
             "state": {
               "type": "search",
@@ -63,11 +67,14 @@
             }
           },
           {
-            "id": "42fa39962ab575ee",
+            "id": "3dbaeceb80248420",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
-              "state": {},
+              "state": {
+                "showSearch": false,
+                "searchQuery": ""
+              },
               "icon": "lucide-bookmark",
               "title": "书签"
             }
@@ -79,20 +86,20 @@
     "width": 300
   },
   "right": {
-    "id": "2a4c825a4724af03",
+    "id": "1c4420339f66a50d",
     "type": "split",
     "children": [
       {
-        "id": "f8eed40085d8ec62",
+        "id": "2005be42bf9fb4f2",
         "type": "tabs",
         "children": [
           {
-            "id": "7b8a47fbe701f6a1",
+            "id": "35f8ee9d30165423",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
-                "file": "AGENT.md",
+                "file": "pi/NOTES.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,25 +109,25 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "AGENT 的反向链接列表"
+              "title": "反向链接"
             }
           },
           {
-            "id": "9eb3de26ab0e3276",
+            "id": "1703142359c8fad5",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "AGENT.md",
+                "file": "pi/NOTES.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "AGENT 的出链列表"
+              "title": "出链"
             }
           },
           {
-            "id": "aaa8e617cab02f82",
+            "id": "afe7ba419fdb4b5a",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -135,7 +142,7 @@
             }
           },
           {
-            "id": "bc86fdc21b7ba522",
+            "id": "409d0007b524baf7",
             "type": "leaf",
             "state": {
               "type": "all-properties",
@@ -149,22 +156,22 @@
             }
           },
           {
-            "id": "f6bf7f52e18059b7",
+            "id": "43eb9b54b96511a8",
             "type": "leaf",
             "state": {
               "type": "outline",
               "state": {
-                "file": "AGENT.md",
+                "file": "pi/NOTES.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "AGENT 的大纲"
+              "title": "大纲"
             }
           },
           {
-            "id": "df6f461487288c10",
+            "id": "4cc9af65cd573e7b",
             "type": "leaf",
             "state": {
               "type": "git-view",
@@ -178,7 +185,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 804.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -189,31 +196,43 @@
       "templates:插入模板": false,
       "command-palette:打开命令面板": false,
       "bases:新建数据库": false,
-      "realclaudian:Open Claudian": false,
-      "obsidian-importer:导入笔记": false,
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "df6f461487288c10",
+  "active": "68792838a0b08030",
   "lastOpenFiles": [
-    "pi/exercises/0002-tool-failures.mjs",
-    "pi/lessons/0002-tool-failures.html",
-    "AGENT.md",
-    "tools/publish.mjs",
-    "tools",
+    "pi/learning-records/0008-single-mainline-merge.md",
+    "pi/learning-records/0007-workspace-merge.md",
     "workspace.config.js",
-    "workspace.config.example.js",
-    "README.md",
-    "pi/RESOURCES.md",
-    "pi/lessons/0001-agent-loop.html",
-    "pi/lessons",
+    "pi/tools/convert-html-links.cjs",
+    "pi/tools",
+    "pi/lessons/sedAT7VqW",
+    "pi/learning-records/0006-starting-point-and-constraints.md",
+    "pi/lessons/0004-tool-failures.html",
+    "pi/lessons/0003-agent-loop.html",
+    "pi/reference/pi-package-map.html",
+    "pi/reference/pi-customization-map.html",
+    "pi/reference/changelog-bilingual.html",
+    "pi/lessons/0002-readme-modes-and-ladder.html",
+    "pi/learning-records/0005-examples-readme-host-driver-closed.md",
+    "pi/learning-records/0004-readme-modes-ladder-closed.md",
+    "pi/learning-records/0003-mission-updated-to-monorepo.md",
+    "pi/learning-records/0002-binary-embeds-code-reads-data.md",
+    "pi/learning-records/0001-exports-subpath-to-file.md",
+    "pi/learning-qa/package-json.md",
+    "pi/learning-qa/README.md",
+    "pi/learning-qa/examples-README.md",
+    "pi/learning-qa/docs-index.md",
+    "pi/learning-qa/CHANGELOG.md",
+    "pi/LEARNING_PATH.md",
+    "pi/AGENTS.md",
+    "欢迎.md",
     "pi/learning-records/0001-starting-point-and-constraints.md",
-    "pi/learning-records",
-    "pi/reference/glossary.html",
-    "pi/reference",
+    "pi/RESOURCES.md",
     "pi/NOTES.md",
     "pi/MISSION.md",
+    "README.md",
     "CLAUDE.md",
-    "欢迎.md"
+    "AGENT.md"
   ]
 }

@@ -1,0 +1,11 @@
+{
+    "schema_version": 2,
+    "commit": "c820aa26fe0907e053e881a957722693fc094c9c",
+    "indexed_at": "2026-09-20T07:42:57Z",
+    "project": "F-ai-project-pi",
+    "nodes": 15450,
+    "edges": 59866,
+    "original_size": 37879808,
+    "compressed_size": 7512440,
+    "compression_level": 9
+}

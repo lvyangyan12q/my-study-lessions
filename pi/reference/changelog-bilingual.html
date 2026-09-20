@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Reference · CHANGELOG 中英对照（0.82.1 → 0.81.1）</title>
+  <link rel="stylesheet" href="../assets/course.css">
+  <script src="../../workspace.config.js"></script>
+  <script src="../assets/workspace-links.js" defer></script>
+</head>
+<body><main>
+  <p class="eyebrow">Reference · CHANGELOG 中英对照</p>
+  <h1>CHANGELOG 中英对照</h1>
+  <p class="lead">范围：0.82.1、0.82.0、0.81.1 三个版本的全部条目。每个条目英文原文在上、中文译文在下（译文前有「译」标记）。</p>
+
+  <div class="card">
+    <strong>使用方式：</strong>先读英文原文，自己判断它属于「新功能／新增／变更／修复」中的哪一类、影响哪一层（Provider、扩展 API、TUI、会话/压缩、RPC），再对照中文译文。译文仅供理解，<strong>以英文原文为准</strong>。分类词含义见文末速查。原始文件：<a data-pi="packages/coding-agent/CHANGELOG.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/CHANGELOG.md"><code>packages/coding-agent/CHANGELOG.md</code></a>。
+  </div>
+
+  <h2 id="v0821">[0.82.1] — 2026-07-25</h2>
+
+  <h3>New Features / 新功能</h3>
+  <div class="bi">
+    <div class="en"><strong>Claude Opus 5</strong> — Available on Anthropic and Amazon Bedrock with adaptive thinking (including <code>xhigh</code>), inference profiles, and prompt caching. See <a data-pi="packages/coding-agent/docs/providers.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/providers.md#api-keys">Providers</a>.</div>
+    <div class="zh"><strong>Claude Opus 5</strong> —— 在 Anthropic 和 Amazon Bedrock 上可用，支持自适应思考（含 <code>xhigh</code>）、推理配置文件（inference profiles）与提示缓存。见 Providers。</div>
+  </div>
+  <div class="bi">
+    <div class="en"><strong>Anthropic gateway bearer auth</strong> — <code>ANTHROPIC_AUTH_TOKEN</code> authenticates against Anthropic-compatible gateways that require <code>Authorization: Bearer</code>, including compaction and branch summaries. See <a data-pi="packages/coding-agent/docs/providers.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/providers.md#environment-variables-or-auth-file">Environment Variables or Auth File</a>.</div>
+    <div class="zh"><strong>Anthropic 网关 Bearer 认证</strong> —— 面对要求 <code>Authorization: Bearer</code> 的 Anthropic 兼容网关，可用 <code>ANTHROPIC_AUTH_TOKEN</code> 完成认证，压缩（compaction）与分支摘要（branch summaries）同样适用。见 Environment Variables or Auth File。</div>
+  </div>
+  <div class="bi">
+    <div class="en"><strong>Faster, more resilient model catalogs</strong> — pi.dev catalogs revalidate with <code>If-None-Match</code> so unchanged providers answer with an empty <code>304</code>, and llama.cpp models stay listed across restarts. See <a data-pi="packages/coding-agent/docs/llama-cpp.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/llama-cpp.md">llama.cpp</a>.</div>
+    <div class="zh"><strong>更快、更稳健的模型目录</strong> —— pi.dev 模型目录改用 <code>If-None-Match</code> 做重新验证，未变更的 provider 直接返回空 <code>304</code>；llama.cpp 模型在重启后仍会保留在列表中。见 llama.cpp。</div>
+  </div>
+
+  <h3>Added / 新增</h3>
+  <div class="bi">
+    <div class="en">Exposed the <code>outputPad</code> setting to custom message renderers. See <a data-pi="packages/coding-agent/docs/extensions.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/extensions.md">Extensions</a> (<a href="https://github.com/earendil-works/pi/pull/7045">#7045</a> by <a href="https://github.com/xl0">@xl0</a>).</div>
+    <div class="zh">向自定义消息渲染器暴露 <code>outputPad</code> 设置。见 Extensions（#7045，@xl0 贡献）。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Added inherited <code>ANTHROPIC_AUTH_TOKEN</code> bearer authentication for Anthropic-compatible gateways. See <a data-pi="packages/coding-agent/docs/providers.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/providers.md#environment-variables-or-auth-file">Providers</a> (<a href="https://github.com/earendil-works/pi/issues/5871">#5871</a>).</div>
+    <div class="zh">为 Anthropic 兼容网关新增继承自上游的 <code>ANTHROPIC_AUTH_TOKEN</code> Bearer 认证。见 Providers（#5871）。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Added inherited Claude Opus 5 support for Anthropic and Amazon Bedrock with adaptive thinking, inference profiles, prompt caching, and preserved AWS validation messages (<a href="https://github.com/earendil-works/pi/pull/7081">#7081</a> by <a href="https://github.com/unexge">@unexge</a>, <a href="https://github.com/earendil-works/pi/pull/7083">#7083</a> by <a href="https://github.com/davidbrai">@davidbrai</a>).</div>
+    <div class="zh">新增继承自上游的 Claude Opus 5 支持，覆盖 Anthropic 与 Amazon Bedrock，包含自适应思考、推理配置文件、提示缓存，并保留 AWS 校验消息（#7081 @unexge、#7083 @davidbrai 贡献）。</div>
+  </div>
+
+  <h3>Changed / 变更</h3>
+  <div class="bi">
+    <div class="en">Changed pi.dev model catalog refreshes to revalidate with <code>If-None-Match</code>, so unchanged provider catalogs answer with an empty <code>304</code> instead of a full download.</div>
+    <div class="zh">pi.dev 模型目录刷新改为用 <code>If-None-Match</code> 重新验证：未变更的 provider 目录返回空 <code>304</code>，不再整包下载。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Changed inherited Radius OAuth device authorization, token exchange, and refresh requests to use the configured gateway directly.</div>
+    <div class="zh">继承自上游的 Radius OAuth 设备授权、令牌交换与刷新请求，改为直接使用已配置的网关。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Changed inherited model loading errors to append the underlying cause, so auth failures such as <code>OAuth refresh failed for openai-codex</code> report the provider response instead of a bare wrapper message.</div>
+    <div class="zh">继承自上游的模型加载错误现在会附带底层原因：像 <code>OAuth refresh failed for openai-codex</code> 这类认证失败会带上 provider 的响应，而不是只有一层包装消息。</div>
+  </div>
+
+  <h3>Fixed / 修复</h3>
+  <div class="bi">
+    <div class="en">Fixed compaction and branch summaries for providers whose authentication resolves entirely to request headers (<a href="https://github.com/earendil-works/pi/issues/5871">#5871</a>).</div>
+    <div class="zh">修复了「认证完全解析为请求头」的 provider 在压缩和分支摘要上的问题（#5871）。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Fixed unavailable scoped models being hidden from <code>/models</code>, allowing them to be removed without editing settings manually (<a href="https://github.com/earendil-works/pi/issues/6949">#6949</a>, <a href="https://github.com/earendil-works/pi/pull/7032">#7032</a> by <a href="https://github.com/christianklotz">@christianklotz</a>).</div>
+    <div class="zh">修复了不可用的 scoped model 被 <code>/models</code> 隐藏的问题，现在无需手改 settings 即可删除（#6949、#7032 @christianklotz 贡献）。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Fixed startup context file discovery to skip directories that match context file names such as <code>AGENTS.md</code>, which produced <code>EISDIR</code> warnings (<a href="https://github.com/earendil-works/pi/pull/7106">#7106</a> by <a href="https://github.com/mrexodia">@mrexodia</a>).</div>
+    <div class="zh">修复启动时的上下文文件发现逻辑：跳过与上下文文件名（如 <code>AGENTS.md</code>）同名的目录，此前会产生 <code>EISDIR</code> 警告（#7106 @mrexodia 贡献）。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Fixed the llama.cpp extension to persist its model catalog, so llama.cpp models stay listed before the first successful refresh. See <a data-pi="packages/coding-agent/docs/llama-cpp.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/llama-cpp.md">llama.cpp</a> (<a href="https://github.com/earendil-works/pi/pull/7072">#7072</a> by <a href="https://github.com/davidbrai">@davidbrai</a>).</div>
+    <div class="zh">修复 llama.cpp 扩展未持久化模型目录的问题，现在首次刷新成功前也会列出 llama.cpp 模型。见 llama.cpp（#7072 @davidbrai 贡献）。</div>
+  </div>
+
+  <h2 id="v0820">[0.82.0] — 2026-07-24</h2>
+
+  <h3>New Features / 新功能</h3>
+  <div class="bi">
+    <div class="en"><strong>Constrained tool sampling</strong> — Tools can prefer or require strict JSON Schema sampling or use OpenAI Lark/regex grammars, with model capability metadata preventing unsupported requests. See <a data-pi="packages/ai/README.md" href="https://github.com/earendil-works/pi/blob/main/packages/ai/README.md#constrained-sampling-for-tools">Constrained Sampling for Tools</a>.</div>
+    <div class="zh"><strong>受限工具采样（Constrained tool sampling）</strong> —— 工具可以「偏好」或「要求」严格的 JSON Schema 采样，或使用 OpenAI Lark／正则文法；模型能力元数据会阻止不支持的请求。见 Constrained Sampling for Tools。</div>
+  </div>
+  <div class="bi">
+    <div class="en"><strong>OpenRouter and Kimi Code sign-in</strong> — Use <code>/login</code> to authorize OpenRouter or a Kimi Code subscription without manually configuring API keys. See <a data-pi="packages/coding-agent/docs/providers.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/providers.md#openrouter">OpenRouter</a>.</div>
+    <div class="zh"><strong>OpenRouter 与 Kimi Code 登录</strong> —— 用 <code>/login</code> 授权 OpenRouter 或 Kimi Code 订阅，无需手动配置 API key。见 OpenRouter。</div>
+  </div>
+  <div class="bi">
+    <div class="en"><strong>Session-aware, streaming bash integrations</strong> — Bash tools receive current session/model metadata, while direct RPC bash commands stream correlated output. See <a data-pi="packages/coding-agent/docs/environment-variables.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/environment-variables.md#bash-tool-session-environment">Bash Tool Session Environment</a> and <a data-pi="packages/coding-agent/docs/rpc.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/rpc.md#bash_execution_update">RPC bash events</a>.</div>
+    <div class="zh"><strong>感知会话、可流式输出的 bash 集成</strong> —— Bash 工具能拿到当前会话／模型元数据；RPC 直发的 bash 命令则以流式返回带关联 ID 的输出。见 Bash Tool Session Environment 与 RPC bash events。</div>
+  </div>
+
+  <h3>Added / 新增</h3>
+  <div class="bi">
+    <div class="en">Added inherited <code>Tool.constrainedSampling</code> with strict JSON Schema (<code>prefer</code>/<code>require</code>) and OpenAI Lark/regex grammar variants across OpenAI, Anthropic, Amazon Bedrock, Google Gemini, and Mistral. See <a data-pi="packages/ai/README.md" href="https://github.com/earendil-works/pi/blob/main/packages/ai/README.md#constrained-sampling-for-tools">Constrained Sampling for Tools</a>.</div>
+    <div class="zh">新增继承自上游的 <code>Tool.constrainedSampling</code>，支持严格 JSON Schema（<code>prefer</code>/<code>require</code>）以及 OpenAI Lark／正则文法变体，覆盖 OpenAI、Anthropic、Amazon Bedrock、Google Gemini 与 Mistral。见 Constrained Sampling for Tools。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Added inherited <code>supportsGrammarTools</code> and <code>supportsStrictTools</code> compatibility flags, expanded <code>supportsStrictMode</code> coverage, and generated model capability metadata to gate constrained sampling.</div>
+    <div class="zh">新增继承自上游的 <code>supportsGrammarTools</code> 与 <code>supportsStrictTools</code> 兼容性标志，扩大 <code>supportsStrictMode</code> 覆盖范围，并生成模型能力元数据以对受限采样做门控。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Added inherited Kimi Code subscription OAuth login for the Kimi For Coding provider, including device authorization and automatic token refresh (<a href="https://github.com/earendil-works/pi/pull/6935">#6935</a> by <a href="https://github.com/zaycruz">@zaycruz</a>).</div>
+    <div class="zh">为 Kimi For Coding provider 新增继承自上游的 Kimi Code 订阅 OAuth 登录，含设备授权与自动令牌刷新（#6935 @zaycruz 贡献）。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Added inherited OpenRouter OAuth PKCE login through <code>/login</code>, minting a user-controlled API key. See <a data-pi="packages/coding-agent/docs/providers.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/providers.md#openrouter">OpenRouter</a> (<a href="https://github.com/earendil-works/pi/pull/6927">#6927</a> by <a href="https://github.com/rsaryev">@rsaryev</a>).</div>
+    <div class="zh">新增继承自上游的 OpenRouter OAuth PKCE 登录（经由 <code>/login</code>），签发由用户自己掌控的 API key。见 OpenRouter（#6927 @rsaryev 贡献）。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Exposed <code>PI_SESSION_ID</code>, <code>PI_SESSION_FILE</code>, <code>PI_PROVIDER</code>, <code>PI_MODEL</code>, and <code>PI_REASONING_LEVEL</code> to commands run by built-in and factory-created bash tools. See <a data-pi="packages/coding-agent/docs/environment-variables.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/environment-variables.md#bash-tool-session-environment">Bash Tool Session Environment</a>.</div>
+    <div class="zh">向内置及 factory 创建的 bash 工具所执行的命令暴露 <code>PI_SESSION_ID</code>、<code>PI_SESSION_FILE</code>、<code>PI_PROVIDER</code>、<code>PI_MODEL</code>、<code>PI_REASONING_LEVEL</code>。见 Bash Tool Session Environment。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Added streaming <code>bash_execution_update</code> events for direct RPC bash commands, correlated with request IDs. See <a data-pi="packages/coding-agent/docs/rpc.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/rpc.md#bash_execution_update">RPC bash events</a> (<a href="https://github.com/earendil-works/pi/pull/6971">#6971</a> by <a href="https://github.com/ananthakumaran">@ananthakumaran</a>).</div>
+    <div class="zh">为 RPC 直发的 bash 命令新增流式 <code>bash_execution_update</code> 事件，并与请求 ID 关联。见 RPC bash events（#6971 @ananthakumaran 贡献）。</div>
+  </div>
+
+  <h3>Changed / 变更</h3>
+  <div class="bi">
+    <div class="en">Changed inherited generated model catalogs to expose only provider-verified reasoning effort levels from models.dev (<a href="https://github.com/earendil-works/pi/pull/6928">#6928</a> by <a href="https://github.com/davidbrai">@davidbrai</a>).</div>
+    <div class="zh">继承自上游的生成模型目录现在只暴露 models.dev 中经 provider 验证的推理强度（reasoning effort）等级（#6928 @davidbrai 贡献）。</div>
+  </div>
+
+  <h3>Fixed / 修复</h3>
+  <div class="bi">
+    <div class="en">Fixed inherited DNS lookup failures such as <code>getaddrinfo</code>, <code>ENOTFOUND</code>, and <code>EAI_AGAIN</code> to trigger automatic assistant retries (<a href="https://github.com/earendil-works/pi/pull/6946">#6946</a> by <a href="https://github.com/christianklotz">@christianklotz</a>).</div>
+    <div class="zh">修复继承自上游的问题：<code>getaddrinfo</code>、<code>ENOTFOUND</code>、<code>EAI_AGAIN</code> 等 DNS 查询失败现在会触发助手自动重试（#6946 @christianklotz 贡献）。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Fixed inherited OpenRouter Anthropic cache breakpoints to advance through tool results and enabled cache control for <code>~anthropic/*-latest</code> aliases (<a href="https://github.com/earendil-works/pi/pull/6941">#6941</a> by <a href="https://github.com/mteam88">@mteam88</a>).</div>
+    <div class="zh">修复继承自上游的 OpenRouter Anthropic 缓存断点，使其能越过工具结果继续推进；并让 <code>~anthropic/*-latest</code> 别名启用缓存控制（#6941 @mteam88 贡献）。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Fixed inherited OpenAI Codex WebSocket sessions to retry once without a missing previous-response continuation after <code>previous_response_not_found</code> errors (<a href="https://github.com/earendil-works/pi/pull/6955">#6955</a> by <a href="https://github.com/davidbrai">@davidbrai</a>).</div>
+    <div class="zh">修复继承自上游的 OpenAI Codex WebSocket 会话：出现 <code>previous_response_not_found</code> 错误后重试一次，且不再携带缺失的上一响应续接（#6955 @davidbrai 贡献）。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Fixed TUI debug and crash logs to respect custom agent directories instead of always writing under <code>~/.pi/agent</code> (<a href="https://github.com/earendil-works/pi/pull/6958">#6958</a> by <a href="https://github.com/davidbrai">@davidbrai</a>).</div>
+    <div class="zh">修复 TUI 调试与崩溃日志未遵循自定义 agent 目录的问题，此前总是写到 <code>~/.pi/agent</code> 下（#6958 @davidbrai 贡献）。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Fixed slow Ctrl+G external-editor startup when the system temporary directory contains many entries (<a href="https://github.com/earendil-works/pi/pull/6903">#6903</a> by <a href="https://github.com/christianklotz">@christianklotz</a>).</div>
+    <div class="zh">修复系统临时目录条目很多时 Ctrl+G 外部编辑器启动缓慢的问题（#6903 @christianklotz 贡献）。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Fixed startup resource display to preserve relative paths for sibling npm extensions loaded by a package (<a href="https://github.com/earendil-works/pi/pull/6964">#6964</a> by <a href="https://github.com/davidbrai">@davidbrai</a>).</div>
+    <div class="zh">修复启动资源展示：由某个包加载的兄弟 npm 扩展现在会保留相对路径（#6964 @davidbrai 贡献）。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Fixed compaction and branch-summary requests to use fresh routing session IDs with prompt caching disabled where supported (<a href="https://github.com/earendil-works/pi/pull/6618">#6618</a> by <a href="https://github.com/tmustier">@tmustier</a>).</div>
+    <div class="zh">修复压缩与分支摘要请求：改用新的路由会话 ID，并在支持时关闭提示缓存（#6618 @tmustier 贡献）。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Fixed explicit self-updates when <code>PI_SKIP_VERSION_CHECK</code> is set (<a href="https://github.com/earendil-works/pi/issues/6977">#6977</a>).</div>
+    <div class="zh">修复设置了 <code>PI_SKIP_VERSION_CHECK</code> 时显式自更新失效的问题（#6977）。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Fixed scoped model IDs containing brackets to resolve as literal exact matches before glob matching (<a href="https://github.com/earendil-works/pi/issues/6210">#6210</a>).</div>
+    <div class="zh">修复含方括号的 scoped model ID：先按字面精确匹配解析，再走 glob 匹配（#6210）。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Fixed inherited OpenAI and Anthropic provider retry waits to honor abort signals and configured delay limits (<a href="https://github.com/earendil-works/pi/pull/6980">#6980</a> by <a href="https://github.com/petrroll">@petrroll</a>).</div>
+    <div class="zh">修复继承自上游的 OpenAI 与 Anthropic provider 重试等待：现在会响应中止信号并遵守配置的延迟上限（#6980 @petrroll 贡献）。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Fixed fresh installs from preferring bundled model catalogs over newer remote catalogs because package file mtimes were newer (<a href="https://github.com/earendil-works/pi/pull/7016">#7016</a> by <a href="https://github.com/davidbrai">@davidbrai</a>).</div>
+    <div class="zh">修复全新安装时因包文件 mtime 较新而误选内置模型目录、压过更新远程目录的问题（#7016 @davidbrai 贡献）。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Fixed inherited editor scroll indicators overflowing narrow terminals (<a href="https://github.com/earendil-works/pi/pull/7015">#7015</a> by <a href="https://github.com/christianklotz">@christianklotz</a>).</div>
+    <div class="zh">修复继承自上游的编辑器滚动指示器在窄终端下溢出（#7015 @christianklotz 贡献）。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Fixed llama.cpp models to use the loaded context window as their output token limit instead of capping it at 16K (<a href="https://github.com/earendil-works/pi/pull/7034">#7034</a> by <a href="https://github.com/christianklotz">@christianklotz</a>).</div>
+    <div class="zh">修复 llama.cpp 模型：输出 token 上限改用已加载的上下文窗口，而不是封顶在 16K（#7034 @christianklotz 贡献）。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Fixed release source archives to include the generated provider model data used to build standalone binaries.</div>
+    <div class="zh">修复发布源码归档：现包含构建独立二进制所需的生成版 provider 模型数据。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Updated the packaged <code>protobufjs</code> dependency to 7.6.5 to address GHSA-j3f2-48v5-ccww (<a href="https://github.com/earendil-works/pi/issues/7005">#7005</a>).</div>
+    <div class="zh">将打包的 <code>protobufjs</code> 依赖升级到 7.6.5，以处理 GHSA-j3f2-48v5-ccww（#7005）。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Fixed <code>/copy</code> on Wayland to fall back to X11 or OSC 52 when <code>wl-copy</code> fails (<a href="https://github.com/earendil-works/pi/pull/7009">#7009</a> by <a href="https://github.com/rkfshakti">@rkfshakti</a>).</div>
+    <div class="zh">修复 Wayland 下的 <code>/copy</code>：<code>wl-copy</code> 失败时回退到 X11 或 OSC 52（#7009 @rkfshakti 贡献）。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Fixed <code>/model</code> to reload updated <code>models.json</code> configuration when opening the model picker (<a href="https://github.com/earendil-works/pi/issues/6999">#6999</a>).</div>
+    <div class="zh">修复 <code>/model</code> 打开模型选择器时未重新加载已更新的 <code>models.json</code> 配置的问题（#6999）。</div>
+  </div>
+
+  <h2 id="v0811">[0.81.1] — 2026-07-21</h2>
+
+  <h3>New Features / 新功能</h3>
+  <div class="bi">
+    <div class="en"><strong>Verifiable release source archives</strong> — GitHub releases now include deterministic, checksummed source archives with instructions for rebuilding standalone binaries. See <a data-pi="README.md" href="https://github.com/earendil-works/pi/blob/main/README.md#building-standalone-binaries-from-release-source">Building standalone binaries from release source</a>.</div>
+    <div class="zh"><strong>可验证的发布源码归档</strong> —— GitHub releases 现在附带确定性（deterministic）且带校验和的源码归档，并附独立二进制的重建说明。见 Building standalone binaries from release source。</div>
+  </div>
+  <div class="bi">
+    <div class="en"><strong>Resilient compaction and branch summaries</strong> — Transient provider failures now follow the configured retry policy, with retry lifecycle events available to interactive, JSON, RPC, and SDK consumers. See <a data-pi="packages/coding-agent/docs/compaction.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/compaction.md">Compaction &amp; Branch Summarization</a> and <a data-pi="packages/coding-agent/docs/rpc.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/rpc.md#summarization_retry_scheduled--summarization_retry_attempt_start--summarization_retry_finished">RPC retry events</a>.</div>
+    <div class="zh"><strong>更稳健的压缩与分支摘要</strong> —— provider 的瞬时故障现在遵循配置的重试策略，重试生命周期事件对 interactive、JSON、RPC、SDK 四类消费方均可用。见 Compaction &amp; Branch Summarization 与 RPC retry events。</div>
+  </div>
+
+  <h3>Added / 新增</h3>
+  <div class="bi">
+    <div class="en">Added deterministic, checksummed source archives to GitHub releases with documented standalone binary rebuild instructions (<a href="https://github.com/earendil-works/pi/pull/6913">#6913</a> by <a href="https://github.com/christianklotz">@christianklotz</a>).</div>
+    <div class="zh">为 GitHub releases 新增确定性、带校验和的源码归档，并附独立二进制重建文档（#6913 @christianklotz 贡献）。</div>
+  </div>
+
+  <h3>Fixed / 修复</h3>
+  <div class="bi">
+    <div class="en">Fixed compaction and branch summarization to retry transient provider failures using the configured retry policy, with retry lifecycle events exposed to interactive, JSON, RPC, and SDK consumers (<a href="https://github.com/earendil-works/pi/pull/6901">#6901</a> by <a href="https://github.com/davidbrai">@davidbrai</a>).</div>
+    <div class="zh">修复压缩与分支摘要在 provider 瞬时故障时的行为：按配置的重试策略重试，并向 interactive、JSON、RPC、SDK 消费方暴露重试生命周期事件（#6901 @davidbrai 贡献）。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Fixed interactive startup waiting for background model catalog refresh while computing the footer provider count.</div>
+    <div class="zh">修复交互模式启动时，计算页脚 provider 数量会等待后台模型目录刷新的问题。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Restored the default stream fallback for extensions using the pre-0.81 agent-core API (<a href="https://github.com/earendil-works/pi/issues/6915">#6915</a>).</div>
+    <div class="zh">为使用 0.81 之前 agent-core API 的扩展恢复默认流回退（#6915）。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Fixed inherited Kimi K3 models from Moonshot AI and Moonshot AI China to use the OpenAI thinking format and expose reasoning effort support.</div>
+    <div class="zh">修复继承自上游的 Moonshot AI 与 Moonshot AI China 的 Kimi K3 模型：改用 OpenAI thinking 格式并暴露推理强度支持。</div>
+  </div>
+
+  <h2>分类速查</h2>
+  <table>
+    <thead><tr><th>小节</th><th>含义</th><th>二次开发关注点</th></tr></thead>
+    <tbody>
+      <tr><td><code>New Features</code></td><td>本版本的头条能力，通常带 See 链接指向文档</td><td>决定能否用某功能；先看这里</td></tr>
+      <tr><td><code>Added</code></td><td>新增的具体 API、字段、事件、Provider 支持</td><td>扩展作者最直接相关：新增的 API 和事件在这里</td></tr>
+      <tr><td><code>Changed</code></td><td>既有行为的变化（可能破坏兼容）</td><td>升级前扫一遍，找自己依赖的行为</td></tr>
+      <tr><td><code>Fixed</code></td><td>错误修复；条目最多</td><td>遇到「文档说支持但实际不对」时来这里查</td></tr>
+    </tbody>
+  </table>
+
+  <div class="card">
+    <strong>注意：</strong>大量 <code>inherited</code> 前缀条目标记的是来自上游 <code>pi-ai</code> 包的改动同步。它们不是 <code>coding-agent</code> 自身新增的代码，但会改变你在这里观察到的模型／Provider 行为。
+  </div>
+
+  <footer class="nav">
+    相关：<a href="../lessons/0002-readme-modes-and-ladder.html">第二课 · README 四种模式与定制阶梯</a> ·
+    <a href="./pi-customization-map.html">速查 · 定制阶梯</a> ·
+    <a data-pi="packages/coding-agent/CHANGELOG.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/CHANGELOG.md">原始 CHANGELOG</a> ·
+    <a href="../LEARNING_PATH.md">学习路线</a>
+  </footer>
+</main></body>
+</html>

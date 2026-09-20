@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>第一课：把 package.json 当作边界契约</title>
+  <link rel="stylesheet" href="../assets/course.css">
+  <script src="../../workspace.config.js"></script>
+  <script src="../assets/workspace-links.js" defer></script>
+</head>
+<body><main>
+  <p class="eyebrow">Lesson 0001 · 约 8 分钟</p>
+  <h1>把 <code>package.json</code> 当作边界契约</h1>
+  <p class="lead">二次开发的第一步不是读所有代码，而是确认外部能够执行什么、导入什么，以及构建后必须带走什么。</p>
+
+  <h2>一个文件，三个边界</h2>
+  <table>
+    <thead><tr><th>边界</th><th>关键字段</th><th>你要回答的问题</th></tr></thead>
+    <tbody>
+      <tr><td>命令行</td><td><code>bin</code></td><td>终端中的 <code>pi</code> 最终执行哪个文件？</td></tr>
+      <tr><td>库 API</td><td><code>main</code>、<code>types</code>、<code>exports</code></td><td>调用者被允许从哪些路径导入哪些产物？</td></tr>
+      <tr><td>发布产物</td><td><code>files</code>、<code>scripts</code></td><td>构建和发布后，运行所需的非代码资源是否仍然存在？</td></tr>
+    </tbody>
+  </table>
+
+  <div class="card"><strong>二次开发判断：</strong>能由公开 <code>exports</code> 完成的集成，不要先改内核；能由 Extension 完成的行为，不要先 fork。</div>
+
+  <h2>动手</h2>
+  <ol>
+    <li>打开 <a data-pi="packages/coding-agent/package.json" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/package.json"><code>package.json</code></a>，分别找到三个边界的配置。</li>
+    <li>从 <code>build:binary</code> 沿命令链追到 <code>copy-binary-assets</code>。</li>
+    <li>解释为什么可执行文件旁还需要主题、文档、示例和图像处理 WASM。</li>
+    <li>关闭本页，凭记忆完成 <a href="../learning-qa/package-json.md">第一轮问题</a>。</li>
+  </ol>
+
+  <h2>完成标准</h2>
+  <p>你能在不查看文件时解释四个入口字段，并写出新增一个公开子路径所需的最小 <code>exports</code> 修改。</p>
+
+  <p><a href="../reference/pi-package-map.html">打开包结构速查</a> · <a href="../RESOURCES.md">可信资料</a></p>
+  <p>任何概念不清楚，直接向教师提问；不要靠猜测带入下一课。</p>
+</main></body>
+</html>

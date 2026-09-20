@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Pi 包结构速查</title>
+  <link rel="stylesheet" href="../assets/course.css">
+  <script src="../../workspace.config.js"></script>
+  <script src="../assets/workspace-links.js" defer></script>
+</head>
+<body><main>
+  <p class="eyebrow">Reference · Pi 0.82.1</p>
+  <h1>包结构速查</h1>
+  <table>
+    <thead><tr><th>字段/目录</th><th>二次开发时的意义</th></tr></thead>
+    <tbody>
+      <tr><td><code>bin</code></td><td>把命令名映射到 CLI 文件。</td></tr>
+      <tr><td><code>main</code> / <code>types</code></td><td>传统 JavaScript 入口与 TypeScript 声明入口。</td></tr>
+      <tr><td><code>exports</code></td><td>公开且受控的包导入路径；新增子路径通常改这里。</td></tr>
+      <tr><td><code>dependencies</code></td><td>运行期依赖；二次开发先复用已有能力。</td></tr>
+      <tr><td><code>devDependencies</code></td><td>只服务构建、类型检查和测试。</td></tr>
+      <tr><td><code>examples/extensions</code></td><td>进程内扩展 Pi 行为的首选学习入口。</td></tr>
+      <tr><td><code>examples/sdk</code></td><td>把 Pi 作为库嵌入 Node.js 程序。</td></tr>
+      <tr><td><code>docs/rpc.md</code></td><td>非 Node.js 或跨进程集成协议。</td></tr>
+    </tbody>
+  </table>
+  <p><a href="../lessons/0001-package-contract.html">返回第一课</a></p>
+</main></body>
+</html>

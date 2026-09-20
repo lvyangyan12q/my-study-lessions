@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>第二课：README —— 四种模式与定制阶梯</title>
+  <link rel="stylesheet" href="../assets/course.css">
+  <script src="../../workspace.config.js"></script>
+  <script src="../assets/workspace-links.js" defer></script>
+</head>
+<body><main>
+  <p class="eyebrow">Lesson 0002 · 约 10 分钟</p>
+  <h1>README：四种模式与定制阶梯</h1>
+  <p class="lead">README 是 Pi 的官方地图。二次开发者要从里面带走两样东西：这个程序能以哪几种方式运行，以及一个需求应该落在定制阶梯的哪一层。</p>
+
+  <h2>Pi 是什么</h2>
+  <p>官方定位一句话：<strong>minimal terminal coding harness</strong>。默认只给模型四个工具：<code>read</code>、<code>write</code>、<code>edit</code>、<code>bash</code>。子代理、计划模式这类别家内建的功能，Pi 故意不做——原话是 <em>adapt pi to your workflows, not the other way around</em>：适配 Pi，而不是被 Pi 适配，且<strong>不必 fork 内核</strong>。这正是一切二次开发的前提。</p>
+
+  <h2>四种运行模式</h2>
+  <table>
+    <thead><tr><th>模式</th><th>入口</th><th>接口形态</th><th>给谁用</th></tr></thead>
+    <tbody>
+      <tr><td>interactive</td><td><code>pi</code></td><td>终端 TUI</td><td>人在终端里对话</td></tr>
+      <tr><td>print / JSON</td><td><code>pi -p</code>、<code>pi --mode json</code></td><td>一次性文本 / JSON 事件流</td><td>脚本调用</td></tr>
+      <tr><td>RPC</td><td><code>pi --mode rpc</code></td><td>stdin/stdout 上的 JSONL</td><td>跨进程、非 Node 集成</td></tr>
+      <tr><td>SDK</td><td><code>import { createAgentSession }</code></td><td>进程内 TypeScript API</td><td>把 Pi 嵌进你自己的程序</td></tr>
+    </tbody>
+  </table>
+  <p>你在 IDE 里打开过的 <a data-pi="packages/coding-agent/examples/sdk/01-minimal.ts" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/examples/sdk/01-minimal.ts"><code>examples/sdk/01-minimal.ts</code></a> 就是 SDK 模式的最小形态——十行代码建会话、订阅流、发一句话、清理。阶段 8 会正式回到它。</p>
+
+  <h2>定制阶梯（从轻到重）</h2>
+  <table>
+    <thead><tr><th>层</th><th>是什么</th><th>怎么触发</th><th>放哪里</th></tr></thead>
+    <tbody>
+      <tr><td>Prompt Template</td><td>可复用的 Markdown 提示词</td><td><code>/name</code> 展开</td><td><code>~/.pi/agent/prompts/</code>、<code>.pi/prompts/</code></td></tr>
+      <tr><td>Skill</td><td>遵循 Agent Skills 标准的说明文档</td><td><code>/skill:name</code> 或模型按需自动加载</td><td><code>~/.pi/agent/skills/</code>、<code>~/.agents/skills/</code>、<code>.pi/skills/</code>、<code>.agents/skills/</code></td></tr>
+      <tr><td>Theme</td><td>颜色/样式 JSON（可热重载）</td><td>设置选用</td><td><code>~/.pi/agent/themes/</code>、<code>.pi/themes/</code></td></tr>
+      <tr><td>Extension</td><td>TypeScript 模块：工具、命令、快捷键、事件、UI</td><td>启动时自动加载</td><td><code>~/.pi/agent/extensions/</code>、<code>.pi/extensions/</code></td></tr>
+      <tr><td>Pi Package</td><td>把上面任意几样打包分发</td><td><code>pi install npm:…</code> / <code>git:…</code></td><td>npm 或 git 仓库</td></tr>
+    </tbody>
+  </table>
+  <div class="card"><strong>安全红线：</strong>Pi Package 以完整系统权限运行。扩展就是任意代码，Skill 可以指挥模型执行任何动作——装第三方包前必须读源码。</div>
+
+  <h2>设计哲学 → 你的判断框架</h2>
+  <p>核心刻意保持极小：没有内建 MCP，没有内建子代理和计划模式（README 明说这些用扩展实现）。接到一个二次开发需求时，按这个顺序问：</p>
+  <ol>
+    <li>一段可复用提示词（Template）够吗？</li>
+    <li>一份操作说明（Skill）够吗？</li>
+    <li>需要跑代码、动工具/命令/UI（Extension）吗？</li>
+    <li>要分发给别人装（打成 Package）吗？</li>
+    <li>要在 Pi 之外调度 Pi（SDK / RPC）吗？</li>
+    <li>以上都不行，才考虑改内核源码。</li>
+  </ol>
+  <div class="card">这直接对应任务书的成功标准之一：<strong>能判断需求应由配置、Skill、Extension、SDK 还是内核修改完成。</strong>选层的默认原则：能用轻的不用重的，能装包不自写，能扩展不 fork。</div>
+
+  <h2>动手</h2>
+  <ol>
+    <li>通读 <a data-pi="packages/coding-agent/README.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/README.md">README.md</a>，重点四节：Quick Start、Customization、Programmatic Usage、Philosophy。</li>
+    <li>衔接第一课：用自己的话（不要翻批改）解释 README、<code>docs/</code>、<code>examples/</code> 为什么出现在二进制发布包里。</li>
+    <li>自测一个场景：我想让每次会话结束自动 <code>git commit</code>——落在阶梯哪一层？为什么？</li>
+    <li>读完在对话里告诉我 <code>完成：README.md</code>，我出三个检索题。</li>
+  </ol>
+
+  <h2>完成标准</h2>
+  <p>不看文件说出四种模式各自的入口和适用场景；面对一个新需求，30 秒内指出它属于阶梯的哪一层。</p>
+
+  <p><a href="0001-package-contract.html">← 第一课：package.json 边界契约</a> · <a href="../reference/pi-customization-map.html">模式与定制速查</a> · <a href="../RESOURCES.md">可信资料</a></p>
+  <p>任何概念不清楚，直接向教师提问；不要靠猜测带入下一课。</p>
+</main></body>
+</html>

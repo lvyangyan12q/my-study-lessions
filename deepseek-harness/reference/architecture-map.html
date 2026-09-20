@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DeepSeek Harness · 术语与源码地图</title><link rel="stylesheet" href="../assets/course.css"><link rel="stylesheet" href="../assets/harness.css">
+<script src="../assets/quiz.js" defer></script><script src="../assets/loop-stepper.js" defer></script></head><body><main>
+<nav><a href="../index.html">课程首页</a> · <a href="../lessons/0001-agent-cycle.html">回到第一课</a></nav>
+<p class="eyebrow">REFERENCE / VERSIONED SOURCE MAP</p><h1>术语与源码地图</h1>
+<p class="lead">先按“谁负责什么”定位，再进入文件。</p>
+<div class="card">本页依据 <code>ddefc45fbc</code>。链接固定提交，行号只帮助定位当时的代码；更新后用符号名重新搜索。</div>
+<h2>六个常用词</h2>
+<dl class="glossary">
+<dt>Plugin · 插件</dt><dd>Cordis 加载、激活、卸载的单元。可以注册工具、提供服务、监听事件；并非每个插件都是工具，也并非必须继承 Service 类。</dd>
+<dt>Context / ctx · 上下文</dt><dd>访问插件服务和事件的入口。插件通过 <code>ctx.tools</code>、<code>ctx.llm</code> 等键使用能力；这里不是专指模型的上下文窗口。</dd>
+<dt>Tool · 工具</dt><dd>对模型暴露名称、说明和输入 schema 的可调用能力。执行后，规范值经渲染成为模型可见结果。</dd>
+<dt>Session · 会话</dt><dd>追加事件形成的会话记录；模型历史从它派生。不是所有日志事件都会成为模型消息。</dd>
+<dt>Turn · 轮次</dt><dd>一次处理工作的范围，从 turn/start 到 turn/end。可以包含零个或多个 step。</dd>
+<dt>Step · 步</dt><dd>围绕模型请求及相关工具调用的处理单元。正常路径一次请求；重试可能有多次尝试。</dd>
+</dl>
+<p class="src">依据：<a href="https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/docs/architecture.md">Architecture</a>；<a href="https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/docs/user/develop/basic/index.md">插件的三种形式</a>；<a href="https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/core/agent-loop/src/agent.ts#L353">step 实现</a>。</p>
+
+<h2>四个插件开发关键词</h2>
+<table><thead><tr><th>关键词</th><th>记住的关系</th></tr></thead><tbody>
+<tr><td><code>apply(ctx)</code></td><td>插件激活时安装能力的入口。</td></tr>
+<tr><td><code>inject</code></td><td>声明服务依赖。必需依赖齐备才能激活；依赖消失也影响消费者生命周期。</td></tr>
+<tr><td><code>effect / disposer</code></td><td>申请资源时绑定清理。ctx.on 与 ctx.tools.register 已管理相应清理；自建 timer 等用 ctx.effect 返回 disposer。</td></tr>
+<tr><td><code>waterfall / next()</code></td><td>可包装或短路的调用链。只观察或包装时调用 next()；不调用会截断后续处理。</td></tr>
+</tbody></table>
+<p class="src">依据：<a href="https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/docs/cordis-primer.md">Cordis primer</a>；<a href="https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/docs/cordis-tutorial/03-services.md">服务依赖</a>；<a href="https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/core/tools/src/index.ts#L1043">工具 register 的 effect</a>。</p>
+<p>别混淆：插件的 <code>inject</code> 是服务依赖声明；<code>agent.inject()</code> 是注入下一次请求可用的上下文，单独调用它不会唤醒 idle agent。见 <a href="https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/docs/cookbook/adding-a-tool.md">工具参考</a>。</p>
+
+<h2>按问题找源码</h2>
+<table><thead><tr><th>想追的问题</th><th>文件与符号</th></tr></thead><tbody>
+<tr><td>循环为什么继续或结束？</td><td><a href="https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/core/agent-loop/src/agent.ts#L270">agent.ts · turn / step</a></td></tr>
+<tr><td>模型历史从哪里得到？</td><td><a href="https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/core/session/src/index.ts#L841">Session.deriveMessages</a></td></tr>
+<tr><td>调用如何选择模型适配器？</td><td><a href="https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/llm/llm/src/index.ts#L920">LlmRuntime.prepareCall</a></td></tr>
+<tr><td>工具调用如何排队并记录？</td><td><a href="https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/core/agent-loop/src/tool-calls.ts#L60">executeToolCalls</a></td></tr>
+<tr><td>注册和执行工具如何接上？</td><td><a href="https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/core/tools/src/index.ts#L1043">ToolRuntime.register / execute</a></td></tr>
+<tr><td>一个真实工具插件长什么样？</td><td><a href="https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/interaction/tool-ask-user/src/index.ts#L19">tool-ask-user · apply</a>：name / inject → parameters → output → execute</td></tr>
+<tr><td>什么能通过事件插件改变？</td><td><a href="https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/session/session-checkpoint-policy/src/index.ts#L63">checkpoint-policy · apply</a>：在合适阶段刷新持久化</td></tr>
+</tbody></table>
+
+<h2>如何选择二次开发入口</h2>
+<table><thead><tr><th>需求</th><th>先看</th></tr></thead><tbody>
+<tr><td>改变加载哪些功能</td><td>profile / bundle / patch；patch 替换整份目标 config，不能默认深合并</td></tr>
+<tr><td>新增模型可调用能力</td><td>工具注册、输入输出定义、取消信号</td></tr>
+<tr><td>换一种能力实现</td><td>Service Definition / Provider / Consumer；三个角色不一定拆成三个包</td></tr>
+<tr><td>请求或工具的策略、观测</td><td>相关 agent/*、tools/* 事件，先确认 dispatch mode</td></tr>
+<tr><td>把 agent 接入自己的应用</td><td>SDK 和支持的 profile 启动路径</td></tr>
+<tr><td>增加需要恢复的会话状态</td><td>SessionEventMap、投影、格式与迁移约束</td></tr>
+</tbody></table>
+<p class="src">依据：<a href="https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/docs/architecture.md#where-new-behavior-goes">Where new behavior goes</a>；<a href="https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/docs/user/develop/practice/index.md">能力分层</a>；<a href="https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/docs/cookbook/extension-cookbook.md">扩展 cookbook</a>。</p>
+<p>后续实践先做一个简单工具，再学习拆分 provider。今天无需背完整事件表或包名。</p>
+<nav class="lesson-nav"><a href="../UPDATES.md">源码更新后如何复核</a><a href="../RESOURCES.md">完整资料清单</a></nav>
+<footer>依据 0.1.6-alpha.2 · ddefc45fbc · 2026-09-20<br>源码更新后先复核本课；这里的交互是教学演示，不调用模型或执行工具。</footer></main></body></html>

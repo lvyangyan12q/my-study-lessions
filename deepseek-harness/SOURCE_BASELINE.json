@@ -1,0 +1,187 @@
+{
+  "repositoryPath": "D:/programming/workspace/deepseek-harness",
+  "commit": "ddefc45fbc7f8e46dd73185e68295696d1297887",
+  "version": "0.1.6-alpha.2",
+  "capturedAt": "2026-09-20",
+  "watchedAreas": [
+    {
+      "name": "课程规则与架构",
+      "paths": [
+        "AGENTS.md",
+        "package.json",
+        "docs/architecture.md",
+        "docs/architecture.zh.md",
+        "docs/development.md",
+        "docs/testing.md"
+      ],
+      "learningImpact": "复核版本约束、总体职责与开发方式。"
+    },
+    {
+      "name": "Cordis 生命周期与组合",
+      "paths": [
+        "vendor/cordis",
+        "packages/boot",
+        "packages/bundle",
+        "apps/cli/src",
+        "docs/cordis-primer.md",
+        "docs/cordis-tutorial",
+        "docs/user/develop"
+      ],
+      "learningImpact": "复核 apply/inject/effect、服务依赖、profile 和 patch 的行为。"
+    },
+    {
+      "name": "Agent 循环与模型",
+      "paths": [
+        "packages/core/agent",
+        "packages/core/agent-loop",
+        "packages/core/system-prompt",
+        "packages/llm/llm",
+        "docs/subsystems/core.md",
+        "docs/agent-lifecycle.md"
+      ],
+      "learningImpact": "复核第一课的 turn/step、请求准备、重试、继续与结束条件。"
+    },
+    {
+      "name": "工具开发与执行",
+      "paths": [
+        "packages/core/tools",
+        "packages/interaction/tool-ask-user",
+        "packages/interaction/user-questions",
+        "docs/tool-execution-pipeline.md",
+        "docs/cookbook/adding-a-tool.md",
+        "docs/cookbook/extension-cookbook.md"
+      ],
+      "learningImpact": "复核插件示例、输入输出、执行管线与卸载清理。"
+    },
+    {
+      "name": "Session 与持久化",
+      "paths": [
+        "packages/core/session",
+        "packages/session",
+        "docs/session-format-status.md",
+        "docs/cookbook/reviewing-persistence-type-changes.md",
+        "docs/subsystems/session.md"
+      ],
+      "learningImpact": "复核模型历史、日志投影、落盘时机与迁移义务。"
+    }
+  ],
+  "files": [
+    {
+      "path": "docs/architecture.md",
+      "sha256": "a381d3b3cb3af59f9be1075b009d5fd0b65b926c2dadd59965af0b1d9d1d2b0a"
+    },
+    {
+      "path": "docs/architecture.zh.md",
+      "sha256": "38100980ac6a824e46d7c31fcd800de1635f772d11ae9ee3a1d3e0e00c0982dc"
+    },
+    {
+      "path": "docs/cordis-primer.md",
+      "sha256": "f0cc573cc10b60d1bd76039fb0bd666edfb32c9b18027d4dc301c042a9e65d58"
+    },
+    {
+      "path": "docs/cordis-tutorial/index.md",
+      "sha256": "344a9a419cf296bde4ffb8a75cfbcc1b8558ea110624ccce03bd54ed5f23424a"
+    },
+    {
+      "path": "docs/user/develop/basic/index.md",
+      "sha256": "4c7f620da1d8fcf3aca44e466e05002b9b3424c62d647c8d443981b0e31c1635"
+    },
+    {
+      "path": "docs/user/develop/basic/tool.md",
+      "sha256": "2b9f0694c614ecf7d29c98d879026c2c73d5da9064524373c0d970105a433cf7"
+    },
+    {
+      "path": "docs/user/develop/practice/index.md",
+      "sha256": "7131f2ea6427df7e06597e3d93a7dd3b0b9dd0bfbece78b1df9885aa0be2c6f6"
+    },
+    {
+      "path": "docs/cookbook/adding-a-tool.md",
+      "sha256": "0827eecbe49a980201b42e2210237f567a6ac307fd0411083ffb5c72e91f65db"
+    },
+    {
+      "path": "docs/cookbook/extension-cookbook.md",
+      "sha256": "09801c5941eaa67533aec0616017942cc2ac3e3eaa6d1310aee6fa26e5fb5639"
+    },
+    {
+      "path": "docs/session-format-status.md",
+      "sha256": "1f545974c1f3eb4defa8f68d8c7899812c8a2b47975da613ebea42cc583a5bdc"
+    },
+    {
+      "path": "docs/cookbook/reviewing-persistence-type-changes.md",
+      "sha256": "71dd780627497b6f8796f426c70fb767f61b71b064cfb736b27aa648f5fbab0d"
+    },
+    {
+      "path": "docs/development.md",
+      "sha256": "e0f76afaa90594cdbe02df50772101e6cc3281777fc2e521c21379bd8292bd7e"
+    },
+    {
+      "path": "docs/testing.md",
+      "sha256": "48163d0455a688794c97dd782aaacc30089437c5f8f4ce05360baa8cdd6e8913"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "e232924a880ba8bada12657fe40d1d9fdc85a4e16f2ba7dfe7aab033be745f60"
+    },
+    {
+      "path": "package.json",
+      "sha256": "a9cc164c4d922d74571e09c04be4e0f85a318685d410bb1c56072258a19a6f1d"
+    },
+    {
+      "path": "packages/core/agent-loop/src/agent.ts",
+      "sha256": "2b238998e1b63ac7ceffa20190caaaa4806a9ae275112807424d176244dfd014"
+    },
+    {
+      "path": "packages/core/agent-loop/src/assistant-stream.ts",
+      "sha256": "120d2bec5efeec2aa54bf0e4261a45282936272d610dbbab21eee36b902629de"
+    },
+    {
+      "path": "packages/core/agent-loop/src/inbox.ts",
+      "sha256": "70c07ea75ebcf18df353bbccf7c2aa3ecf6cb0d687b96e3520b675680c29f662"
+    },
+    {
+      "path": "packages/core/agent-loop/src/tool-calls.ts",
+      "sha256": "1f8984127d4245b6a08c1e4b0c8b9d8fa7ce30ffcf08184187f16dc1bf57ae6d"
+    },
+    {
+      "path": "packages/core/agent-loop/src/index.ts",
+      "sha256": "c112ecabe3711092821cefd76f285a185fcf7bcf6be7b5599ff8b86bf28e1b4a"
+    },
+    {
+      "path": "packages/core/session/src/index.ts",
+      "sha256": "c6ded93fde2c64e87a313f27877bbf37390e280ff90c3012ef575181e553e1fe"
+    },
+    {
+      "path": "packages/core/session/src/types.ts",
+      "sha256": "312580d4e2ab568eeec466dbbcff5117cff84a932aeee5d10214bc6a087812eb"
+    },
+    {
+      "path": "packages/core/tools/src/index.ts",
+      "sha256": "e040cf44c7a4c1b74650cc32f67503b8881cc1d5b1f47f1cb38cf0167a9bb3da"
+    },
+    {
+      "path": "packages/core/tools/src/schema.ts",
+      "sha256": "be6e4b3fa18fe633c6c83ed4f9072da5a2a203f64bf0b70c9066fd58b0e2c897"
+    },
+    {
+      "path": "packages/llm/llm/src/index.ts",
+      "sha256": "2260ce28e29fddeaa0b78a273292b6f5c7194adf6226f38ff9e59a50b808cf09"
+    },
+    {
+      "path": "packages/interaction/tool-ask-user/src/index.ts",
+      "sha256": "4aea338a641ddd90846c7ec61508eafa123aafcc8861c85574e13a28e9591fc5"
+    },
+    {
+      "path": "packages/interaction/user-questions/src/index.ts",
+      "sha256": "2d8e7899f9763b308cf3fab3cc1018f5026af8c06a6b39925982ccdb8d934668"
+    },
+    {
+      "path": "packages/session/session-checkpoint-policy/src/index.ts",
+      "sha256": "2b93aae29cfb0b5757656f4e2e54c21d2ab5c11c1bccaed014735ecb9685fe35"
+    },
+    {
+      "path": "packages/session/session-persistence-jsonl/src/storage.ts",
+      "sha256": "41d6e4af01d3f613eb9d4e89e3d8ddded5070b4e73c7b3f858a61cbbd3b43b33"
+    }
+  ],
+  "captureNotes": "Tracked lesson sources matched HEAD at capture; hashes describe working-tree bytes. Untracked local runtime/configuration files are excluded."
+}

@@ -5,6 +5,7 @@
 | 目录 | 学科 | 主线 |
 |---|---|---|
 | [`pi/`](./pi/) | pi / agent 工程 | Pi 二次开发（扩展 / SDK / RPC）+ 手搓 agent，一条主线学到底 |
+| [`deepseek-harness/`](./deepseek-harness/) | DeepSeek Harness | 运行机制 → Cordis 插件 → 二次开发，课程跟踪源码版本 |
 
 ## 怎么读
 

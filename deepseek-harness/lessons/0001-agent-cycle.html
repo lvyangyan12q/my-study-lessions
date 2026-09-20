@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 1 课 · 工具返回后，为什么还要再问一次模型？</title><link rel="stylesheet" href="../assets/course.css"><link rel="stylesheet" href="../assets/harness.css">
+<script src="../assets/quiz.js" defer></script><script src="../assets/loop-stepper.js" defer></script></head><body><main>
+<nav><a href="../index.html">课程首页</a> · <a href="../reference/architecture-map.html">术语与源码地图</a></nav>
+<p class="eyebrow">DEEPSEEK HARNESS / LESSON 01</p>
+<h1>工具返回后，<br>为什么还要再问一次模型？</h1>
+<p class="lead">先跟完一个工具调用，再决定插件应该插在哪里。</p>
+<p><span class="badge">约 15–20 分钟</span><span class="badge">能读代码即可</span><span class="badge">无需 API key</span></p>
+<div class="goal"><h2>今天只完成一件事</h2><p>解释“请求模型 → 执行工具 → 带结果再请求模型”，并分清模型、循环、工具与会话记录的职责。</p></div>
+
+<h2>1. 模型提出调用，Harness 负责执行</h2>
+<p>假设用户说：“读取 notes.txt 并总结。”模型可以返回一个结构化的工具调用，例如 <code>read_file({"path":"notes.txt"})</code>。这表达它想做什么；Harness 的工具执行管线负责检查并调用对应实现，文件读取才真正发生。</p>
+<p>工具返回“会议改为周五”后，这段文本进入会话记录。循环再发起模型请求，模型这次拿到包含工具结果的历史，才能给出“会议时间已改为周五”的答复。</p>
+<div class="path" aria-label="正常工具调用路径">
+<span>① 模型<small>提出工具调用</small></span><span>② Harness<small>执行获准的工具</small></span><span>③ Session<small>记录工具结果</small></span><span>④ 模型<small>根据结果继续回答</small></span>
+</div>
+<p><strong>工具成功和这一轮完成，是两件事。</strong>工具完成一个具体动作；循环判断是否还需要模型请求或其他工作。</p>
+<p class="src">依据：<a href="https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/docs/architecture.md#turn-flow">Architecture · Turn flow</a>；<a href="https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/core/agent-loop/src/agent.ts#L270">ReactLoopAgent.turn / step</a>。本例的文件名、工具名与输出用于说明机制，不是一段已执行的真实会话。</p>
+
+<h2>2. 一轮 turn，可以有多个 step</h2>
+<p><strong>Session</strong> 保存这段会话的事件记录；<strong>turn</strong> 是一轮工作的处理范围；<strong>step</strong> 围绕一次模型请求及其工具调用展开。在本例里，第 1 步要文件，第 2 步写总结，合起来是一轮 turn。</p>
+<p>点“下一步”，观察右侧什么时候出现 <code>tool/result</code>，以及哪一步模型才拿到这份结果。</p>
+<loop-stepper data-code-title="正常路径 · 教学步骤" data-messages-title="Session 日志节选 · 非完整日志">
+<script type="application/json">{"code":["输入排队，循环开始 turn","接受输入并准备模型请求","从 Session 派生历史 → 请求模型","记录模型返回的工具调用意图","记录 tool/call → 执行工具","记录 tool/result → 结束 step 1","从更新后的 Session → 再请求模型","记录最终回复 → 结束 step 2 与 turn"],"steps":[{"line":0,"note":"用户输入先进入 inbox。右侧只显示与本课相关的日志节选；此刻尚未提交模型可见的 user/message。","messages":[{"role":"turn/start","text":"开始处理这一轮"}]},{"line":1,"note":"输入经过接纳和路由准备后才提交。真实实现还记录 system 与请求信息；这里省略这些事件，只追踪工具往返。","messages":[{"role":"turn/start","text":"开始处理这一轮"},{"role":"step/start","text":"进入第 1 步"},{"role":"user/message","text":"请读取 notes.txt 并总结"}]},{"line":2,"note":"第 1 次模型请求的历史由 Session 推导；模型知道有哪些工具，但这次还没看到 notes.txt 的内容。","messages":[{"role":"turn/start","text":"开始处理这一轮"},{"role":"step/start","text":"进入第 1 步"},{"role":"user/message","text":"请读取 notes.txt 并总结"}]},{"line":3,"note":"模型返回的是“调用 read_file”的结构化意图。此刻文件还没有因此被读取，执行由 Harness 负责。","messages":[{"role":"turn/start","text":"开始处理这一轮"},{"role":"step/start","text":"进入第 1 步"},{"role":"user/message","text":"请读取 notes.txt 并总结"},{"role":"assistant/message","text":"模型要求调用 read_file"}]},{"line":4,"note":"Harness 记录调用，经过工具执行管线，在本例获准后运行工具。工具承担读取文件这项具体工作。","messages":[{"role":"turn/start","text":"开始处理这一轮"},{"role":"step/start","text":"进入第 1 步"},{"role":"user/message","text":"请读取 notes.txt 并总结"},{"role":"assistant/message","text":"模型要求调用 read_file"},{"role":"tool/call","text":"记录调用 read_file 的请求"}]},{"line":5,"note":"结果进入 tool/result。工具成功并不代表模型已经总结了文件；第一步结束，循环还需要继续。","messages":[{"role":"turn/start","text":"开始处理这一轮"},{"role":"step/start","text":"进入第 1 步"},{"role":"user/message","text":"请读取 notes.txt 并总结"},{"role":"assistant/message","text":"模型要求调用 read_file"},{"role":"tool/call","text":"记录调用 read_file 的请求"},{"role":"tool/result","text":"工具返回：会议改为周五"},{"role":"step/end","text":"第 1 步结束，仍欠一次模型请求"}]},{"line":6,"note":"第 2 次请求从更新后的 Session 重新派生历史，现在包含工具返回的“会议改为周五”。模型可以据此写总结。","messages":[{"role":"turn/start","text":"开始处理这一轮"},{"role":"step/start","text":"进入第 1 步"},{"role":"user/message","text":"请读取 notes.txt 并总结"},{"role":"assistant/message","text":"模型要求调用 read_file"},{"role":"tool/call","text":"记录调用 read_file 的请求"},{"role":"tool/result","text":"工具返回：会议改为周五"},{"role":"step/end","text":"第 1 步结束，仍欠一次模型请求"},{"role":"step/start","text":"进入第 2 步"}]},{"line":7,"note":"模型给出文字答复。本例没有新的工具或待处理输入，也没有插件要求继续，于是结束 turn：共 2 个 step、1 次工具执行。","messages":[{"role":"turn/start","text":"开始处理这一轮"},{"role":"step/start","text":"进入第 1 步"},{"role":"user/message","text":"请读取 notes.txt 并总结"},{"role":"assistant/message","text":"模型要求调用 read_file"},{"role":"tool/call","text":"记录调用 read_file 的请求"},{"role":"tool/result","text":"工具返回：会议改为周五"},{"role":"step/end","text":"第 1 步结束，仍欠一次模型请求"},{"role":"step/start","text":"进入第 2 步"},{"role":"assistant/message","text":"会议时间已改为周五。"},{"role":"step/end","text":"第 2 步结束"},{"role":"turn/end","text":"没有待处理工作，本轮结束"}]}]}</script>
+</loop-stepper>
+<noscript><p>未启用 JavaScript：直接按上方四个步骤阅读，再用本课结尾的回忆题自测。</p></noscript>
+<details><summary>这张简图省略了什么？</summary>
+<p>真实流程先接纳输入和准备路由，再提交模型可见的输入；不是输入一到就直接追加 user/message。这里省略 system、request/header、request/context 等事件，以及实时流片段。</p>
+<p>重试可能使同一个 step 发生多次请求尝试；输入被拒绝时，一个 turn 可以没有 step；取消、失败或工具的 <code>concludesTurn</code> 也可能提前结束。“有工具结果就再问一次模型”是本课正常路径，不是所有出口的规则。</p>
+<p class="src">核源：<a href="https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/docs/architecture.md#turn-flow">Turn flow</a>；<a href="https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/core/agent-loop/src/agent.ts#L353">step 实现</a>。</p>
+</details>
+
+<h2>3. 你以后写的插件，会接到哪里？</h2>
+<p>在这个项目里，模型适配器、工具注册器、Session 和循环本身都由 Cordis 插件提供。插件是框架加载并管理生命周期的单元；工具是注册给模型调用的一项能力。一个插件可以注册工具，也可以只提供服务或监听事件。</p>
+<table><thead><tr><th>部件</th><th>本例中的职责</th><th>服务入口</th></tr></thead><tbody>
+<tr><td>LLM</td><td>生成文本或工具调用意图</td><td><code>ctx.llm</code></td></tr>
+<tr><td>Agent loop</td><td>协调请求、工具执行与继续/结束</td><td><code>ctx.agentLoop</code></td></tr>
+<tr><td>Tools</td><td>登记工具、检查并执行调用</td><td><code>ctx.tools</code></td></tr>
+<tr><td>Session</td><td>记录事实，派生模型历史</td><td><code>ctx.sessions</code></td></tr>
+</tbody></table>
+<p>以后新增一个模型可调用的功能，先找 <code>ctx.tools.register(...)</code>；如果要观察耗时，就找相应事件。先学清扩展入口，再判断是否需要修改循环实现。</p>
+<p class="src">依据：<a href="https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/docs/architecture.md#where-new-behavior-goes">Cordis 与扩展机制</a>；<a href="https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/docs/user/develop/basic/tool.md">官方首个工具示例</a>。</p>
+
+<h2>4. 为什么这里还要专门学习 Session？</h2>
+<p>模型历史通过 <code>session.deriveMessages()</code> 从会话记录推导。设计要求是：<strong>影响模型请求的输入必须能从日志重建</strong>。但不是把全部日志直接发给模型；例如 turn 边界也会记录，却不是一条模型聊天消息。</p>
+<p>因此，如果你的插件以后想给模型补充信息，只更新 UI 里的显示文本是不够的。你需要使用项目提供的上下文与日志机制；这会在会话一课里展开。</p>
+<p class="src">依据：<a href="https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/docs/architecture.md#session-log">Session log</a>；<a href="https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/core/session/src/index.ts#L841">Session.deriveMessages</a>。日志提交和磁盘刷新也有区别，本课不把它们等同。</p>
+
+<h2>5. 现在自己判断</h2>
+<div class="mcq" data-answer="2" data-explain="是循环插件协调后续模型请求。工具负责具体动作，结果被记录后，循环从更新后的会话派生请求。">
+<p class="q">工具成功返回后，本例由谁协调下一次模型请求？</p>
+<ul class="mcq-options"><li>工具函数</li><li>界面组件</li><li>循环插件</li><li>模型服务</li></ul>
+</div>
+<div class="mcq" data-answer="1" data-explain="新增模型可调用能力，先使用工具注册扩展点。模型读取 schema 后可请求调用，执行交给已有的工具管线。">
+<p class="q">你要新增一个模型能调用的“查询笔记”功能，先选择哪个入口？</p>
+<ul class="mcq-options"><li>重写循环</li><li>注册工具</li><li>修改页面</li><li>改动模型</li></ul>
+</div>
+<div class="recall"><p class="q">闭卷复述：本例有几个 turn、几个 step、几次工具执行？第二次模型请求比第一次多知道了什么？</p>
+<button class="reveal" type="button">想好了，看答案</button>
+<div class="answer" hidden><p>1 个 turn、2 个 step、1 次工具执行。第二次请求的历史包含工具调用及其返回结果，模型获得了文件内容。关键是结果经记录进入新请求，而不是工具返回就自动等于模型已经回答。</p></div></div>
+
+<div class="primary-source"><h2>今天只推荐读这一处原文</h2><p><a href="https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/docs/architecture.zh.md">架构文档 · Turn flow 对应章节</a>：找到“轮次流程”及其文本流程图，对照本课走一遍；无需今天读完全文。英文对应 <a href="https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/docs/architecture.md#turn-flow">Turn flow</a>。</p><p>愿意多看一点源码时，打开 <a href="https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/core/agent-loop/src/agent.ts#L270">agent.ts 的 turn()</a>，只找 <code>this.step</code> 与继续循环的判断。</p></div>
+<div class="ask-teacher"><p>遇到不清楚的地方，直接把概念或源码片段发给老师。学完后可以用自己的话回答 <a href="../learning-qa/0001-agent-cycle.md">第一课三题</a>，不用抄源码，也不用先搭运行环境。</p></div>
+<nav class="lesson-nav"><a href="../reference/architecture-map.html">反复查阅：术语与源码地图</a><a href="../LEARNING_PATH.md">下一阶段：插件生命周期</a></nav>
+<footer>依据 0.1.6-alpha.2 · ddefc45fbc · 2026-09-20<br>源码更新后先复核本课；这里的交互是教学演示，不调用模型或执行工具。</footer></main></body></html>

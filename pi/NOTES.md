@@ -1,11 +1,11 @@
 # Teaching Notes（合并自两期教学）
 
-## 工作区位置（2026-09-20 起生效）
+## 工作区位置（2026-10-03 更新）
 
-- 学习仓库根：`F:/lessons-study`（用户自理的 git 仓库，原 `D:/learning-lessons` 迁来，推 GitHub `lvyangyan12q/my-study-lessions`）。**仓库根 = 学习总目录，`pi/` 是其中一门学科。**
-- 本学科工作区：**`F:/lessons-study/pi/`**（2026-09-20 从 `F:/ai-project/pi/study/` 整体迁入，与旧工作区合并）。
-- 课程里指向 pi 源码的链接一律走「GitHub 地址 + `data-pi` 属性」约定：`assets/workspace-links.js` + 仓库根 `workspace.config.js`（gitignore，每机一份，当前 `piSourceRoot = "F:/ai-project/pi"`）在页面加载时改写成 `file:///` 本地直达。**不要在课程中写死本机绝对路径。**
-- 旧路径 `F:/ai-project/pi/study/` 已删除；源码仓库本体在 `F:/ai-project/pi`。
+- 仓库根 = 学习总目录（Obsidian 知识库），每门学科一个子目录，`pi/` 是其中一门；git 推 GitHub `lvyangyan12q/my-study-lessions`。
+- 本学科工作区：本目录 `pi/`。
+- 本机路径不写死：仓库根 `machine.config.json`（gitignore，每机一份）保存 `repoRoot` / `piSourceRoot` / `deepseekSourceRoot` / `gitBashPath`；换机器复制 `machine.config.example.json` 填一份。
+- 课程里指向 pi 源码的链接一律走「GitHub 地址 + `data-pi` 属性」约定：`assets/workspace-links.js` + 仓库根 `workspace.config.js`（gitignore，`piSourceRoot` 需与 `machine.config.json` 一致）在页面加载时改写成 `file:///` 本地直达。**不要在课程中写死本机绝对路径。**
 
 ## 教学流程（主线，阶段 0–13）
 
@@ -27,19 +27,28 @@
 - **不要为了「获取证据」就催用户跑命令或回报输出**：资料与课程直接生成；练习自判成败，措辞用「做完自己对照」。用户会主动汇报进度或提问。
 - 每天约 1 小时；内容宁可短。
 - 选择题选项等长（全部 4 个汉字），避免格式泄题。
+- 2026-10-03：本库是 Obsidian 知识库，会持续加入新学科；课程**视觉优先**（图解 / 动画 / 交互组件），在 60 分钟预算内提高知识密度——用视觉承载信息，而不是靠加长文字。
+- 2026-10-03：出题**只考与使命相关的概念与判断链**（二次开发 / 手搓 / 判断落层）；**安装方式、目录、`--continue` 这类操作性细节不要出题**。
+- 2026-10-03：**核心概念 / 机制要重点讲、重点考**；每篇先挑出「核心部分」深讲，再只对核心出题（概念 + 判断链）。操作性细节（安装、目录、快捷键）不出题。
+- 2026-10-03：**课程验收尺子（10 分钟）**：一门课要能让读者在 10 分钟内 ① 说清本课内容 ② 带走一个明确收获 ③ 核心知识点不漏。三缺一不算达标。
+- 2026-10-03：问答**默认直接写标准答案 + 讲解**进 `learning-qa/`（状态记「未考核（教师直接给答案）」），不等用户逐题作答；用户有空看，后续换问法复测。
+- 2026-10-03：`docs/` 这类偏概念/操作的用户文档**不逐篇出课与中英对照**，直接给「知识点 + 答案」Markdown（放 `learning-qa/`）。**视觉课 + 中英对照只留给核心**（`packages/agent` 源码、Extension、SDK、手搓 agent）。
 
-## 机器事实（历史记录，已过时 → 现况）
+## 机器事实（2026-10-03 更新）
 
-- ~~没有 shell、无法执行命令~~ → 现环境（`F:/lessons-study`）bash 可用，`node` 可用（Node v22）。
-- ~~仓库在 `D:/programming/workspace/pi`~~ → 现为 `F:/ai-project/pi`，是完整 monorepo（含 `packages/coding-agent/src/`、`packages/agent/`）。
-- 当时「引用文档走 `packages/coding-agent/docs/`，根目录没有 docs/」→ 现在同样成立。
+- bash 可用（Git Bash 装在非标准路径 `D:\programming\Git`，已在 `~/.pi/agent/settings.json` 设 `shellPath`）；`node` 可用（Node v22）。
+- 源码仓库是完整 monorepo（含 `packages/coding-agent/src/`、`packages/agent/`）；本机在位路径见 `machine.config.json.piSourceRoot`（记录曾写 `D:/programming/workspace/pi`）。
+- 「引用文档走 `packages/coding-agent/docs/`，根目录没有 docs/」同样成立。
+- 2026-10-06：pi 升到 **1.0.4**（源码与全局安装一致，HEAD `18336987a`，覆盖 v1.0.1–v1.0.4，最后提交 2026-10-06）。
+- 2026-10-06：`~/.pi/agent/settings.json` 新增 `extensions: ["D:/learning-lessons/pi/extensions"]`；其中 `pi/extensions/jev.ts`（547 行）把 Jev 分类模型包成 `jev` 工具（用 `ctx.modelRegistry.classify()`）——这是阶段 3/4 的**真实扩展素材**，未入库。
+- 1.0.1–1.0.4 对已有课程的影响（小）：`--tools` 支持 `+name/-name`、`*` 模式与 `--no-mcp`；`Home`/`End` 行为调整；`models.json` 新增 `samplingParamsByThinkingLevel`；`coding-agent` 的 Azure provider 改名为 `azure`（Breaking）；`outputPad` 现也作用于 `!` 输出/工具输出/摘要块。核心机制未变。
 
 
 
 ## Open items
 
-- 主线 checkpoint：`CHANGELOG.md` 未考核（待复测）；`docs/index.md` 第一轮问题已出、待用户作答；`package.json`/`README.md`/`examples-README.md` 已收口。
-- 合并主线后：`LEARNING_PATH.md` 已重写为单一顺序（阶段 0–15）；下一步作业仍是 `docs/index.md` 三题。
+- 主线 checkpoint：**阶段 0–1 已覆盖**——`package.json`/`README.md`/`examples-README.md`/`docs/index.md`/`quickstart`/`usage` 收口；`providers`/`models`/`settings`/`keybindings`/`sessions`/`compaction`/`security` 直接给知识点与答案（未考核）；`CHANGELOG` 待复测。
+- 下一步：**阶段 2**（`packages/agent` 源码 + 手搓），课 `lessons/0003`/`0004` 已有，可进入 `packages/agent/README.md` 与 `agent-loop.ts` 的 `runLoop()`。
 
 ## 2026-09-20 迁移记录
 

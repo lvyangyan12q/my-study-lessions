@@ -11,14 +11,14 @@
             "id": "f50e7b1973043c47",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "split-diff-view",
               "state": {
-                "file": "deepseek-harness/NOTES.md",
-                "mode": "source",
-                "source": false
+                "aFile": "pi/lessons/0005-docs-map.html",
+                "bFile": "pi/lessons/0005-docs-map.html",
+                "aRef": ""
               },
-              "icon": "lucide-file",
-              "title": "NOTES"
+              "icon": "diff",
+              "title": "Diff: 0005-docs-map.html  (Working Tree)"
             }
           }
         ]
@@ -220,43 +220,43 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "f50e7b1973043c47",
+  "active": "4101fabd9d20ddb2",
   "lastOpenFiles": [
+    "pi/lessons/0016-runloop.html",
+    "pi/lessons/0015-security.html",
+    "pi/lessons/0014-compaction.html",
+    "pi/lessons/0013-sessions.html",
+    "pi/lessons/0012-keybindings.html",
+    "pi/lessons/0011-settings.html",
+    "pi/reference/agent-readme-bilingual.html",
+    "pi/lessons/0010-agent-messages-events.html",
+    "pi/learning-qa/security.md",
+    "pi/learning-qa/compaction.md",
+    "pi/learning-qa/sessions.md",
+    "pi/learning-qa/keybindings.md",
+    "pi/learning-qa/settings.md",
+    "pi/learning-qa/models.md",
+    "pi/reference/models-bilingual.html",
+    "pi/lessons/0009-models.html",
+    "pi/learning-qa/providers.md",
+    "pi/reference/providers-bilingual.html",
+    "pi/learning-records/0010-intervention-points-in-the-loop.md",
+    "pi/learning-qa/usage.md",
+    "pi/learning-qa/quickstart.md",
+    "CLAUDE.md",
+    "pi/learning-records/0009-docs-map-and-customization-landing.md",
+    "AGENTS.md",
+    "deepseek-harness/NOTES.md",
     "pi/NOTES.md",
     "pi/LEARNING_PATH.md",
     "AGENT.md",
-    "deepseek-harness/SOURCE_BASELINE.json",
     "deepseek-harness/RESOURCES.md",
-    "deepseek-harness/index.html",
-    "deepseek-harness/reference/architecture-map.html",
-    "deepseek-harness/reference",
-    "deepseek-harness/lessons/0001-agent-cycle.html",
-    "deepseek-harness/lessons",
     "deepseek-harness/assets/README.md",
-    "deepseek-harness/assets/harness.css",
     "deepseek-harness/tools/README.md",
-    "deepseek-harness/tools/check-source.mjs",
-    "deepseek-harness/tools",
-    "deepseek-harness/assets/loop-stepper.js",
     "deepseek-harness/README.md",
     "deepseek-harness/UPDATES.md",
     "deepseek-harness/learning-qa/0001-agent-cycle.md",
     "deepseek-harness/LEARNING_PATH.md",
-    "deepseek-harness/learning-records/0001-starting-point.md",
-    "deepseek-harness/NOTES.md",
-    "deepseek-harness/MISSION.md",
-    "pi/learning-records/0008-single-mainline-merge.md",
-    "pi/learning-records/0007-workspace-merge.md",
-    "pi/learning-records/0006-starting-point-and-constraints.md",
-    "pi/learning-records/0005-examples-readme-host-driver-closed.md",
-    "pi/learning-records/0004-readme-modes-ladder-closed.md",
-    "pi/learning-records/0003-mission-updated-to-monorepo.md",
-    "pi/learning-records/0002-binary-embeds-code-reads-data.md",
-    "pi/learning-records/0001-exports-subpath-to-file.md",
-    "pi/AGENTS.md",
-    "CLAUDE.md",
-    "README.md",
-    "pi/learning-qa/README.md",
-    "pi/learning-qa/package-json.md"
+    "deepseek-harness/learning-records/0001-starting-point.md"
   ]
 }

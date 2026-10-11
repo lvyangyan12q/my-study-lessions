@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Reference · docs/quickstart.md 中英对照</title>
+  <link rel="stylesheet" href="../assets/course.css">
+  <script src="../../workspace.config.js"></script>
+  <script src="../assets/workspace-links.js" defer></script>
+</head>
+<body><main>
+  <p class="eyebrow">Reference · docs/quickstart.md 中英对照</p>
+  <h1>docs/quickstart.md 中英对照</h1>
+  <p class="lead">范围：官方快速上手全文。英文原文在上、中文译文在下（译文前有「译」标记）。命令与文件名保持原样。</p>
+
+  <div class="card">
+    <strong>使用方式：</strong>先读英文原文，再对照中文译文；译文仅供理解，<strong>以英文原文为准</strong>。原始文件：<a data-pi="packages/coding-agent/docs/quickstart.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/quickstart.md"><code>packages/coding-agent/docs/quickstart.md</code></a>。配套课程：<a href="../lessons/0006-quickstart.html">第 6 课 · Quickstart：从装到第一句话</a>。
+  </div>
+
+  <h2 id="intro">Quickstart / 快速上手</h2>
+  <div class="bi">
+    <div class="en">Pi runs in your terminal and works with files on your machine. To use it, you need access to a model through a supported provider. This can be a subscription, an API key, or a local model.</div>
+    <div class="zh">Pi 在终端里运行，直接操作你机器上的文件。要用它，你需要通过一个受支持的 provider 访问某个模型——可以是订阅、API Key，或本地模型。</div>
+  </div>
+  <div class="bi">
+    <div class="en">For native Windows setup, read <a data-pi="packages/coding-agent/docs/windows.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/windows.md">Windows Setup</a>. For Android, read <a data-pi="packages/coding-agent/docs/termux.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/termux.md">Termux Setup</a>.</div>
+    <div class="zh">Windows 原生安装见 <a data-pi="packages/coding-agent/docs/windows.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/windows.md">Windows Setup</a>；Android 见 <a data-pi="packages/coding-agent/docs/termux.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/termux.md">Termux Setup</a>。</div>
+  </div>
+
+  <h2 id="install">1. Install Pi / 安装</h2>
+  <div class="bi">
+    <div class="en">On macOS or Linux, you can use the installer:</div>
+    <div class="zh">macOS 或 Linux 上可以用安装脚本：</div>
+  </div>
+  <pre><code>curl -fsSL https://pi.dev/install.sh | sh</code></pre>
+  <div class="bi">
+    <div class="en">The installer pins all dependencies and updates Pi with <code>pi update</code>. Alternatively, install Pi from npm, which does not pin transitive dependencies. This requires Node.js 22.19 or newer:</div>
+    <div class="zh">安装脚本会锁定全部依赖，并用 <code>pi update</code> 更新 Pi。另一种方式是用 npm 安装，它不锁定传递依赖，要求 Node.js 22.19 或更新：</div>
+  </div>
+  <pre><code>npm install -g --ignore-scripts @earendil-works/pi-coding-agent</code></pre>
+  <div class="bi">
+    <div class="en">Pi does not require dependency lifecycle scripts for a normal npm installation.</div>
+    <div class="zh">正常用 npm 安装时，Pi 不需要依赖的生命周期脚本。</div>
+  </div>
+  <div class="bi">
+    <div class="en">With Nix on macOS or Linux, install the latest release from Pi's flake. Nix builds Pi from source:</div>
+    <div class="zh">在 macOS 或 Linux 上用 Nix 时，从 Pi 的 flake 安装最新 release。Nix 会从源码构建 Pi：</div>
+  </div>
+  <pre><code>nix profile add github:earendil-works/pi/stable</code></pre>
+  <div class="bi">
+    <div class="en">Older Nix versions use <code>nix profile install</code> instead. Update with <code>nix profile upgrade pi</code>; <code>pi update</code> cannot update a Nix installation. To pin a release, use a tag such as <code>github:earendil-works/pi/v1.0.0</code>.</div>
+    <div class="zh">较早的 Nix 版本改用 <code>nix profile install</code>。更新用 <code>nix profile upgrade pi</code>；<code>pi update</code> 无法更新 Nix 安装。要固定某个版本，可用形如 <code>github:earendil-works/pi/v1.0.0</code> 的 tag。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Verify the installation:</div>
+    <div class="zh">验证安装：</div>
+  </div>
+  <pre><code>pi --version</code></pre>
+
+  <h2 id="start">2. Start Pi / 启动</h2>
+  <div class="bi">
+    <div class="en">Change to the folder you want Pi to work with, then start it:</div>
+    <div class="zh">切换到你想让 Pi 工作的文件夹，然后启动它：</div>
+  </div>
+  <pre><code>cd /path/to/folder
+pi</code></pre>
+  <div class="bi">
+    <div class="en">The working folder helps Pi discover relevant files, instructions, and configuration. Pi also uses it to group saved sessions.</div>
+    <div class="zh">工作目录帮助 Pi 发现相关文件、指令和配置；Pi 也用它给保存的会话分组。</div>
+  </div>
+  <figure style="margin:1.4rem 0">
+    <img data-pi="packages/coding-agent/docs/images/interactive-mode.png" src="https://raw.githubusercontent.com/earendil-works/pi/main/packages/coding-agent/docs/images/interactive-mode.png" alt="Pi running in a terminal with a conversation, input editor, and status footer" style="width:100%;height:auto;border:1px solid var(--rule);border-radius:4px">
+    <figcaption class="src">（官方图）交互模式：对话 + 输入编辑器 + 状态栏。</figcaption>
+  </figure>
+  <div class="bi">
+    <div class="en">The interface shows your conversation, an editor for prompts and commands, and a footer with the current folder, model, and session status. See <a data-pi="packages/coding-agent/docs/usage.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/usage.md">Use Pi in the terminal</a> to learn how to add files, run commands, direct ongoing work, and manage results.</div>
+    <div class="zh">界面显示：你的对话、输入提示词与命令的编辑器，以及底部状态栏（当前目录、模型、会话状态）。如何添加文件、运行命令、指挥进行中的工作、管理结果，见 <a data-pi="packages/coding-agent/docs/usage.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/usage.md">Use Pi in the terminal</a>。</div>
+  </div>
+
+  <h2 id="model">3. Choose a model / 选模型</h2>
+  <div class="bi">
+    <div class="en">A <strong>model</strong> generates Pi's responses. A <strong>provider</strong> is the service or account Pi uses to access that model.</div>
+    <div class="zh"><strong>model（模型）</strong>负责生成 Pi 的回答；<strong>provider（提供方）</strong>是 Pi 用来访问该模型的服务或账号。</div>
+  </div>
+  <div class="bi">
+    <div class="en">In Pi, run:</div>
+    <div class="zh">在 Pi 里运行：</div>
+  </div>
+  <pre><code>/login</code></pre>
+  <div class="bi">
+    <div class="en">Choose a provider, then follow the prompts to use a subscription or store an API key. Run <code>/model</code> afterward if you want to select a different available model.</div>
+    <div class="zh">选一个 provider，然后按提示使用订阅或保存 API Key。之后想换一个可用模型，再运行 <code>/model</code>。</div>
+  </div>
+  <div class="bi">
+    <div class="en">See <a data-pi="packages/coding-agent/docs/models.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/models.md">Choose a model and provider</a> for supported providers, environment-variable authentication, local models, and custom endpoints.</div>
+    <div class="zh">受支持的 provider、环境变量认证、本地模型与自定义端点，见 <a data-pi="packages/coding-agent/docs/models.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/models.md">Choose a model and provider</a>。</div>
+  </div>
+
+  <h2 id="task">4. Give Pi a task / 给任务</h2>
+  <div class="bi">
+    <div class="en">Pi shows each file read, search, command, and edit it performs. It does not ask before every tool call.</div>
+    <div class="zh">Pi 会显示它执行的每一次文件读取、搜索、命令和编辑；但它<strong>不会在每次工具调用前都征求同意</strong>。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Enter a task that matches your work, for example:</div>
+    <div class="zh">输入一个贴合你工作的任务，例如：</div>
+  </div>
+  <pre><code>Summarize @meeting-notes.md and save the action items to action-items.md.
+Explain how this repository is structured and how to run its checks.
+Compare @previous.csv with @current.csv and summarize the important changes.</code></pre>
+  <div class="bi">
+    <div class="en">Type <code>@</code> in the editor to search for a file instead of entering its full path. When Pi finishes, review its response and any changed files. Use version control or backups for important work. For untrusted or unattended work, use a container or another sandbox. See <a data-pi="packages/coding-agent/docs/security.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/security.md">Security</a>.</div>
+    <div class="zh">在编辑器里输入 <code>@</code> 可搜索文件，而不必敲完整路径。Pi 完成后，检查它的回答和所有被改动的文件。重要工作请用版本控制或备份；不可信或无人值守的场景，请用容器或其它沙箱。见 <a data-pi="packages/coding-agent/docs/security.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/security.md">Security</a>。</div>
+  </div>
+
+  <h2 id="continue">Continue later / 稍后继续</h2>
+  <div class="bi">
+    <div class="en">Pi saves sessions automatically. Exit Pi, then resume the most recent session for the same working folder with:</div>
+    <div class="zh">Pi 会自动保存会话。退出 Pi 后，在同一工作目录下用下面的命令恢复最近一次会话：</div>
+  </div>
+  <pre><code>pi --continue</code></pre>
+  <div class="bi">
+    <div class="en">Use <code>/resume</code> to choose another saved session. See <a data-pi="packages/coding-agent/docs/sessions.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/sessions.md">Continue or branch a session</a> for session naming, branching, compaction, export, and sharing.</div>
+    <div class="zh">用 <code>/resume</code> 可以挑另一个已保存的会话。会话命名、分支、压缩、导出与分享，见 <a data-pi="packages/coding-agent/docs/sessions.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/sessions.md">Continue or branch a session</a>。</div>
+  </div>
+
+  <h2 id="next">Next steps / 下一步</h2>
+  <div class="bi">
+    <div class="en"><a data-pi="packages/coding-agent/docs/usage.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/usage.md">Use Pi interactively</a> to learn input, commands, shortcuts, and queued messages.</div>
+    <div class="zh"><a data-pi="packages/coding-agent/docs/usage.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/usage.md">交互式使用 Pi</a>：输入、命令、快捷键与排队消息。</div>
+  </div>
+  <div class="bi">
+    <div class="en"><a data-pi="packages/coding-agent/docs/configuration.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/configuration.md#context-files">Add instructions</a> that Pi should follow whenever it works in a folder.</div>
+    <div class="zh"><a data-pi="packages/coding-agent/docs/configuration.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/configuration.md#context-files">添加指令</a>：让 Pi 在这个文件夹里工作时始终遵守。</div>
+  </div>
+  <div class="bi">
+    <div class="en"><a data-pi="packages/coding-agent/docs/models.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/models.md">Choose a model and provider</a>.</div>
+    <div class="zh"><a data-pi="packages/coding-agent/docs/models.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/models.md">选择模型与 provider</a>。</div>
+  </div>
+
+  <h2 id="chooser">Choose how to customize Pi / 定制选型器</h2>
+  <div class="bi">
+    <div class="en">Start with the least powerful mechanism that meets your need:</div>
+    <div class="zh">从满足需求的<strong>最轻机制</strong>起步：</div>
+  </div>
+  <table>
+    <thead><tr><th>Need / 需求</th><th>Start with / 先用</th></tr></thead>
+    <tbody>
+      <tr><td>Give Pi persistent instructions for a folder<br>给某文件夹常驻指令</td><td><a data-pi="packages/coding-agent/docs/configuration.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/configuration.md#context-files"><code>AGENTS.md</code></a></td></tr>
+      <tr><td>Reuse a prompt from the <code>/</code> menu<br>从 <code>/</code> 菜单复用一段提示词</td><td><a data-pi="packages/coding-agent/docs/prompt-templates.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/prompt-templates.md">Prompt template</a></td></tr>
+      <tr><td>Add task-specific instructions and supporting files<br>加任务专用说明与配套文件</td><td><a data-pi="packages/coding-agent/docs/skills.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/skills.md">Skill</a></td></tr>
+      <tr><td>Add executable tools, commands, or event handlers<br>加可执行工具 / 命令 / 事件处理器</td><td><a data-pi="packages/coding-agent/docs/extensions.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/extensions.md">Extension</a></td></tr>
+      <tr><td>Build a custom terminal component<br>造自定义终端组件</td><td><a data-pi="packages/coding-agent/docs/tui.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/tui.md">Terminal UI</a></td></tr>
+      <tr><td>Connect an unsupported model service<br>接一个不受支持的模型服务</td><td><a data-pi="packages/coding-agent/docs/custom-provider.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/custom-provider.md">Custom provider</a></td></tr>
+      <tr><td>Install or distribute several resources<br>安装 / 分发多个资源</td><td><a data-pi="packages/coding-agent/docs/packages.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/packages.md">Pi package</a></td></tr>
+    </tbody>
+  </table>
+
+  <h2 id="uninstall">Uninstall Pi / 卸载</h2>
+  <div class="bi">
+    <div class="en">If you installed Pi with npm, run:</div>
+    <div class="zh">如果你用 npm 安装的 Pi：</div>
+  </div>
+  <pre><code>npm uninstall -g @earendil-works/pi-coding-agent</code></pre>
+  <div class="bi">
+    <div class="en">If you used the installer, run it again and choose <strong>Uninstall Pi</strong>:</div>
+    <div class="zh">如果你用的是安装脚本，重跑它并选 <strong>Uninstall Pi</strong>：</div>
+  </div>
+  <pre><code>curl -fsSL https://pi.dev/install.sh | sh</code></pre>
+  <div class="bi">
+    <div class="en">If you installed Pi with Nix, run:</div>
+    <div class="zh">如果你用 Nix 安装的 Pi：</div>
+  </div>
+  <pre><code>nix profile remove pi</code></pre>
+  <div class="bi">
+    <div class="en">None of these methods removes configuration, credentials, sessions, or installed Pi packages from <code>~/.pi/agent/</code>.</div>
+    <div class="zh">这些方式都<strong>不会</strong>删除 <code>~/.pi/agent/</code> 里的配置、凭据、会话或已安装的 Pi 包。</div>
+  </div>
+
+  <nav class="lesson-nav">
+    <span><a href="docs-index-bilingual.html">速查：docs/index.md 中英对照</a> · <a href="changelog-bilingual.html">CHANGELOG 中英对照</a></span>
+    <span><a href="../lessons/0006-quickstart.html">第 6 课 · Quickstart</a> · <a data-pi="packages/coding-agent/docs/quickstart.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/quickstart.md">原文</a></span>
+  </nav>
+</main></body>
+</html>

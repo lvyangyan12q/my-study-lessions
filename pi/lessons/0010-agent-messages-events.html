@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>第十课：packages/agent —— Message Flow 与 Event Flow</title>
+  <link rel="stylesheet" href="../assets/course.css">
+  <script src="../../workspace.config.js"></script>
+  <script src="../assets/workspace-links.js" defer></script>
+  <script src="../assets/quiz.js" defer></script>
+</head>
+<body><main>
+  <p class="eyebrow">Lesson 0010 · 约 12 分钟 · 核心：消息怎么进去、事件怎么出来</p>
+  <h1>packages/agent：Message Flow 与 Event Flow</h1>
+  <p class="lead">第 3、4 课看的是循环的<strong>内部结构</strong>；这一篇看它的<strong>两条边界</strong>——喂进去的消息怎么变成 LLM 认得的样子（Message Flow），跑起来时又吐出哪些事件给 UI（Event Flow）。这两条边界，就是以后写 Extension / SDK 时要对接的口子。</p>
+
+  <div class="goal">
+    <h2>这一课带走什么</h2>
+    <p>画出消息流的两步转换；说出一次 <code>prompt()</code> 的事件顺序；知道 <code>AgentMessage</code> 与 LLM Message 为什么是两套。</p>
+  </div>
+
+  <h2>核心一：Message Flow（进边界）</h2>
+  <figure style="margin:1.4rem 0">
+    <svg viewBox="0 0 760 130" role="img" aria-label="消息流：AgentMessage 经 transformContext 与 convertToLlm 变成 LLM Message" style="width:100%;height:auto">
+      <g font-family="var(--sans)">
+        <text x="185" y="42" text-anchor="middle" font-size="9.5" fill="var(--accent)">transformContext()（可选）</text>
+        <text x="385" y="42" text-anchor="middle" font-size="9.5" fill="var(--accent)">convertToLlm()（必需）</text>
+        <g fill="var(--paper-2)" stroke="var(--rule)">
+          <rect x="10" y="60" width="150" height="44" rx="5"/>
+          <rect x="210" y="60" width="150" height="44" rx="5"/>
+        </g>
+        <rect x="410" y="60" width="140" height="44" rx="5" fill="var(--paper-2)" stroke="var(--rule)"/>
+        <rect x="600" y="60" width="140" height="44" rx="5" fill="var(--accent-soft)" stroke="var(--accent)"/>
+        <g stroke="var(--rule-strong)"><line x1="160" y1="82" x2="208" y2="82"/><line x1="360" y1="82" x2="408" y2="82"/><line x1="550" y1="82" x2="598" y2="82"/></g>
+        <g font-size="10" fill="var(--ink)">
+          <text x="85" y="86" text-anchor="middle">AgentMessage[]</text>
+          <text x="285" y="86" text-anchor="middle">AgentMessage[]</text>
+          <text x="480" y="86" text-anchor="middle" font-family="var(--mono)">Message[]</text>
+          <text x="670" y="86" text-anchor="middle" fill="var(--accent)">LLM</text>
+        </g>
+        <text x="85" y="122" text-anchor="middle" font-size="8.5" fill="var(--ink-soft)">含 UI 专用 / 自定义消息</text>
+        <text x="470" y="122" text-anchor="middle" font-size="8.5" fill="var(--ink-soft)">只认 user / assistant / toolResult</text>
+      </g>
+    </svg>
+    <figcaption class="src">依据 <a data-pi="packages/agent/README.md" href="https://github.com/earendil-works/pi/blob/main/packages/agent/README.md">packages/agent/README.md</a>。</figcaption>
+  </figure>
+  <ul>
+    <li><code>transformContext</code>：修剪旧消息、注入外部上下文（**可选**）。</li>
+    <li><code>convertToLlm</code>：过滤掉 UI 专用消息、把自定义类型转成 LLM 格式（**必需**）。</li>
+  </ul>
+  <div class="card"><strong>为什么要两套类型？</strong><code>AgentMessage</code> 更宽，能塞应用自己的消息（靠声明合并扩展）；LLM 只懂 <code>user</code> / <code>assistant</code> / <code>toolResult</code>。<code>convertToLlm</code> 就是这两者之间唯一的桥——**只在每次 LLM 调用边界发生一次**。</div>
+
+  <h2>核心二：Event Flow（出边界）</h2>
+  <p>调用 <code>prompt("Hello")</code> 时，事件按下面的顺序发出（无工具）：</p>
+  <figure style="margin:1.4rem 0">
+    <svg viewBox="0 0 760 320" role="img" aria-label="prompt 的事件序列" style="width:100%;height:auto">
+      <g font-family="var(--sans)">
+        <line x1="56" y1="24" x2="56" y2="300" stroke="var(--rule-strong)"/>
+        <g fill="var(--paper-2)" stroke="var(--rule)">
+          <rect x="48" y="16" width="16" height="16" rx="8"/><rect x="48" y="48" width="16" height="16" rx="8"/><rect x="48" y="80" width="16" height="16" rx="8"/><rect x="48" y="112" width="16" height="16" rx="8"/><rect x="48" y="144" width="16" height="16" rx="8"/><rect x="48" y="176" width="16" height="16" rx="8"/><rect x="48" y="208" width="16" height="16" rx="8"/><rect x="48" y="240" width="16" height="16" rx="8"/><rect x="48" y="272" width="16" height="16" rx="8"/>
+        </g>
+        <g font-size="10.5" fill="var(--ink)">
+          <text x="80" y="28"><tspan font-family="var(--mono)">agent_start</tspan></text>
+          <text x="80" y="60"><tspan font-family="var(--mono)">turn_start</tspan></text>
+          <text x="80" y="92"><tspan font-family="var(--mono)">message_start</tspan> / <tspan font-family="var(--mono)">message_end</tspan>（你的 prompt = user）</text>
+          <text x="80" y="124"><tspan font-family="var(--mono)">message_start</tspan>（assistant 开始回应）</text>
+          <text x="80" y="156"><tspan font-family="var(--mono)">message_update</tspan> ×N（流式片段）</text>
+          <text x="80" y="188"><tspan font-family="var(--mono)">message_end</tspan>（assistant 完整消息）</text>
+          <text x="80" y="220"><tspan font-family="var(--mono)">turn_end</tspan></text>
+          <text x="80" y="252"><tspan font-family="var(--mono)">agent_end</tspan></text>
+        </g>
+      </g>
+    </svg>
+    <figcaption class="src">有工具调用时，本轮会在 <code>message_end(assistant)</code> 后插入 <code>tool_execution_start/update/end</code> 与 <code>toolResult</code> 的 <code>message_start/end</code>，再 <code>turn_end</code>，然后 <code>turn_start</code> 开**下一轮**，直到没有工具调用。</figcaption>
+  </figure>
+
+  <h2>事件类型表</h2>
+  <table>
+    <thead><tr><th>事件</th><th>含义</th></tr></thead>
+    <tbody>
+      <tr><td><code>agent_start</code> / <code>agent_end</code></td><td>整轮运行的开始 / 结束（<code>agent_end</code> 是最后一个事件）</td></tr>
+      <tr><td><code>turn_start</code> / <code>turn_end</code></td><td>一轮 = 一次 LLM 调用 + 它的工具执行</td></tr>
+      <tr><td><code>message_start</code> / <code>message_end</code></td><td>任意消息（user / assistant / toolResult）开始与结束</td></tr>
+      <tr><td><code>message_update</code></td><td><strong>仅 assistant</strong>：带 <code>assistantMessageEvent</code> 增量（流式）</td></tr>
+      <tr><td><code>tool_execution_start</code> / <code>_update</code> / <code>_end</code></td><td>工具开始 / 流式进度 / 结束</td></tr>
+    </tbody>
+  </table>
+  <p><code>agent.subscribe()</code> 的回调**按注册顺序被 await**；<code>agent_end</code> 之后不再有循环事件，但 <code>waitForIdle()</code> / <code>prompt()</code> 要等所有 <code>agent_end</code> 订阅者结束才 settle。</p>
+
+  <h2>顺带记两条（后面会用到）</h2>
+  <ul>
+    <li><strong>工具执行模式</strong>：默认 <code>parallel</code>（并行）；只要批里有一个工具声明 <code>executionMode: "sequential"</code>，整批顺序执行。并行时**完成事件按完成顺序**，但持久化的 toolResult 消息仍按 assistant 源码顺序。</li>
+    <li><strong>四个钩子</strong>：<code>beforeToolCall</code>（校验参数后、执行前，可 block）、<code>afterToolCall</code>（执行后、发最终事件前，可改写）、<code>prepareRequest</code>（每次请求前重建上下文）、<code>finishTurn</code>（turn 结束前决定 continue / end）。扩展的权限门禁、审计都挂这里。</li>
+  </ul>
+
+  <h2>检索练习（合上再答）</h2>
+  <div class="recall">
+    <p class="q">不看上面，写出消息流：从什么开始、经过哪两步、变成什么、给谁。</p>
+    <button class="reveal">想好了，看答案</button>
+    <div class="answer" hidden><p><code>AgentMessage[]</code> →(可选 <code>transformContext</code>)→ <code>AgentMessage[]</code> →(必需 <code>convertToLlm</code>)→ <code>Message[]</code> → LLM。</p></div>
+  </div>
+  <div class="mcq" data-answer="0" data-explain="convertToLlm 在每次 LLM 调用边界把 AgentMessage 过滤/转换成 LLM 认识的 user/assistant/toolResult；transformContext 是可选的上下文修剪。">
+    <p class="q">消息流里 <code>convertToLlm</code> 的作用是？</p>
+    <ul class="mcq-options">
+      <li>过滤转换</li>
+      <li>压缩历史</li>
+      <li>执行工具</li>
+      <li>发送请求</li>
+    </ul>
+  </div>
+  <div class="mcq" data-answer="0" data-explain="工具结果不是直接返回给模型，而是被包成一条 role=toolResult 的消息回灌进上下文，模型只能读到这条消息。">
+    <p class="q">带工具调用时，工具结果怎样回到模型？</p>
+    <ul class="mcq-options">
+      <li>结果消息</li>
+      <li>函数返回</li>
+      <li>错误对象</li>
+      <li>日志记录</li>
+    </ul>
+  </div>
+
+  <div class="primary-source">
+    <h2>主要出处</h2>
+    <p><a data-pi="packages/agent/README.md" href="https://github.com/earendil-works/pi/blob/main/packages/agent/README.md">packages/agent/README.md</a>（Message Flow / Event Flow）+ <a data-pi="packages/agent/src/agent-loop.ts" href="https://github.com/earendil-works/pi/blob/main/packages/agent/src/agent-loop.ts">src/agent-loop.ts</a>（<code>runLoop()</code>）。中英对照见 <a href="../reference/agent-readme-bilingual.html">agent/README 中英对照</a>。</p>
+  </div>
+
+  <div class="ask-teacher">
+    <p>核心是「消息流两步转换」和「事件序列」。不清楚直接问教师。</p>
+  </div>
+
+  <nav class="lesson-nav">
+    <span><a href="0004-tool-failures.html">← 上一课：工具的四种失败</a></span>
+    <span><a href="../reference/agent-readme-bilingual.html">agent/README 中英对照</a> · <a data-pi="packages/agent/README.md" href="https://github.com/earendil-works/pi/blob/main/packages/agent/README.md">原文</a></span>
+  </nav>
+</main></body>
+</html>

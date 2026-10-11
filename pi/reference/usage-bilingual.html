@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Reference · docs/usage.md 中英对照</title>
+  <link rel="stylesheet" href="../assets/course.css">
+  <script src="../../workspace.config.js"></script>
+  <script src="../assets/workspace-links.js" defer></script>
+</head>
+<body><main>
+  <p class="eyebrow">Reference · docs/usage.md 中英对照</p>
+  <h1>docs/usage.md 中英对照</h1>
+  <p class="lead">范围：交互模式操作手册全文。英文原文在上、中文译文在下。命令、快捷键、文件名保持原样，可直接当速查。</p>
+
+  <div class="card">
+    <strong>使用方式：</strong>先读英文原文，再对照中文译文；<strong>以英文原文为准</strong>。原始文件：<a data-pi="packages/coding-agent/docs/usage.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/usage.md"><code>packages/coding-agent/docs/usage.md</code></a>。配套课程：<a href="../lessons/0007-usage.html">第 7 课 · 在终端里用 Pi</a>。
+  </div>
+
+  <h2 id="intro">Use Pi in the terminal / 在终端里用 Pi</h2>
+  <div class="bi">
+    <div class="en">Run <code>pi</code> from the folder you want to work in. Pi uses that folder to discover files, instructions, and configuration, and to group saved sessions. If you have not installed Pi or chosen a model yet, follow the <a data-pi="packages/coding-agent/docs/quickstart.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/quickstart.md">Quickstart</a>.</div>
+    <div class="zh">在你想工作的文件夹里运行 <code>pi</code>。Pi 用该文件夹发现文件、指令和配置，并给保存的会话分组。若还没安装或没选模型，先走 <a data-pi="packages/coding-agent/docs/quickstart.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/quickstart.md">Quickstart</a>。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Pi may ask whether you trust the working folder before loading its project resources. See <a data-pi="packages/coding-agent/docs/security.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/security.md#understand-project-trust">Project trust</a>.</div>
+    <div class="zh">加载项目资源前，Pi 可能先问你信不信任这个工作文件夹。见 <a data-pi="packages/coding-agent/docs/security.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/security.md#understand-project-trust">Project trust</a>。</div>
+  </div>
+  <figure style="margin:1.4rem 0">
+    <img data-pi="packages/coding-agent/docs/images/interactive-mode.png" src="https://raw.githubusercontent.com/earendil-works/pi/main/packages/coding-agent/docs/images/interactive-mode.png" alt="Pi interactive mode showing a conversation, editor, and status information" style="width:100%;height:auto;border:1px solid var(--rule);border-radius:4px">
+    <figcaption class="src">（官方图）交互模式：对话 + 编辑器 + 状态信息。</figcaption>
+  </figure>
+  <div class="bi">
+    <div class="en">The transcript shows your prompts, Pi's responses, tool calls, results and errors. You write prompts and commands in the editor. The footer shows the current folder, session, model, context usage, and accumulated usage and cost.</div>
+    <div class="zh">对话区显示：你的提示、Pi 的回应、工具调用、结果和错误。你在编辑器里写提示和命令。状态栏显示：当前目录、会话、模型、上下文用量，以及累计用量与花费。</div>
+  </div>
+
+  <h2 id="enter">Enter a prompt / 输入提示</h2>
+  <div class="bi">
+    <div class="en">Type a request and press <code>Enter</code> to send it. Use <code>Shift+Enter</code> to add a line, or press <code>Ctrl+G</code> to work on a longer prompt in your configured external editor.</div>
+    <div class="zh">输入请求后按 <code>Enter</code> 发送。<code>Shift+Enter</code> 换行；<code>Ctrl+G</code> 在已配置的外部编辑器里写更长的提示。</div>
+  </div>
+  <div class="bi">
+    <div class="en">To include files or images:</div>
+    <div class="zh">要加入文件或图片：</div>
+  </div>
+  <div class="bi">
+    <div class="en">Type <code>@</code> to search for a file and add it to your prompt.</div>
+    <div class="zh">输入 <code>@</code> 搜索文件并加入提示。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Press <code>Tab</code> to complete a path.</div>
+    <div class="zh">按 <code>Tab</code> 补全路径。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Paste an image or drag it into a compatible terminal.</div>
+    <div class="zh">粘贴图片，或把它拖进兼容的终端。</div>
+  </div>
+
+  <h2 id="follow">Follow Pi's work / 跟随 Pi 的工作</h2>
+  <div class="bi">
+    <div class="en">Pi shows each tool call and result while it works. Press <code>Ctrl+O</code> to expand or collapse tool output. Press <code>Ctrl+T</code> to show or hide thinking blocks.</div>
+    <div class="zh">Pi 工作时会显示每一次工具调用和结果。按 <code>Ctrl+O</code> 展开/折叠工具输出；按 <code>Ctrl+T</code> 显示/隐藏 thinking 块。</div>
+  </div>
+  <div class="bi">
+    <div class="en">The startup header lists the instructions and resources Pi loaded. The editor border indicates the current thinking level. The footer updates as the model uses context and reports usage.</div>
+    <div class="zh">启动头列出 Pi 加载的指令与资源。编辑器边框表示当前 thinking 级别。状态栏随模型消耗上下文、报告用量而更新。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Pi does not ask before every tool call. Review commands and changed files, and use a sandbox for untrusted or unattended work. See <a data-pi="packages/coding-agent/docs/security.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/security.md">Security</a>.</div>
+    <div class="zh">Pi 不会在每次工具调用前都问你。自己 review 命令与改动的文件；不可信或无人值守的工作请用沙箱。见 <a data-pi="packages/coding-agent/docs/security.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/security.md">Security</a>。</div>
+  </div>
+
+  <h2 id="direction">Change direction / 改变方向</h2>
+  <div class="bi">
+    <div class="en">You can send more input while Pi is working:</div>
+    <div class="zh">Pi 工作时你仍可继续输入：</div>
+  </div>
+  <table>
+    <thead><tr><th>What you want / 你想</th><th>Action / 操作</th></tr></thead>
+    <tbody>
+      <tr><td>Adjust the current task<br>调整当前任务</td><td>Type a message and press <code>Enter</code></td></tr>
+      <tr><td>Add work after the current task<br>追加后续工作</td><td>Type a message and press <code>Alt+Enter</code></td></tr>
+      <tr><td>Return queued messages to the editor<br>把排队消息收回编辑器</td><td>Press <code>Alt+Up</code></td></tr>
+      <tr><td>Stop the current task<br>停止当前任务</td><td>Press <code>Escape</code></td></tr>
+    </tbody>
+  </table>
+  <div class="bi">
+    <div class="en">A message sent with <code>Enter</code> waits until the current response and its tool calls finish, then guides the next response. A follow-up sent with <code>Alt+Enter</code> waits until Pi finishes the current task. Aborting returns queued messages to the editor.</div>
+    <div class="zh">用 <code>Enter</code> 发的消息会等当前回应及其工具调用结束，然后引导下一次回应。用 <code>Alt+Enter</code> 发的 follow-up 会等 Pi 完成当前任务。中止（abort）会把排队消息退回编辑器。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Windows Terminal reserves some Alt shortcuts. See <a data-pi="packages/coding-agent/docs/terminal-setup.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/terminal-setup.md">Terminal Setup</a> for the Windows alternatives.</div>
+    <div class="zh">Windows Terminal 保留了部分 Alt 快捷键，Windows 替代方案见 <a data-pi="packages/coding-agent/docs/terminal-setup.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/terminal-setup.md">Terminal Setup</a>。</div>
+  </div>
+
+  <h2 id="model">Change the model or settings / 改模型或设置</h2>
+  <div class="bi">
+    <div class="en">Type <code>/</code> to search the available commands. The commands you will use most often are:</div>
+    <div class="zh">输入 <code>/</code> 搜索可用命令。最常用的有：</div>
+  </div>
+  <div class="bi">
+    <div class="en"><code>/model</code> selects a model. Press <code>Ctrl+L</code> to open the same selector.</div>
+    <div class="zh"><code>/model</code> 选模型；<code>Ctrl+L</code> 打开同一个选择器。</div>
+  </div>
+  <div class="bi">
+    <div class="en"><code>/thinking</code> selects how much reasoning the current model uses. Press <code>Shift+Tab</code> to cycle through supported levels.</div>
+    <div class="zh"><code>/thinking</code> 选择当前模型用多少推理；<code>Shift+Tab</code> 在支持的级别间循环。</div>
+  </div>
+  <div class="bi">
+    <div class="en"><code>/login</code> and <code>/logout</code> manage provider access.</div>
+    <div class="zh"><code>/login</code> 与 <code>/logout</code> 管理 provider 访问。</div>
+  </div>
+  <div class="bi">
+    <div class="en"><code>/settings</code> changes common preferences.</div>
+    <div class="zh"><code>/settings</code> 修改常用偏好。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Prompt templates, skills, and extensions can add more commands to the same menu. See <a data-pi="packages/coding-agent/docs/models.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/models.md">Choose a Model</a>, <a data-pi="packages/coding-agent/docs/configuration.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/configuration.md">Configuration</a>, or the complete <a data-pi="packages/coding-agent/docs/slash-commands.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/slash-commands.md">Slash Commands reference</a>.</div>
+    <div class="zh">Prompt template、Skill、Extension 都能往同一菜单里加命令。见 <a data-pi="packages/coding-agent/docs/models.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/models.md">Choose a Model</a>、<a data-pi="packages/coding-agent/docs/configuration.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/configuration.md">Configuration</a>，或完整的 <a data-pi="packages/coding-agent/docs/slash-commands.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/slash-commands.md">Slash Commands 参考</a>。</div>
+  </div>
+
+  <h2 id="continue">Continue or start over / 继续或重开</h2>
+  <div class="bi">
+    <div class="en">Pi saves sessions automatically unless session persistence is disabled.</div>
+    <div class="zh">除非关闭了会话持久化，Pi 会自动保存会话。</div>
+  </div>
+  <div class="bi">
+    <div class="en"><code>/new</code> starts a new session.</div>
+    <div class="zh"><code>/new</code> 开始新会话。</div>
+  </div>
+  <div class="bi">
+    <div class="en"><code>/resume</code> opens another saved session.</div>
+    <div class="zh"><code>/resume</code> 打开另一个已保存会话。</div>
+  </div>
+  <div class="bi">
+    <div class="en"><code>/name</code> gives the current session a recognizable name.</div>
+    <div class="zh"><code>/name</code> 给当前会话起个可辨认的名字。</div>
+  </div>
+  <div class="bi">
+    <div class="en"><code>/session</code> shows its file, ID, message count, token usage, and cost.</div>
+    <div class="zh"><code>/session</code> 显示会话文件、ID、消息数、token 用量与花费。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Use <code>/tree</code>, <code>/fork</code>, or <code>/clone</code> when you want to explore another approach without losing existing work. Use <code>/compact</code> to reduce the conversation history sent to the model. See <a data-pi="packages/coding-agent/docs/sessions.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/sessions.md">Sessions and Context</a> for these workflows.</div>
+    <div class="zh">想在不丢已有工作的情况下探索另一条路，用 <code>/tree</code>、<code>/fork</code> 或 <code>/clone</code>。用 <code>/compact</code> 压缩发给模型的对话历史。这些流程见 <a data-pi="packages/coding-agent/docs/sessions.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/sessions.md">Sessions and Context</a>。</div>
+  </div>
+  <div class="bi">
+    <div class="en">After leaving Pi, run <code>pi --continue</code> from the same folder to resume its most recent session.</div>
+    <div class="zh">离开 Pi 后，在同一文件夹里运行 <code>pi --continue</code> 恢复最近一次会话。</div>
+  </div>
+
+  <h2 id="shell">Run a terminal command / 跑终端命令</h2>
+  <div class="bi">
+    <div class="en">Prefix a command with <code>!</code> to run it and include its output in the conversation:</div>
+    <div class="zh">命令前加 <code>!</code>：执行它，并把输出带进对话：</div>
+  </div>
+  <pre><code>!git status</code></pre>
+  <div class="bi">
+    <div class="en">Use <code>!!</code> when you want to run a command without sending its output to the model.</div>
+    <div class="zh">想执行命令但不把输出发给模型，用 <code>!!</code>。</div>
+  </div>
+
+  <h2 id="share">Copy, export, or share results / 复制、导出、分享</h2>
+  <div class="bi">
+    <div class="en">Press <code>Ctrl+X</code> or run <code>/copy</code> to copy the last assistant response. Use <code>/export</code> to save the session as HTML or JSONL.</div>
+    <div class="zh">按 <code>Ctrl+X</code> 或运行 <code>/copy</code> 复制上一条 assistant 回应。用 <code>/export</code> 把会话保存为 HTML 或 JSONL。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Use <code>/share</code> to upload the session and get a viewer link. With Radius authentication, the artifact is visible to your Radius organization. Otherwise, Pi creates a private GitHub gist through the GitHub CLI. Review the session first because it can contain prompts, tool output, file contents, and credentials exposed during the conversation.</div>
+    <div class="zh">用 <code>/share</code> 上传会话并得到查看链接。用 Radius 认证时，产物对你的 Radius 组织可见；否则 Pi 通过 GitHub CLI 建一个私有 gist。<strong>分享前先自查会话</strong>——它可能含提示、工具输出、文件内容，以及对话过程中暴露的凭据。</div>
+  </div>
+
+  <h2 id="terminal">Adjust the terminal / 调整终端</h2>
+  <div class="bi">
+    <div class="en">Fullscreen mode, the default, keeps the editor and status area fixed while the transcript scrolls within the terminal window. Regular mode uses the terminal's normal scrollback. Choose a mode through <code>/settings</code> or <code>--tui-mode</code>.</div>
+    <div class="zh">全屏模式（默认）固定编辑器与状态区，对话在终端窗口内滚动；普通模式用终端自身的回滚区。用 <code>/settings</code> 或 <code>--tui-mode</code> 选择模式。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Terminal support for mouse input, keyboard shortcuts, and inline images varies. See <a data-pi="packages/coding-agent/docs/terminal-setup.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/terminal-setup.md">Terminal Setup</a> for platform-specific configuration and <a data-pi="packages/coding-agent/docs/keybindings.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/keybindings.md">Keybindings</a> for every configurable shortcut. Run <code>/hotkeys</code> to inspect the shortcuts active in your current session.</div>
+    <div class="zh">终端对鼠标输入、键盘快捷键、内联图片的支持各不相同。平台配置见 <a data-pi="packages/coding-agent/docs/terminal-setup.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/terminal-setup.md">Terminal Setup</a>；所有可配置快捷键见 <a data-pi="packages/coding-agent/docs/keybindings.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/keybindings.md">Keybindings</a>。运行 <code>/hotkeys</code> 查看当前会话生效的快捷键。</div>
+  </div>
+
+  <h2 id="debug">Collect diagnostic information / 收集诊断信息</h2>
+  <div class="bi">
+    <div class="en">When troubleshooting terminal rendering or conversation state, run <code>/debug</code>. Pi writes the rendered terminal lines and current session messages to <code>pi-debug.log</code> in your <a data-pi="packages/coding-agent/docs/configuration.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/configuration.md#agent-directory">agent directory</a>.</div>
+    <div class="zh">排查终端渲染或会话状态问题时，运行 <code>/debug</code>。Pi 会把渲染出的终端行和当前会话消息写到你的 <a data-pi="packages/coding-agent/docs/configuration.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/configuration.md#agent-directory">agent 目录</a>下的 <code>pi-debug.log</code>。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Review this file before sharing it. It can contain prompts, model responses, tool output, file contents, and terminal data.</div>
+    <div class="zh">分享这个文件前先 review：它可能含提示、模型回应、工具输出、文件内容和终端数据。</div>
+  </div>
+
+  <nav class="lesson-nav">
+    <span><a href="quickstart-bilingual.html">速查：quickstart 中英对照</a> · <a href="docs-index-bilingual.html">docs/index 中英对照</a></span>
+    <span><a href="../lessons/0007-usage.html">第 7 课 · 在终端里用 Pi</a> · <a data-pi="packages/coding-agent/docs/usage.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/usage.md">原文</a></span>
+  </nav>
+</main></body>
+</html>

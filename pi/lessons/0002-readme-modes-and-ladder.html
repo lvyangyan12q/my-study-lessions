@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="../assets/course.css">
   <script src="../../workspace.config.js"></script>
   <script src="../assets/workspace-links.js" defer></script>
+  <script src="../assets/quiz.js" defer></script>
 </head>
 <body><main>
   <p class="eyebrow">Lesson 0002 · 约 10 分钟</p>
@@ -29,6 +30,27 @@
   <p>你在 IDE 里打开过的 <a data-pi="packages/coding-agent/examples/sdk/01-minimal.ts" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/examples/sdk/01-minimal.ts"><code>examples/sdk/01-minimal.ts</code></a> 就是 SDK 模式的最小形态——十行代码建会话、订阅流、发一句话、清理。阶段 8 会正式回到它。</p>
 
   <h2>定制阶梯（从轻到重）</h2>
+  <figure style="margin:1.4rem 0">
+    <svg viewBox="0 0 760 230" role="img" aria-label="定制阶梯：Prompt Template、Skill、Theme、Extension、Pi Package，越往右越重" style="width:100%;height:auto">
+      <g font-family="var(--sans)">
+        <line x1="20" y1="200" x2="740" y2="200" stroke="var(--rule-strong)"/>
+        <rect x="30" y="170" width="120" height="30" fill="var(--paper-2)" stroke="var(--rule)"/>
+        <text x="90" y="189" text-anchor="middle" font-size="10.5" fill="var(--ink)">Prompt Template</text>
+        <rect x="170" y="150" width="120" height="50" fill="var(--paper-2)" stroke="var(--rule)"/>
+        <text x="230" y="179" text-anchor="middle" font-size="10.5" fill="var(--ink)">Skill</text>
+        <rect x="310" y="130" width="120" height="70" fill="var(--paper-2)" stroke="var(--rule)"/>
+        <text x="370" y="169" text-anchor="middle" font-size="10.5" fill="var(--ink)">Theme</text>
+        <rect x="450" y="110" width="120" height="90" fill="var(--paper-2)" stroke="var(--rule)"/>
+        <text x="510" y="159" text-anchor="middle" font-size="10.5" fill="var(--ink)">Extension</text>
+        <rect x="590" y="90" width="120" height="110" fill="var(--accent-soft)" stroke="var(--accent)"/>
+        <text x="650" y="149" text-anchor="middle" font-size="10.5" fill="var(--accent)">Pi Package</text>
+
+        <text x="20" y="220" font-size="9" fill="var(--ink-faint)">轻 / 能用就不上重的</text>
+        <text x="740" y="220" text-anchor="end" font-size="9" fill="var(--ink-faint)">重 / 要跑代码、要分发</text>
+      </g>
+    </svg>
+    <figcaption class="src">越往右，能力越强、成本越高。判断落层看触发机制：手动 / 模型按需 / 设置选用 / 启动加载 / 打包分发。</figcaption>
+  </figure>
   <table>
     <thead><tr><th>层</th><th>是什么</th><th>怎么触发</th><th>放哪里</th></tr></thead>
     <tbody>
@@ -60,6 +82,22 @@
     <li>自测一个场景：我想让每次会话结束自动 <code>git commit</code>——落在阶梯哪一层？为什么？</li>
     <li>读完在对话里告诉我 <code>完成：README.md</code>，我出三个检索题。</li>
   </ol>
+
+  <h2>检索练习（合上再答）</h2>
+  <div class="recall">
+    <p class="q">不看上面，按从轻到重说出定制阶梯五层，并说出判断落层的那个变量。</p>
+    <button class="reveal">想好了，看答案</button>
+    <div class="answer" hidden><p>Prompt Template → Skill → Theme → Extension → Pi Package；判断落层的变量 = <strong>触发机制</strong>（手动 / 模型按需 / 设置选用 / 启动加载 / 打包分发）。</p></div>
+  </div>
+  <div class="mcq" data-answer="0" data-explain="「/review 展开一段固定提示词」是用户手动触发的文本展开，最轻，落 Prompt Template；Skill 要模型按需加载、Extension 要写代码。">
+    <p class="q">需求「输入 /review 展开固定提示词」落哪一层？</p>
+    <ul class="mcq-options">
+      <li>提示模板</li>
+      <li>技能说明</li>
+      <li>扩展代码</li>
+      <li>主题配置</li>
+    </ul>
+  </div>
 
   <h2>完成标准</h2>
   <p>不看文件说出四种模式各自的入口和适用场景；面对一个新需求，30 秒内指出它属于阶梯的哪一层。</p>

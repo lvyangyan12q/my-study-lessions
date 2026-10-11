@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>第六课：Quickstart —— 从装到第一句话</title>
+  <link rel="stylesheet" href="../assets/course.css">
+  <script src="../../workspace.config.js"></script>
+  <script src="../assets/workspace-links.js" defer></script>
+  <script src="../assets/quiz.js" defer></script>
+</head>
+<body><main>
+  <p class="eyebrow">Lesson 0006 · 约 15 分钟</p>
+  <h1>Quickstart：从装到第一句话</h1>
+  <p class="lead">这一篇是「把 Pi 跑起来」的最短路径，五步走完。它同时是后面所有主题的起点：工作目录、模型、会话，都在这里第一次出现。</p>
+
+  <div class="goal">
+    <h2>这一课带走什么</h2>
+    <p>离开时你能：① 说出 quickstart 的五步；② 在任何一台机器上把 Pi 从零跑起来；③ 看懂文末那张「定制选型器」表。</p>
+  </div>
+
+  <h2>五步全貌</h2>
+  <figure style="margin:1.4rem 0">
+    <svg viewBox="0 0 760 84" role="img" aria-label="Quickstart 五步：安装、启动、选模型、给任务、继续" style="width:100%;height:auto">
+      <g font-family="var(--sans)">
+        <rect x="12" y="14" width="128" height="40" rx="6" fill="var(--accent-soft)" stroke="var(--accent)"/>
+        <text x="76" y="39" text-anchor="middle" font-size="12" fill="var(--accent)">① 安装</text>
+        <text x="76" y="70" text-anchor="middle" font-size="8.5" fill="var(--ink-soft)">install.sh / npm / nix</text>
+
+        <text x="152" y="40" text-anchor="middle" font-size="14" fill="var(--rule-strong)">→</text>
+        <rect x="164" y="14" width="128" height="40" rx="6" fill="var(--accent-soft)" stroke="var(--accent)"/>
+        <text x="228" y="39" text-anchor="middle" font-size="12" fill="var(--accent)">② 启动</text>
+        <text x="228" y="70" text-anchor="middle" font-size="8.5" fill="var(--ink-soft)">cd 目录 &amp;&amp; pi</text>
+
+        <text x="304" y="40" text-anchor="middle" font-size="14" fill="var(--rule-strong)">→</text>
+        <rect x="316" y="14" width="128" height="40" rx="6" fill="var(--accent-soft)" stroke="var(--accent)"/>
+        <text x="380" y="39" text-anchor="middle" font-size="12" fill="var(--accent)">③ 选模型</text>
+        <text x="380" y="70" text-anchor="middle" font-size="8.5" fill="var(--ink-soft)">/login · /model</text>
+
+        <text x="456" y="40" text-anchor="middle" font-size="14" fill="var(--rule-strong)">→</text>
+        <rect x="468" y="14" width="128" height="40" rx="6" fill="var(--accent-soft)" stroke="var(--accent)"/>
+        <text x="532" y="39" text-anchor="middle" font-size="12" fill="var(--accent)">④ 给任务</text>
+        <text x="532" y="70" text-anchor="middle" font-size="8.5" fill="var(--ink-soft)">@ 找文件</text>
+
+        <text x="608" y="40" text-anchor="middle" font-size="14" fill="var(--rule-strong)">→</text>
+        <rect x="620" y="14" width="128" height="40" rx="6" fill="var(--accent-soft)" stroke="var(--accent)"/>
+        <text x="684" y="39" text-anchor="middle" font-size="12" fill="var(--accent)">⑤ 继续</text>
+        <text x="684" y="70" text-anchor="middle" font-size="8.5" fill="var(--ink-soft)">pi --continue</text>
+      </g>
+    </svg>
+  </figure>
+
+  <h2>① 安装</h2>
+  <table>
+    <thead><tr><th>方式</th><th>命令</th><th>要点</th></tr></thead>
+    <tbody>
+      <tr><td>安装脚本（macOS / Linux）</td><td><code>curl -fsSL https://pi.dev/install.sh | sh</code></td><td>锁定全部依赖；用 <code>pi update</code> 更新</td></tr>
+      <tr><td>npm</td><td><code>npm install -g --ignore-scripts @earendil-works/pi-coding-agent</code></td><td>需要 <strong>Node.js 22.19+</strong>；不锁定传递依赖</td></tr>
+      <tr><td>Nix</td><td><code>nix profile add github:earendil-works/pi/stable</code></td><td>从源码构建；<code>pi update</code> 管不了 Nix 安装</td></tr>
+    </tbody>
+  </table>
+  <p>验证：<code>pi --version</code>。Windows 见 <a data-pi="packages/coding-agent/docs/windows.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/windows.md">Windows Setup</a>，Android 见 <a data-pi="packages/coding-agent/docs/termux.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/termux.md">Termux Setup</a>。</p>
+
+  <h2>② 启动（注意「工作目录」）</h2>
+  <pre><code>cd /path/to/folder
+pi</code></pre>
+  <p><strong>工作目录是关键参数</strong>：Pi 靠它发现相关文件、指令、配置，也用它给保存的会话分组。换个目录，看到的就是另一套上下文。</p>
+  <figure style="margin:1.4rem 0">
+    <img data-pi="packages/coding-agent/docs/images/interactive-mode.png" src="https://raw.githubusercontent.com/earendil-works/pi/main/packages/coding-agent/docs/images/interactive-mode.png" alt="Pi 交互界面：对话、输入编辑器、状态栏" style="width:100%;height:auto;border:1px solid var(--rule);border-radius:4px">
+    <figcaption class="src">官方截图：交互模式 = 对话 + 输入编辑器 + 底部状态栏（目录 / 模型 / 会话）。</figcaption>
+  </figure>
+
+  <h2>③ 选模型</h2>
+  <div class="card"><strong>先分清两个词：</strong><strong>model</strong> 是生成回答的模型；<strong>provider</strong> 是 Pi 用来访问该模型的服务 / 账号。一个 provider 下可以有多个 model。</div>
+  <pre><code>/login</code></pre>
+  <p>选一个 provider，按提示用订阅或存 API Key；之后想换具体模型再 <code>/model</code>。受支持的 provider、环境变量认证、本地模型、自定义端点见 <a data-pi="packages/coding-agent/docs/models.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/models.md">models.md</a>。</p>
+
+  <h2>④ 给任务</h2>
+  <p>Pi 会显示它做的每一次读取、搜索、命令和编辑——<strong>但不会每次工具调用前都问你</strong>。在编辑器里输入 <code>@</code> 可以搜文件，不用写全路径。三个例子：</p>
+  <pre><code>Summarize @meeting-notes.md and save the action items to action-items.md.
+Explain how this repository is structured and how to run its checks.
+Compare @previous.csv with @current.csv and summarize the important changes.</code></pre>
+  <div class="card"><strong>安全前提：</strong>重要工作先有版本控制或备份；不可信 / 无人值守的场景，用容器或其它沙箱。见 <a data-pi="packages/coding-agent/docs/security.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/security.md">security.md</a>。</div>
+
+  <h2>⑤ 继续</h2>
+  <p>会话自动保存。退出后，在同一工作目录里恢复最近一次：</p>
+  <pre><code>pi --continue</code></pre>
+  <p>要挑别的会话用 <code>/resume</code>；命名、分支、压缩、导出、分享见 <a data-pi="packages/coding-agent/docs/sessions.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/sessions.md">sessions.md</a>。</p>
+
+  <h2>定制选型器（重点）</h2>
+  <p>从<strong>满足需求的最小机制</strong>起步。这张表就是第 2 课「定制阶梯」的操作版：</p>
+  <table>
+    <thead><tr><th>需求</th><th>先用</th></tr></thead>
+    <tbody>
+      <tr><td>给某文件夹常驻指令</td><td><a data-pi="packages/coding-agent/docs/configuration.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/configuration.md#context-files"><code>AGENTS.md</code></a></td></tr>
+      <tr><td>从 <code>/</code> 菜单复用一段提示词</td><td><a data-pi="packages/coding-agent/docs/prompt-templates.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/prompt-templates.md">Prompt template</a></td></tr>
+      <tr><td>加任务专用说明和配套文件</td><td><a data-pi="packages/coding-agent/docs/skills.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/skills.md">Skill</a></td></tr>
+      <tr><td>加可执行工具、命令、事件处理器</td><td><a data-pi="packages/coding-agent/docs/extensions.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/extensions.md">Extension</a></td></tr>
+      <tr><td>造自定义终端组件</td><td><a data-pi="packages/coding-agent/docs/tui.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/tui.md">Terminal UI</a></td></tr>
+      <tr><td>接一个不受支持的模型服务</td><td><a data-pi="packages/coding-agent/docs/custom-provider.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/custom-provider.md">Custom provider</a></td></tr>
+      <tr><td>安装 / 分发多个资源</td><td><a data-pi="packages/coding-agent/docs/packages.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/packages.md">Pi package</a></td></tr>
+    </tbody>
+  </table>
+
+  <h2>卸载</h2>
+  <p>npm：<code>npm uninstall -g @earendil-works/pi-coding-agent</code>；安装脚本：重跑并选 <strong>Uninstall Pi</strong>；Nix：<code>nix profile remove pi</code>。<strong>三者都不会删除</strong> <code>~/.pi/agent/</code> 里的配置、凭据、会话或已装 Pi 包。</p>
+
+  <div class="primary-source">
+    <h2>主要出处</h2>
+    <p>读原文：<a data-pi="packages/coding-agent/docs/quickstart.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/quickstart.md">docs/quickstart.md</a>。中英对照见 <a href="../reference/quickstart-bilingual.html">quickstart 中英对照</a>。</p>
+  </div>
+
+  <h2>检索练习（合上再答）</h2>
+  <div class="recall">
+    <p class="q">不看上面，按顺序说出 quickstart 的五步。</p>
+    <button class="reveal">想好了，看答案</button>
+    <div class="answer" hidden>
+      <p>① 安装 → ② 启动（<code>cd</code> 工作目录 + <code>pi</code>）→ ③ 选模型（<code>/login</code>）→ ④ 给任务 → ⑤ 继续（<code>pi --continue</code>）。</p>
+    </div>
+  </div>
+
+  <div class="mcq" data-answer="0" data-explain="第一次接入模型用 /login 选 provider，再按提示订阅或存 Key；/model 用于之后换具体模型。">
+    <p class="q">第一次接入模型，在 Pi 里运行哪个命令？</p>
+    <ul class="mcq-options">
+      <li>登录命令</li>
+      <li>模型命令</li>
+      <li>恢复命令</li>
+      <li>更新命令</li>
+    </ul>
+  </div>
+
+  <div class="mcq" data-answer="0" data-explain="选型器第一条：给某个文件夹的常驻指令先用 AGENTS.md（configuration.md 的 context files 一节），这是最轻的机制。">
+    <p class="q">想给某个文件夹加「Pi 每次都要遵守的指令」，选型器建议先用哪个？</p>
+    <ul class="mcq-options">
+      <li>项目指令</li>
+      <li>提示模板</li>
+      <li>技能说明</li>
+      <li>扩展代码</li>
+    </ul>
+  </div>
+
+  <div class="ask-teacher">
+    <p>哪里不清楚直接问教师——尤其是「工作目录到底影响什么」「provider 和 model 怎么分」。</p>
+  </div>
+
+  <nav class="lesson-nav">
+    <span><a href="0005-docs-map.html">← 上一课：docs/ 地图</a></span>
+    <span><a href="../reference/quickstart-bilingual.html">quickstart 中英对照</a> · <a data-pi="packages/coding-agent/docs/quickstart.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/quickstart.md">原文</a></span>
+  </nav>
+</main></body>
+</html>

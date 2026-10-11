@@ -1,5 +1,6 @@
 # 本机配置，每台机器一份，不上传
 workspace.config.js
+machine.config.json
 
 # 系统垃圾
 .DS_Store

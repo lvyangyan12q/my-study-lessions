@@ -30,16 +30,17 @@
 
 ## 阶段 1：作为用户掌握主流程
 
-- [ ] `docs/index.md`：文档地图。
-- [ ] `docs/quickstart.md`：安装、认证、第一次会话、项目指令。
-- [ ] `docs/usage.md`：交互、命令、消息队列、上下文文件、CLI 参数。
-- [ ] `docs/providers.md`：认证类型、Provider 选择与解析顺序。
+- [x] `docs/index.md`：文档地图。（配套课：`lessons/0005-docs-map.html`；2026-10-03 考核通过）
+- [x] `docs/quickstart.md`：安装、认证、第一次会话、项目指令。（配套课：`lessons/0006-quickstart.html`；中英对照：`reference/quickstart-bilingual.html`；2026-10-03 通过）
+- [x] `docs/usage.md`：交互、命令、消息队列、上下文文件、CLI 参数。（配套课：`lessons/0007-usage.html`；中英对照：`reference/usage-bilingual.html`；核心考点：三种介入方式 steer / follow-up / abort；2026-10-03 通过）
+- [ ] `docs/providers.md`：认证类型、凭据来源与解析顺序。（配套课：`lessons/0008-providers.html`；中英对照：`reference/providers-bilingual.html`；核心考点：凭据解析四级顺序 + `/logout` 边界；2026-10-03 直接给答案，未考核）
+- [ ] `docs/models.md`：自定义模型与兼容 API 配置。（配套课：`lessons/0009-models.html`；中英对照：`reference/models-bilingual.html`；2026-10-03 直接给答案，未考核）
 - [ ] `docs/models.md`：自定义模型与兼容 API 配置。
-- [ ] `docs/settings.md`：全局/项目配置及覆盖关系。
-- [ ] `docs/keybindings.md`：按键格式、动作和自定义绑定。
-- [ ] `docs/sessions.md`：会话保存、恢复、分支、fork、clone。
-- [ ] `docs/compaction.md`：压缩与分支摘要的触发和结果。
-- [ ] `docs/security.md`：项目信任、无内置沙箱的边界。
+- [ ] `docs/settings.md`：全局/项目配置及覆盖关系。（知识点已给：`learning-qa/settings.md`；配套课：`lessons/0011-settings.html`，未考核）
+- [ ] `docs/keybindings.md`：按键格式、动作和自定义绑定。（知识点已给：`learning-qa/keybindings.md`；配套课：`lessons/0012-keybindings.html`，未考核）
+- [ ] `docs/sessions.md`：会话保存、恢复、分支、fork、clone。（知识点已给：`learning-qa/sessions.md`；配套课：`lessons/0013-sessions.html`，未考核）
+- [ ] `docs/compaction.md`：压缩与分支摘要的触发和结果。（知识点已给：`learning-qa/compaction.md`；配套课：`lessons/0014-compaction.html`，未考核；阶段 7 地基）
+- [ ] `docs/security.md`：项目信任、无内置沙箱的边界。（知识点已给：`learning-qa/security.md`；配套课：`lessons/0015-security.html`，未考核）
 
 阶段任务：不用写代码，配置一个安全、可恢复、能切模型的日常工作流。
 
@@ -49,8 +50,8 @@
 
 - [ ] `lessons/0003-agent-loop.html`（已有课）：agent = while 循环 + messages 数组 + 模型调用 + 工具执行。
 - [ ] `exercises/0001-agent-loop.mjs`：补全循环，假模型假工具已备好，`node` 直接跑。
-- [ ] `packages/agent/README.md`：Message Flow、Event Flow、AgentMessage vs LLM Message。
-- [ ] `packages/agent/src/agent-loop.ts` 的 `runLoop()`（第一遍，只读结构）：内外双层循环、工具批执行、事件 emit 点。
+- [ ] `packages/agent/README.md`：Message Flow、Event Flow、AgentMessage vs LLM Message。（配套课：`lessons/0010-agent-messages-events.html`；中英对照：`reference/agent-readme-bilingual.html`）
+- [ ] `packages/agent/src/agent-loop.ts` 的 `runLoop()`（第一遍，只读结构）：内外双层循环、工具批执行、事件 emit 点。（配套课：`lessons/0016-runloop.html`）
 - [ ] `lessons/0004-tool-failures.html`（已有课）：工具的四种失败 = 一条消息回灌给模型。
 - [ ] `exercises/0002-tool-failures.mjs`：把失败的三种情形各自包成 `isError` 结果。
 - [ ] `reference/glossary.html`：把零散术语并入常用词（compaction、toolResult、StreamFn 等）。

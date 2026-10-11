@@ -79,6 +79,18 @@
 <dd>stopReason 为 length 时，工具参数可能被 token 上限截半。这类调用能解析、能过校验，但语义残缺，所以整批不执行、全部报错，逼模型重新发起。
 <span class="src">落点：<code>failToolCallsFromTruncatedMessage()</code></span></dd>
 
+<dt>steering message（引导消息 / steer）</dt>
+<dd>Pi 工作中按 <kbd>Enter</kbd> 发的消息。它<b>不打断本轮</b>，而是等「当前回应 + 其工具调用」结束后送达，用来调整方向、引导下一次回应。
+<span class="src">落点：usage.md；how-pi-works.md — steering messages enter after the current assistant turn</span></dd>
+
+<dt>follow-up message（后续消息）</dt>
+<dd>按 <kbd>Alt+Enter</kbd> 发的消息。排进队列，等 Pi 把<b>整个任务</b>做完后才取用，用于追加后续工作；因此不算打断当前任务。
+<span class="src">落点：usage.md；how-pi-works.md — follow-up messages enter after the agent has finished its pending work</span></dd>
+
+<dt>abort（中止）</dt>
+<dd>按 <kbd>Escape</kbd> 立即停止当前运行；排队但未送达的消息会<b>退回编辑器</b>，不会自动发出。
+<span class="src">落点：usage.md；how-pi-works.md — aborting stops the current run and returns queued messages to the editor</span></dd>
+
 </dl>
 
 <hr>

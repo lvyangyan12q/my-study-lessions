@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>第十五课：Security —— 信任不等于沙箱</title>
+  <link rel="stylesheet" href="../assets/course.css">
+  <script src="../../workspace.config.js"></script>
+  <script src="../assets/workspace-links.js" defer></script>
+  <script src="../assets/quiz.js" defer></script>
+</head>
+<body><main>
+  <p class="eyebrow">Lesson 0015 · 约 10 分钟 · 核心：项目信任管什么、不管什么</p>
+  <h1>Security：信任不等于沙箱</h1>
+  <p class="lead">这一篇只有一句话最要命：<strong>项目信任 ≠ 沙箱</strong>。它只决定「启动时加载哪些项目资源」，管不了工具之后能碰什么。真正的安全来自隔离。</p>
+
+  <div class="goal"><h2>这一课带走什么</h2><p>说清项目信任管什么、不管什么；说出信任决策的优先级；知道三种运行方式各自的边界。</p></div>
+
+  <h2>核心：信任决策的顺序</h2>
+  <figure style="margin:1.4rem 0">
+    <svg viewBox="0 0 760 200" role="img" aria-label="项目信任决策顺序" style="width:100%;height:auto">
+      <g font-family="var(--sans)">
+        <g fill="var(--paper-2)" stroke="var(--rule)">
+          <rect x="10" y="24" width="170" height="46" rx="5"/><rect x="200" y="24" width="170" height="46" rx="5"/><rect x="390" y="24" width="170" height="46" rx="5"/><rect x="580" y="24" width="170" height="46" rx="5"/>
+        </g>
+        <g font-size="9.5" fill="var(--ink)">
+          <text x="95" y="43" text-anchor="middle">① 命令行覆盖</text><text x="95" y="59" text-anchor="middle" font-family="var(--mono)">--approve / --no-approve</text>
+          <text x="285" y="43" text-anchor="middle">② 扩展的信任事件</text><text x="285" y="59" text-anchor="middle" font-family="var(--mono)">project_trust</text>
+          <text x="475" y="43" text-anchor="middle">③ 保存的决策</text><text x="475" y="59" text-anchor="middle" font-family="var(--mono)">~/.pi/agent/trust.json</text>
+          <text x="665" y="43" text-anchor="middle">④ 全局默认</text><text x="665" y="59" text-anchor="middle" font-family="var(--mono)">defaultProjectTrust</text>
+        </g>
+        <g stroke="var(--rule-strong)"><line x1="180" y1="47" x2="198" y2="47"/><line x1="370" y1="47" x2="388" y2="47"/><line x1="560" y1="47" x2="578" y2="47"/></g>
+        <text x="10" y="110" font-size="9.5" fill="var(--ink-soft)">① 命中即定；未命中才往下走。③ 取最近的父目录决策；④ 默认是 `"ask"`。</text>
+        <rect x="10" y="130" width="740" height="52" rx="5" fill="var(--bad-soft)" stroke="var(--bad)"/>
+        <text x="24" y="150" font-size="10" fill="var(--bad)">例外：Pi 在选择/创建会话时会「先读」项目 `sessionDir`（在解析信任之前）——拒绝信任也撤不回这一次查找。</text>
+        <text x="24" y="170" font-size="10" fill="var(--bad)">另：上下文文件（`AGENTS.md`、`CLAUDE.md`）不受信任控制，始终加载。</text>
+      </g>
+    </svg>
+    <figcaption class="src">依据 <a data-pi="packages/coding-agent/docs/security.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/security.md">docs/security.md</a>。</figcaption>
+  </figure>
+
+  <h2>项目信任：管什么 / 不管什么</h2>
+  <div class="card"><strong>管：</strong>是否加载**受保护的项目资源**——<code>.pi/settings.json</code>、<code>.pi/mcp.json</code>、<code>.pi/extensions|skills|prompts|themes</code>、<code>.pi/SYSTEM.md</code>/<code>APPEND_SYSTEM.md</code>、项目 <code>.agents/skills</code>。裸 <code>.pi</code> 目录**不需要**信任。<br><strong>不管：</strong>工具调用能访问/影响什么。启动后，已启用的工具仍以 Pi 进程的 OS 权限运行。</div>
+
+  <h2>三种运行方式，各自保护什么</h2>
+  <table>
+    <thead><tr><th>怎么跑</th><th>保护住什么</th></tr></thead>
+    <tbody>
+      <tr><td>直接用（OS 用户权限）</td><td>该用户访问不到的东西；专用账户可收窄</td></tr>
+      <tr><td>整个跑在容器 / VM / 沙箱里</td><td>你没暴露进去的宿主文件与进程（<strong>通常最稳</strong>）</td></tr>
+      <tr><td>主体在外、只有内置工具在隔离环境里</td><td>经这些工具的动作；Pi 与其它扩展仍在边界外（较窄）</td></tr>
+    </tbody>
+  </table>
+  <p class="src">工作目录只控制资源发现与工具默认位置，**不阻止命令访问进程能访问的其它路径**。非交互模式（print / JSON / RPC）弹不出信任提示：只有 <code>always</code> 才加载受保护资源。</p>
+
+  <h2>检索练习（合上再答）</h2>
+  <div class="recall">
+    <p class="q">项目信任是沙箱吗？它到底管什么、不管什么？</p>
+    <button class="reveal">想好了，看答案</button>
+    <div class="answer" hidden><p>不是沙箱。它只管「启动时加载哪些受保护的项目资源」；不管工具调用之后能访问/影响什么——那些仍以 Pi 进程的 OS 权限运行。</p></div>
+  </div>
+  <div class="mcq" data-answer="0" data-explain="项目信任只控制资源加载，不构成安全边界：工具调用仍以 Pi 进程的操作系统权限运行。">
+    <p class="q">项目信任属于什么？</p>
+    <ul class="mcq-options"><li>不是沙箱</li><li>就是沙箱</li><li>只在网络</li><li>只在离线</li></ul>
+  </div>
+  <div class="mcq" data-answer="0" data-explain="决策顺序：命令行 --approve/--no-approve → 扩展的 project_trust 事件 → 保存的决策（trust.json，取最近父目录）→ 全局 defaultProjectTrust（默认 ask）。">
+    <p class="q">信任决策的第一优先级是？</p>
+    <ul class="mcq-options"><li>命令开关</li><li>扩展事件</li><li>保存决策</li><li>全局默认</li></ul>
+  </div>
+
+  <div class="primary-source"><h2>主要出处</h2><p><a data-pi="packages/coding-agent/docs/security.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/security.md">docs/security.md</a>；知识点卡：<a href="../learning-qa/security.md">learning-qa/security.md</a>。</p></div>
+  <div class="ask-teacher"><p>核心是「信任 ≠ 沙箱」和信任决策顺序。不清楚直接问教师。</p></div>
+  <nav class="lesson-nav"><span><a href="0014-compaction.html">← 上一课：Compaction</a></span><span><a data-pi="packages/coding-agent/docs/security.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/security.md">原文</a> · <a href="0010-agent-messages-events.html">阶段 2 第 3 课 →</a></span></nav>
+</main></body>
+</html>

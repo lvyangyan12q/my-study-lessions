@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>第十一课：Settings —— 覆盖关系与 defaultTools</title>
+  <link rel="stylesheet" href="../assets/course.css">
+  <script src="../../workspace.config.js"></script>
+  <script src="../assets/workspace-links.js" defer></script>
+  <script src="../assets/quiz.js" defer></script>
+</head>
+<body><main>
+  <p class="eyebrow">Lesson 0011 · 约 10 分钟 · 核心：谁覆盖谁</p>
+  <h1>Settings：覆盖关系与 <code>defaultTools</code></h1>
+  <p class="lead">设置这一篇字段很多，但真正要带走的是一个判断：<strong>项目设置覆盖用户设置，可资源列表是合并</strong>。搞清这一点，配置冲突就能自己定位。</p>
+
+  <div class="goal"><h2>这一课带走什么</h2><p>说清两层设置的覆盖与合并；写对 <code>defaultTools</code> 的 +/− 语法；说出 compaction 三级回退顺序。</p></div>
+
+  <h2>核心：覆盖 vs 合并</h2>
+  <figure style="margin:1.4rem 0">
+    <svg viewBox="0 0 760 160" role="img" aria-label="项目设置覆盖用户设置，资源列表是合并" style="width:100%;height:auto">
+      <g font-family="var(--sans)">
+        <rect x="230" y="20" width="380" height="44" rx="5" fill="var(--accent-soft)" stroke="var(--accent)"/>
+        <text x="420" y="47" text-anchor="middle" font-size="11.5" fill="var(--accent)">项目设置 · &lt;project&gt;/.pi/settings.json（高）</text>
+        <rect x="230" y="96" width="380" height="44" rx="5" fill="var(--paper-2)" stroke="var(--rule)"/>
+        <text x="420" y="123" text-anchor="middle" font-size="11.5" fill="var(--ink)">用户设置 · ~/.pi/agent/settings.json（低）</text>
+        <line x1="200" y1="118" x2="200" y2="42" stroke="var(--rule-strong)"/>
+        <text x="192" y="84" text-anchor="end" font-size="9.5" fill="var(--ink-soft)">覆盖</text>
+      </g>
+    </svg>
+    <figcaption class="src">依据 <a data-pi="packages/coding-agent/docs/settings.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/settings.md">docs/settings.md</a>。**例外：资源列表（`packages`/`extensions`/`skills`/`prompts`/`themes`）是合并，不是覆盖。**</figcaption>
+  </figure>
+
+  <h2><code>defaultTools</code> 的语法</h2>
+  <table>
+    <thead><tr><th>写法</th><th>语义</th></tr></thead>
+    <tbody>
+      <tr><td><code>["read","bash"]</code>（纯名）</td><td><strong>替换</strong>默认选择</td></tr>
+      <tr><td><code>["+codemode"]</code></td><td>在继承的选择上<strong>加</strong>工具</td></tr>
+      <tr><td><code>["-bash","+powershell"]</code></td><td><strong>减</strong>一个、<strong>加</strong>一个</td></tr>
+      <tr><td><code>[]</code>（空数组）</td><td>禁用所有内置工具（不禁扩展 / SDK 工具）</td></tr>
+    </tbody>
+  </table>
+  <p>项目设置叠在用户设置之上：项目列表**只含 +/−** 时改用户选择；**含纯名**时替换。改完 <code>/reload</code> 只**启用新增**的工具，不关闭被移除的、也不重新启用你手动关掉的。</p>
+
+  <h2>compaction 三级回退</h2>
+  <figure style="margin:1.4rem 0">
+    <svg viewBox="0 0 760 70" role="img" aria-label="compaction 值回退：模型覆盖、普通设置、内置默认" style="width:100%;height:auto">
+      <g font-family="var(--sans)">
+        <g fill="var(--paper-2)" stroke="var(--rule)"><rect x="10" y="16" width="200" height="38" rx="5"/><rect x="280" y="16" width="200" height="38" rx="5"/><rect x="550" y="16" width="200" height="38" rx="5"/></g>
+        <g font-size="10" fill="var(--ink)"><text x="110" y="40" text-anchor="middle">模型覆盖</text><text x="380" y="40" text-anchor="middle">普通 compaction 设置</text><text x="650" y="40" text-anchor="middle">内置默认</text></g>
+        <g stroke="var(--rule-strong)"><line x1="210" y1="35" x2="278" y2="35"/><line x1="480" y1="35" x2="548" y2="35"/></g>
+      </g>
+    </svg>
+    <figcaption class="src">每个值**各自独立回退**：模型覆盖 → 普通设置 → 内置默认。默认 <code>reserveTokens=16384</code>、<code>keepRecentTokens=20000</code>、<code>enabled=true</code>。</figcaption>
+  </figure>
+
+  <p class="src">只有少数项**只能在 agent 目录设置**：<code>defaultProjectTrust</code>、<code>httpProxy</code>；<code>cacheWarming</code> 只能全局。</p>
+
+  <h2>检索练习（合上再答）</h2>
+  <div class="recall">
+    <p class="q">项目设置和用户设置，谁覆盖谁？资源列表呢？</p>
+    <button class="reveal">想好了，看答案</button>
+    <div class="answer" hidden><p><strong>项目设置覆盖用户设置</strong>；但<strong>资源列表是合并</strong>（两处的资源都会加载）。</p></div>
+  </div>
+  <div class="mcq" data-answer="0" data-explain="只含 +/− 的列表改变继承的选择，所以 [+codemode] 是在默认四工具之上新增 codemode。">
+    <p class="q"><code>defaultTools</code> 写 <code>["+codemode"]</code> 的效果是？</p>
+    <ul class="mcq-options"><li>新增工具</li><li>替换工具</li><li>禁用工具</li><li>清空工具</li></ul>
+  </div>
+  <div class="mcq" data-answer="0" data-explain="defaultProjectTrust 与 httpProxy 只能在 agent 目录设置；cacheWarming 只能全局。">
+    <p class="q">下面哪一项只能在 agent 目录设置？</p>
+    <ul class="mcq-options"><li>项目信任</li><li>普通设置</li><li>资源列表</li><li>主题配色</li></ul>
+  </div>
+
+  <div class="primary-source"><h2>主要出处</h2><p><a data-pi="packages/coding-agent/docs/settings.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/settings.md">docs/settings.md</a>；知识点卡：<a href="../learning-qa/settings.md">learning-qa/settings.md</a>。</p></div>
+  <div class="ask-teacher"><p>核心是「覆盖 vs 合并」和 <code>defaultTools</code> 的 +/− 语义。不清楚直接问教师。</p></div>
+  <nav class="lesson-nav"><span><a href="0009-models.html">← 上一课：Choose a Model</a></span><span><a data-pi="packages/coding-agent/docs/settings.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/settings.md">原文</a> · <a href="0012-keybindings.html">下一课：Keybindings →</a></span></nav>
+</main></body>
+</html>

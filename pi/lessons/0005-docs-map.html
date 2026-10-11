@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>第五课：docs/ 地图 —— 需求到文档</title>
+  <link rel="stylesheet" href="../assets/course.css">
+  <script src="../../workspace.config.js"></script>
+  <script src="../assets/workspace-links.js" defer></script>
+  <script src="../assets/doc-router.js" defer></script>
+  <script src="../assets/quiz.js" defer></script>
+</head>
+<body><main>
+  <p class="eyebrow">Lesson 0005 · 约 12 分钟</p>
+  <h1>docs/ 地图：需求 → 文档</h1>
+  <p class="lead">官方 <code>docs/index.md</code> 只回答一个问题：<strong>我想做 X，该读哪一篇</strong>。它不教你用 Pi，它是一张索引。学会看它，后面几十篇文档你就不用通读，按需取。</p>
+
+  <div class="goal">
+    <h2>这一课带走什么</h2>
+    <p>离开时你能：① 说出文档分成哪几组；② 拿到一个需求，三秒内指出该翻哪一篇。</p>
+  </div>
+
+  <h2>一张图看懂文档地图</h2>
+  <figure style="margin:1.4rem 0">
+    <svg viewBox="0 0 760 190" role="img" aria-label="Pi 文档地图：index.md 是入口，向下分为开始用、定制、自动化嵌入、查阅平台、安全五组" style="width:100%;height:auto">
+      <rect x="300" y="4" width="160" height="30" rx="4" fill="var(--accent-soft)" stroke="var(--accent)"/>
+      <text x="380" y="23" text-anchor="middle" font-size="12" font-family="var(--sans)" fill="var(--accent)">docs/index.md · 地图</text>
+      <g stroke="var(--rule-strong)" stroke-width="1" fill="none">
+        <path d="M380 34 V58"/>
+        <path d="M84 58 H676"/>
+        <path d="M84 58 V82"/><path d="M232 58 V82"/><path d="M380 58 V82"/><path d="M528 58 V82"/><path d="M676 58 V82"/>
+      </g>
+
+      <g font-family="var(--sans)">
+        <rect x="16" y="82" width="136" height="102" rx="4" fill="var(--paper-2)" stroke="var(--rule)"/>
+        <text x="26" y="100" font-size="11" fill="var(--accent)">开始用 Pi</text>
+        <text x="26" y="118" font-size="9" fill="var(--ink-soft)">quickstart · usage</text>
+        <text x="26" y="132" font-size="9" fill="var(--ink-soft)">models · sessions</text>
+        <text x="26" y="146" font-size="9" fill="var(--ink-soft)">configuration</text>
+        <text x="26" y="160" font-size="9" fill="var(--ink-soft)">how-pi-works</text>
+
+        <rect x="164" y="82" width="136" height="102" rx="4" fill="var(--paper-2)" stroke="var(--rule)"/>
+        <text x="174" y="100" font-size="11" fill="var(--accent)">定制 Pi</text>
+        <text x="174" y="118" font-size="9" fill="var(--ink-soft)">prompt-templates</text>
+        <text x="174" y="132" font-size="9" fill="var(--ink-soft)">skills</text>
+        <text x="174" y="146" font-size="9" fill="var(--ink-soft)">extensions · themes</text>
+        <text x="174" y="160" font-size="9" fill="var(--ink-soft)">packages</text>
+
+        <rect x="312" y="82" width="136" height="102" rx="4" fill="var(--paper-2)" stroke="var(--rule)"/>
+        <text x="322" y="100" font-size="11" fill="var(--accent)">自动化 / 嵌入</text>
+        <text x="322" y="118" font-size="9" fill="var(--ink-soft)">cli（print）</text>
+        <text x="322" y="132" font-size="9" fill="var(--ink-soft)">json</text>
+        <text x="322" y="146" font-size="9" fill="var(--ink-soft)">rpc</text>
+        <text x="322" y="160" font-size="9" fill="var(--ink-soft)">sdk</text>
+
+        <rect x="460" y="82" width="136" height="102" rx="4" fill="var(--paper-2)" stroke="var(--rule)"/>
+        <text x="470" y="100" font-size="11" fill="var(--accent)">查阅 / 平台</text>
+        <text x="470" y="118" font-size="9" fill="var(--ink-soft)">settings · providers</text>
+        <text x="470" y="132" font-size="9" fill="var(--ink-soft)">keybindings</text>
+        <text x="470" y="146" font-size="9" fill="var(--ink-soft)">environment-variables</text>
+        <text x="470" y="160" font-size="9" fill="var(--ink-soft)">windows · tmux · termux</text>
+
+        <rect x="608" y="82" width="136" height="102" rx="4" fill="var(--paper-2)" stroke="var(--rule)"/>
+        <text x="618" y="100" font-size="11" fill="var(--accent)">安全</text>
+        <text x="618" y="118" font-size="9" fill="var(--ink-soft)">security</text>
+        <text x="618" y="132" font-size="9" fill="var(--ink-soft)">项目信任</text>
+        <text x="618" y="146" font-size="9" fill="var(--ink-soft)">工具不沙箱</text>
+      </g>
+    </svg>
+    <figcaption class="src">依据本机源码 <code>packages/coding-agent/docs/index.md</code>（Pi 1.0.0）。</figcaption>
+  </figure>
+
+  <h2>需求路由：点一个需求，看该翻哪篇</h2>
+  <p>这是这张地图唯一的用法。<strong>先有需求，再找文档</strong>——不要从 A 读到 Z。点下面的需求按钮，目标文档会高亮。</p>
+
+  <div class="doc-router">
+    <div class="doc-router__needs">
+      <button class="doc-router__need" data-docs="doc-quickstart,doc-usage" data-note="先按 quickstart.md 跑通，再用 usage.md 学会交互里怎么干活。">刚开始用 Pi</button>
+      <button class="doc-router__need" data-docs="doc-models,doc-providers" data-note="models.md 选模型、配兼容端点；providers.md 接订阅 / API Key / OAuth。">换模型、接自己的 API</button>
+      <button class="doc-router__need" data-docs="doc-sessions" data-note="sessions.md：保存、恢复、分支、fork、clone。">恢复或分叉上次会话</button>
+      <button class="doc-router__need" data-docs="doc-configuration,doc-settings" data-note="configuration.md 讲放哪、怎么加载、信任；settings.md 是字段清单。">配偏好 / 项目指令</button>
+      <button class="doc-router__need" data-docs="doc-chooser,doc-prompt-templates,doc-skills,doc-extensions,doc-themes,doc-packages" data-note="先从最轻的 Template / Skill 起；要跑代码、动工具才上 Extension；Package 只是分发形态。">让 Pi 按我的方式定制</button>
+      <button class="doc-router__need" data-docs="doc-cli" data-note="cli.md 的 print 模式（pi -p）：一次性跑完就退出，适合脚本 / CI。">脚本里一次性跑</button>
+      <button class="doc-router__need" data-docs="doc-rpc" data-note="rpc.md：stdin/stdout 上的 JSONL 协议，给非 Node 进程控制 Pi。">别的进程控制 Pi</button>
+      <button class="doc-router__need" data-docs="doc-sdk" data-note="sdk.md：进程内 TypeScript API，把 Pi 嵌进你自己的应用。">嵌进我的程序</button>
+      <button class="doc-router__need" data-docs="doc-how" data-note="how-pi-works.md：工具、上下文、会话、agent 循环。">理解内部机制</button>
+      <button class="doc-router__need" data-docs="doc-security" data-note="security.md：项目信任只决定加载什么，它不是沙箱。">安全边界</button>
+      <button class="doc-router__need" data-docs="doc-windows,doc-terminal-setup" data-note="windows.md 处理 Windows 命令环境；terminal-setup.md 处理各终端键盘。">Windows / 终端按键</button>
+    </div>
+    <p class="doc-router__note"></p>
+
+    <div class="docmap">
+      <div class="docmap__grid">
+        <div class="docmap__group">
+          <p class="docmap__title">开始用 Pi</p>
+          <div class="docmap__chips">
+            <a class="chip doc-chip" id="doc-quickstart" data-pi="packages/coding-agent/docs/quickstart.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/quickstart.md">quickstart</a>
+            <a class="chip doc-chip" id="doc-usage" data-pi="packages/coding-agent/docs/usage.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/usage.md">usage</a>
+            <a class="chip doc-chip" id="doc-models" data-pi="packages/coding-agent/docs/models.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/models.md">models</a>
+            <a class="chip doc-chip" id="doc-sessions" data-pi="packages/coding-agent/docs/sessions.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/sessions.md">sessions</a>
+            <a class="chip doc-chip" id="doc-configuration" data-pi="packages/coding-agent/docs/configuration.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/configuration.md">configuration</a>
+            <a class="chip doc-chip" id="doc-how" data-pi="packages/coding-agent/docs/how-pi-works.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/how-pi-works.md">how-pi-works</a>
+          </div>
+        </div>
+
+        <div class="docmap__group">
+          <p class="docmap__title">定制 Pi</p>
+          <div class="docmap__chips">
+            <a class="chip doc-chip" id="doc-chooser" data-pi="packages/coding-agent/docs/quickstart.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/quickstart.md#choose-how-to-customize-pi">quickstart 选型</a>
+            <a class="chip doc-chip" id="doc-prompt-templates" data-pi="packages/coding-agent/docs/prompt-templates.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/prompt-templates.md">prompt-templates</a>
+            <a class="chip doc-chip" id="doc-skills" data-pi="packages/coding-agent/docs/skills.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/skills.md">skills</a>
+            <a class="chip doc-chip" id="doc-extensions" data-pi="packages/coding-agent/docs/extensions.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/extensions.md">extensions</a>
+            <a class="chip doc-chip" id="doc-themes" data-pi="packages/coding-agent/docs/themes.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/themes.md">themes</a>
+            <a class="chip doc-chip" id="doc-packages" data-pi="packages/coding-agent/docs/packages.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/packages.md">packages</a>
+          </div>
+        </div>
+
+        <div class="docmap__group">
+          <p class="docmap__title">自动化 / 嵌入</p>
+          <div class="docmap__chips">
+            <a class="chip doc-chip" id="doc-cli" data-pi="packages/coding-agent/docs/cli.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/cli.md#invocation-and-output">cli（print）</a>
+            <a class="chip doc-chip" id="doc-json" data-pi="packages/coding-agent/docs/json.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/json.md">json</a>
+            <a class="chip doc-chip" id="doc-rpc" data-pi="packages/coding-agent/docs/rpc.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/rpc.md">rpc</a>
+            <a class="chip doc-chip" id="doc-sdk" data-pi="packages/coding-agent/docs/sdk.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/sdk.md">sdk</a>
+          </div>
+        </div>
+
+        <div class="docmap__group">
+          <p class="docmap__title">查阅 / 平台</p>
+          <div class="docmap__chips">
+            <a class="chip doc-chip" id="doc-settings" data-pi="packages/coding-agent/docs/settings.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/settings.md">settings</a>
+            <a class="chip doc-chip" id="doc-providers" data-pi="packages/coding-agent/docs/providers.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/providers.md">providers</a>
+            <a class="chip doc-chip" id="doc-keybindings" data-pi="packages/coding-agent/docs/keybindings.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/keybindings.md">keybindings</a>
+            <a class="chip doc-chip" id="doc-env" data-pi="packages/coding-agent/docs/environment-variables.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/environment-variables.md">env-vars</a>
+            <a class="chip doc-chip" id="doc-terminal-setup" data-pi="packages/coding-agent/docs/terminal-setup.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/terminal-setup.md">terminal-setup</a>
+            <a class="chip doc-chip" id="doc-windows" data-pi="packages/coding-agent/docs/windows.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/windows.md">windows</a>
+            <a class="chip doc-chip" id="doc-tmux" data-pi="packages/coding-agent/docs/tmux.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/tmux.md">tmux</a>
+            <a class="chip doc-chip" id="doc-termux" data-pi="packages/coding-agent/docs/termux.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/termux.md">termux</a>
+            <a class="chip doc-chip" id="doc-containerization" data-pi="packages/coding-agent/docs/containerization.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/containerization.md">containerization</a>
+          </div>
+        </div>
+
+        <div class="docmap__group">
+          <p class="docmap__title">安全</p>
+          <div class="docmap__chips">
+            <a class="chip doc-chip" id="doc-security" data-pi="packages/coding-agent/docs/security.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/security.md">security</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <span class="callout__label">地图只是一层</span>
+    <p><code>index.md</code> 只列一级入口。docs/ 下还有近 40 篇更细的文件（如 <code>compaction.md</code>、<code>session-format.md</code>、<code>mcp.md</code>、<code>rpc-commands.md</code>），它们从一级篇目里链接出来，按需进入即可，不在这张图上。</p>
+  </div>
+
+  <div class="primary-source">
+    <h2>主要出处</h2>
+    <p>读原文：<a data-pi="packages/coding-agent/docs/index.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/index.md">docs/index.md</a>（一屏，5 分钟）。对照上一课 <a href="0002-readme-modes-and-ladder.html">README：四种模式与定制阶梯</a>——index.md 的「Automate or embed」正是那四种模式的文档入口。</p>
+  </div>
+
+  <h2>检索练习（合上再答）</h2>
+  <div class="recall">
+    <p class="q">不看上面，说出 <code>docs/index.md</code> 把文档分成的五组（中文即可）。</p>
+    <button class="reveal">想好了，看答案</button>
+    <div class="answer" hidden>
+      <p>① 开始用 Pi（Start using Pi）② 定制 Pi（Customize Pi）③ 自动化或嵌入（Automate or embed）④ 查阅与平台设置（Reference and setup）⑤ 安全工作（Work safely）。</p>
+    </div>
+  </div>
+
+  <div class="mcq" data-answer="0" data-explain="print 模式 = pi -p，一次性输出后退出，入口与用法在 cli.md 的 Invocation and output。交互模式是 pi，面向人坐在终端里干活。">
+    <p class="q">需求：在 CI 脚本里跑一次提示、拿最终结果就退出。先翻哪一篇？</p>
+    <ul class="mcq-options">
+      <li>打印模式</li>
+      <li>交互模式</li>
+      <li>主题配色</li>
+      <li>模型选择</li>
+    </ul>
+  </div>
+
+  <div class="mcq" data-answer="0" data-explain="windows.md 与 terminal-setup.md 属于「查阅与平台设置」组。security.md 讲安全，sessions.md 讲会话，models.md 讲模型。">
+    <p class="q">需求：同事在 Windows 上按键不对。先翻哪一篇？</p>
+    <ul class="mcq-options">
+      <li>平台设置</li>
+      <li>安全边界</li>
+      <li>会话分叉</li>
+      <li>模型路由</li>
+    </ul>
+  </div>
+
+  <div class="ask-teacher">
+    <p>哪里不清楚，直接问教师——尤其是「这个需求到底该读哪组」。别靠猜带到下一篇。</p>
+  </div>
+
+  <nav class="lesson-nav">
+    <span><a href="0004-tool-failures.html">← 上一课：工具的四种失败</a></span>
+    <span><a href="../reference/pi-customization-map.html">速查：定制地图</a> · <a data-pi="packages/coding-agent/docs/index.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/index.md">原文 index.md</a> · <a href="../RESOURCES.md">可信资料</a></span>
+  </nav>
+</main></body>
+</html>

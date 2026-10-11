@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>第十四课：Compaction —— 上下文满了怎么办</title>
+  <link rel="stylesheet" href="../assets/course.css">
+  <script src="../../workspace.config.js"></script>
+  <script src="../assets/workspace-links.js" defer></script>
+  <script src="../assets/quiz.js" defer></script>
+</head>
+<body><main>
+  <p class="eyebrow">Lesson 0014 · 约 12 分钟 · 核心：切点与 firstKeptEntryId</p>
+  <h1>Compaction：上下文满了怎么办</h1>
+  <p class="lead">模型没有记忆，每轮都要把整段历史重发。历史越长越贵、最终撑爆窗口——于是 Pi 把旧消息**摘要**掉。这一课的重点是：**切点在哪、为什么不能切在工具结果上**。</p>
+
+  <div class="goal"><h2>这一课带走什么</h2><p>画出压缩前后的条目序列；说出切点规则与 <code>firstKeptEntryId</code> 的作用；分清 compaction 与 branch summarization。</p></div>
+
+  <h2>核心：切点与 <code>firstKeptEntryId</code></h2>
+  <figure style="margin:1.4rem 0">
+    <svg viewBox="0 0 760 250" role="img" aria-label="压缩前后：旧消息变摘要，从 firstKeptEntryId 起保留" style="width:100%;height:auto">
+      <g font-family="var(--sans)" font-size="9" fill="var(--ink)">
+        <text x="10" y="16" font-size="10" fill="var(--ink-soft)">压缩前（条目序列）</text>
+        <g>
+          <rect x="10" y="26" width="66" height="30" fill="var(--paper-2)" stroke="var(--rule)"/><text x="43" y="45" text-anchor="middle">hdr</text>
+          <rect x="80" y="26" width="66" height="30" fill="var(--bad-soft)" stroke="var(--bad)"/><text x="113" y="45" text-anchor="middle" fill="var(--bad)">usr</text>
+          <rect x="150" y="26" width="66" height="30" fill="var(--bad-soft)" stroke="var(--bad)"/><text x="183" y="45" text-anchor="middle" fill="var(--bad)">ass</text>
+          <rect x="220" y="26" width="66" height="30" fill="var(--bad-soft)" stroke="var(--bad)"/><text x="253" y="45" text-anchor="middle" fill="var(--bad)">tool</text>
+          <rect x="290" y="26" width="66" height="30" fill="var(--ok-soft)" stroke="var(--ok)"/><text x="323" y="45" text-anchor="middle" fill="var(--ok)">usr</text>
+          <rect x="360" y="26" width="66" height="30" fill="var(--ok-soft)" stroke="var(--ok)"/><text x="393" y="45" text-anchor="middle" fill="var(--ok)">ass</text>
+          <rect x="430" y="26" width="66" height="30" fill="var(--ok-soft)" stroke="var(--ok)"/><text x="463" y="45" text-anchor="middle" fill="var(--ok)">tool</text>
+        </g>
+        <text x="185" y="72" font-size="9" fill="var(--bad)">← messagesToSummarize（旧）</text>
+        <text x="330" y="72" font-size="9" fill="var(--ok)">kept（保留）→</text>
+        <line x1="290" y1="60" x2="290" y2="90" stroke="var(--accent)"/>
+        <text x="296" y="90" font-size="9.5" fill="var(--accent)">firstKeptEntryId</text>
+
+        <text x="10" y="120" font-size="10" fill="var(--ink-soft)">压缩后（追加一条 cmp）</text>
+        <rect x="10" y="130" width="66" height="30" fill="var(--paper-2)" stroke="var(--rule)"/><text x="43" y="149" text-anchor="middle">hdr</text>
+        <rect x="80" y="130" width="66" height="30" fill="var(--paper-2)" stroke="var(--rule)" stroke-dasharray="3 2"/><text x="113" y="149" text-anchor="middle" fill="var(--ink-faint)">usr…</text>
+        <rect x="150" y="130" width="66" height="30" fill="var(--paper-2)" stroke="var(--rule)" stroke-dasharray="3 2"/><text x="183" y="149" text-anchor="middle" fill="var(--ink-faint)">…</text>
+        <rect x="220" y="130" width="66" height="30" fill="var(--accent-soft)" stroke="var(--accent)"/><text x="253" y="149" text-anchor="middle" fill="var(--accent)">cmp</text>
+        <rect x="290" y="130" width="66" height="30" fill="var(--ok-soft)" stroke="var(--ok)"/><text x="323" y="149" text-anchor="middle" fill="var(--ok)">usr</text>
+        <rect x="360" y="130" width="66" height="30" fill="var(--ok-soft)" stroke="var(--ok)"/><text x="393" y="149" text-anchor="middle" fill="var(--ok)">ass</text>
+        <rect x="430" y="130" width="66" height="30" fill="var(--ok-soft)" stroke="var(--ok)"/><text x="463" y="149" text-anchor="middle" fill="var(--ok)">tool</text>
+        <text x="80" y="182" font-size="9" fill="var(--ink-faint)">原始条目仍保留在会话里（只是不再发给模型）</text>
+        <text x="10" y="212" font-size="10" fill="var(--accent)">模型实际看到：</text>
+        <rect x="130" y="196" width="80" height="24" fill="var(--accent-soft)" stroke="var(--accent)"/><text x="170" y="212" text-anchor="middle" fill="var(--accent)">summary</text>
+        <text x="218" y="212" font-size="10" fill="var(--ink)">+ 从 firstKeptEntryId 起的消息</text>
+      </g>
+    </svg>
+    <figcaption class="src">依据 <a data-pi="packages/coding-agent/docs/compaction.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/compaction.md">docs/compaction.md</a>。触发条件：<code>contextTokens &gt; contextWindow − reserveTokens</code>（默认 16384）。</figcaption>
+  </figure>
+
+  <h2>切点规则（最该记）</h2>
+  <div class="card"><strong>绝不在 tool 结果处切</strong>——工具结果必须和它的工具调用待在一起。可以在 user / assistant / BashExecution / 自定义消息处切。</div>
+  <p>五步：① 从后往前累计 token 找切点（到 <code>keepRecentTokens</code>，默认 20000）→ ② 取要摘要的消息 → ③ 调 LLM 生成摘要 → ④ 追加 <code>CompactionEntry</code>（含 <code>summary</code> 与 <code>firstKeptEntryId</code>）→ ⑤ 重建上下文。重复压缩从上一次的 <code>firstKeptEntryId</code> 起。</p>
+
+  <h2>两种摘要</h2>
+  <table>
+    <thead><tr><th>机制</th><th>触发</th><th>目的</th></tr></thead>
+    <tbody>
+      <tr><td>Compaction</td><td>上下文超阈值，或 <code>/compact</code></td><td>摘要旧消息，腾上下文</td></tr>
+      <tr><td>Branch summarization</td><td><code>/tree</code> 导航</td><td>换分支时保留离开分支的上下文</td></tr>
+    </tbody>
+  </table>
+  <p class="src">扩展钩子：<code>session_before_compact</code>、<code>session_compact_failed</code>、<code>session_before_tree</code>。</p>
+
+  <h2>检索练习（合上再答）</h2>
+  <div class="recall">
+    <p class="q">压缩的切点能不能落在工具结果上？为什么？</p>
+    <button class="reveal">想好了，看答案</button>
+    <div class="answer" hidden><p>不能。工具结果必须和它的工具调用待在一起；切在中间会让模型拿到「没有对应请求的结果」。</p></div>
+  </div>
+  <div class="mcq" data-answer="0" data-explain="合法切点包含 user / assistant / BashExecution / 自定义消息；tool 结果永远不能切。">
+    <p class="q">下面哪种位置不能作为切点？</p>
+    <ul class="mcq-options"><li>工具结果</li><li>用户消息</li><li>助手消息</li><li>系统消息</li></ul>
+  </div>
+  <div class="mcq" data-answer="0" data-explain="压缩存在的原因正是「模型无记忆，每轮都要重发全部消息」——历史迟早撑爆上下文窗口。">
+    <p class="q">为什么会有 compaction？</p>
+    <ul class="mcq-options"><li>上下文满</li><li>磁盘太小</li><li>网络延迟</li><li>模型选择</li></ul>
+  </div>
+
+  <div class="primary-source"><h2>主要出处</h2><p><a data-pi="packages/coding-agent/docs/compaction.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/compaction.md">docs/compaction.md</a>；知识点卡：<a href="../learning-qa/compaction.md">learning-qa/compaction.md</a>（阶段 7 会回看）。</p></div>
+  <div class="ask-teacher"><p>核心是「切点规则」与 <code>firstKeptEntryId</code>。不清楚直接问教师。</p></div>
+  <nav class="lesson-nav"><span><a href="0013-sessions.html">← 上一课：Sessions</a></span><span><a data-pi="packages/coding-agent/docs/compaction.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/compaction.md">原文</a> · <a href="0015-security.html">下一课：Security →</a></span></nav>
+</main></body>
+</html>

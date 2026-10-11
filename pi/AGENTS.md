@@ -35,7 +35,7 @@
 
 ## 源码版本（会持续迭代）
 
-课程里记的版本只是当时快照。继续任何主题前，用 `machine.config.json.piSourceRoot` **现读源码实际版本**（如 `packages/coding-agent/package.json` 的 `version`），再决定是否更新记录 / 课程，不要假设仍是旧版。记录里写的是 `0.82.1`；**本机现为 `1.0.4`**（HEAD `18336987a`，2026-10-06，覆盖 v1.0.1–v1.0.4）。更新后扫 `CHANGELOG.md` 的 Changed/Breaking 判断对课程的影响。
+课程里记的版本只是当时快照。继续任何主题前，用 `machine.config.json.piSourceRoot` **现读源码实际版本**（如 `packages/coding-agent/package.json` 的 `version`），再决定是否更新记录 / 课程，不要假设仍是旧版。记录里写的是 `0.82.1`；**本机现为 `1.1.0`**（HEAD `ea448f454`，2026-10-10）。更新后扫 `CHANGELOG.md` 的 Changed/Breaking 判断对课程的影响。
 
 ## Current checkpoint
 

@@ -13,10 +13,10 @@ node .\deepseek-harness\tools\check-source.mjs
 换一份源码目录时：
 
 ```powershell
-node .\deepseek-harness\tools\check-source.mjs --source "D:\another\deepseek-harness"
+node .\deepseek-harness\tools\check-source.mjs --source "<源仓库目录>"
 ```
 
-脚本读取 [SOURCE_BASELINE.json](SOURCE_BASELINE.json)，比较已关注目录的提交差异、未提交变化和关键文件 SHA-256。它只读本地，不联网，不拉取，不切换分支，也不更新学习基线。
+脚本读取 [SOURCE_BASELINE.json](SOURCE_BASELINE.json)，比较已关注目录的提交差异、未提交变化和关键文件 SHA-256。不传 `--source` 时，源仓库位置取自仓库根 `machine.config.json` 的 `deepseekSourceRoot`。它只读本地，不联网，不拉取，不切换分支，也不更新学习基线。
 
 ## 如何处理结果
 

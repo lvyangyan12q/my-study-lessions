@@ -34,14 +34,19 @@
 - 2026-10-03：问答**默认直接写标准答案 + 讲解**进 `learning-qa/`（状态记「未考核（教师直接给答案）」），不等用户逐题作答；用户有空看，后续换问法复测。
 - 2026-10-03：`docs/` 这类偏概念/操作的用户文档**不逐篇出课与中英对照**，直接给「知识点 + 答案」Markdown（放 `learning-qa/`）。**视觉课 + 中英对照只留给核心**（`packages/agent` 源码、Extension、SDK、手搓 agent）。
 
-## 机器事实（2026-10-03 更新）
+## 机器事实（2026-10-11 更新）
 
-- bash 可用（Git Bash 装在非标准路径 `D:\programming\Git`，已在 `~/.pi/agent/settings.json` 设 `shellPath`）；`node` 可用（Node v22）。
-- 源码仓库是完整 monorepo（含 `packages/coding-agent/src/`、`packages/agent/`）；本机在位路径见 `machine.config.json.piSourceRoot`（记录曾写 `D:/programming/workspace/pi`）。
+- **本机绝对路径一律不写在本文件**，读仓库根 `machine.config.json`：`repoRoot` / `piSourceRoot` / `gitBashPath`（每机一份，已 gitignore）。
+- bash 可用（Git Bash 装在非标准路径，已按 `gitBashPath` 写进 `~/.pi/agent/settings.json` 的 `shellPath`）；`node` 可用（Node v22）。
+- 源码仓库是完整 monorepo（含 `packages/coding-agent/src/`、`packages/agent/`），在位于 `machine.config.json.piSourceRoot`。
 - 「引用文档走 `packages/coding-agent/docs/`，根目录没有 docs/」同样成立。
-- 2026-10-06：pi 升到 **1.0.4**（源码与全局安装一致，HEAD `18336987a`，覆盖 v1.0.1–v1.0.4，最后提交 2026-10-06）。
-- 2026-10-06：`~/.pi/agent/settings.json` 新增 `extensions: ["D:/learning-lessons/pi/extensions"]`；其中 `pi/extensions/jev.ts`（547 行）把 Jev 分类模型包成 `jev` 工具（用 `ctx.modelRegistry.classify()`）——这是阶段 3/4 的**真实扩展素材**，未入库。
-- 1.0.1–1.0.4 对已有课程的影响（小）：`--tools` 支持 `+name/-name`、`*` 模式与 `--no-mcp`；`Home`/`End` 行为调整；`models.json` 新增 `samplingParamsByThinkingLevel`；`coding-agent` 的 Azure provider 改名为 `azure`（Breaking）；`outputPad` 现也作用于 `!` 输出/工具输出/摘要块。核心机制未变。
+- 2026-10-11：pi 现为 **1.1.0**（HEAD `ea448f454`，2026-10-10）。课程仍按记录版本 `0.82.1` 写。
+- 1.0.1–1.0.4 的影响（小）：`--tools`/`--exclude-tools` 支持 `*` 模式、`--no-mcp`；`Home`/`End` 行为调整；`models.json` 新增 `samplingParamsByThinkingLevel`；`coding-agent` 的 Azure provider 改名为 `azure`（Breaking）。
+- 1.1.0 的影响（对二次开发最相关的几条）：`--tools` 新增 `+name/-name`（改默认选中项而非整个替换）；工具渲染上下文新增 `outputPad`（现也作用于 `!` 输出 / 工具输出 / 摘要块）与 `durationMs`；`tool_execution_end`、`agent_settled` 新增 `durationMs` / `aborted`；分类器新增 GPT-6 Luna（`OPENAI_API_KEY`）与 llama.cpp 原生 decision model（Julia-1 / Laya / Kev / lev / OpenJev），`models.classify()` 开始接受 `images`。核心机制未变。
+- 2026-10-11：`~/.pi/agent/settings.json` 的 `extensions` 指向本仓库的 `pi/extensions`。**它以本机绝对路径形式写在机器配置里，每台机器要重设一次**——所以绝不要把该路径抄进任何入库文件（这正是旧记录踩过的坑）。
+- `pi/extensions/jev.ts`（547 行）：把 Jev 分类模型包成 `jev` 工具（用 `ctx.modelRegistry.classify()`），是阶段 3/4 的**真实扩展素材**，**已入库**（旧记录写「未入库」已过期）。两点注意：
+  - 它是**可选**素材——`LEARNING_PATH.md` 任何阶段清单都没有列它；pi 也支持 `pi -e ./pi/extensions/jev.ts` 显式加载，不挂全局设置不影响主线。
+  - 它需要 Jev-capable provider（`TYPESAFE_API_KEY` / `OPENROUTER_API_KEY` / `AI_GATEWAY_API_KEY` / `CLOUDFLARE_*` / `OPENCODE_API_KEY` 之一，见文件头注释）。本机 `~/.pi/agent/models.json` 目前只配了 `command-code`，没有 Jev provider，所以 `jev` 工具挂着也调不通。
 
 
 

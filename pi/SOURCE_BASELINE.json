@@ -1,0 +1,93 @@
+{
+  "commit": "482c1381a00d8d00bc81697e4a980c593db6803e",
+  "version": "1.3.0",
+  "capturedAt": "2026-10-18",
+  "watchedAreas": [
+    {
+      "name": "文档地图与用户主流程",
+      "paths": [
+        "packages/coding-agent/docs/index.md",
+        "packages/coding-agent/docs/quickstart.md",
+        "packages/coding-agent/docs/usage.md",
+        "packages/coding-agent/docs/cli.md",
+        "packages/coding-agent/docs/configuration.md",
+        "packages/coding-agent/docs/how-pi-works.md",
+        "packages/coding-agent/docs/message-types.md",
+        "packages/coding-agent/docs/mcp.md"
+      ],
+      "learningImpact": "复核文档地图、首次运行流程、交互/命令/上下文文件、CLI 参数与内建 MCP 等课程内容。"
+    },
+    {
+      "name": "模型与 Provider",
+      "paths": [
+        "packages/coding-agent/docs/providers.md",
+        "packages/coding-agent/docs/models.md",
+        "packages/coding-agent/docs/virtual-models.md"
+      ],
+      "learningImpact": "复核认证类型与凭据解析顺序、自定义模型与兼容 API 配置、分类模型清单。"
+    },
+    {
+      "name": "配置、会话与安全",
+      "paths": [
+        "packages/coding-agent/docs/settings.md",
+        "packages/coding-agent/docs/keybindings.md",
+        "packages/coding-agent/docs/sessions.md",
+        "packages/coding-agent/docs/session-format.md",
+        "packages/coding-agent/docs/compaction.md",
+        "packages/coding-agent/docs/security.md"
+      ],
+      "learningImpact": "复核全局/项目配置覆盖、按键格式、会话保存/恢复/分支与分享、压缩触发、项目信任与沙箱边界。"
+    },
+    {
+      "name": "Agent 循环与消息（手搓线）",
+      "paths": [
+        "packages/agent"
+      ],
+      "learningImpact": "复核最小循环结构、事件 emit 点、AgentMessage vs LLM Message、工具结果/错误回灌、StreamFn 契约。"
+    },
+    {
+      "name": "包契约与运行模式",
+      "paths": [
+        "packages/coding-agent/package.json",
+        "packages/coding-agent/README.md",
+        "packages/coding-agent/CHANGELOG.md",
+        "packages/coding-agent/examples/sdk",
+        "packages/coding-agent/docs/json.md",
+        "packages/coding-agent/docs/rpc.md",
+        "packages/coding-agent/docs/sdk.md",
+        "packages/ai/README.md",
+        "README.md"
+      ],
+      "learningImpact": "复核包入口与版本、四种运行模式入口、SDK/RPC/JSON 嵌入方式与扩展机制定位。"
+    }
+  ],
+  "files": [
+    { "path": "packages/coding-agent/README.md", "sha256": "fbc7abec7d0829ac8bc4b217e950794e1ba4d8d1b3e0850f970da318ad72e863" },
+    { "path": "packages/coding-agent/CHANGELOG.md", "sha256": "e3f6edeba5de7f430b03bb2daed0f56d1d6a88cd2963fff017e9508886560ccc" },
+    { "path": "packages/coding-agent/package.json", "sha256": "a253f61695fcf170fb9a5b57a4d59adb4eb27518852fb0d285e608ce19c91caa" },
+    { "path": "packages/agent/README.md", "sha256": "37da6831566eb0385a59da2ee055e7a7efe3e8e7a4b50aab8745ce43559197fe" },
+    { "path": "packages/agent/src/agent-loop.ts", "sha256": "28a2b03e34a7e32f004aa851e54d3b5be9dad71c392205614cbc9abdf3a9020a" },
+    { "path": "packages/agent/src/types.ts", "sha256": "2e116ef60fdaca4e26be5a1ace8d8b47f545d648d365de60b8c9f9d1ba629ee4" },
+    { "path": "packages/ai/README.md", "sha256": "1d449a01dd6213ee0d513c52cb25be4154d1d4dcbcb340d554fdc3df7606b66f" },
+    { "path": "packages/coding-agent/examples/sdk/01-minimal.ts", "sha256": "ffe5215e36f750f5ca7146cc7dfa5be36461292036d55b8db652b4d26331f351" },
+    { "path": "packages/coding-agent/docs/index.md", "sha256": "c107426e88eac570e9ecbea325cb45c2a6b778a324fd6e424bd032380a65614d" },
+    { "path": "packages/coding-agent/docs/quickstart.md", "sha256": "10c69b394304f6e7d6409b6bde02b0165f5723ff4acfd49cfa8f7414f977266a" },
+    { "path": "packages/coding-agent/docs/usage.md", "sha256": "6dfe7446c81d601d5ebef5769523115229f802da364fe90fcdf96e322ae9fbcd" },
+    { "path": "packages/coding-agent/docs/providers.md", "sha256": "bc8798e4cc3209e455e3dc50c6652ae73c057d40122a4a741d8b5b65a041c2f1" },
+    { "path": "packages/coding-agent/docs/models.md", "sha256": "2cd9463ec81285f022b3d35dccd91faaa6db08be3bd4f137f1b5e5780d771d2a" },
+    { "path": "packages/coding-agent/docs/settings.md", "sha256": "2915d26f91f4c46ab1b92e63cbc46b8d48888fa0e491168642a5a90f973bd814" },
+    { "path": "packages/coding-agent/docs/keybindings.md", "sha256": "413aa1c5e95a934d216aa5aba20052fa2cf35940ba5f02d1f4b22ff53c6ec678" },
+    { "path": "packages/coding-agent/docs/sessions.md", "sha256": "152d6489f61a6de9349c8ceaade95d5498fbc74f21771f41ba8e87ce0e5d8936" },
+    { "path": "packages/coding-agent/docs/compaction.md", "sha256": "b5b23d10bb86d8ab32b67f80a7e57febd953222c6da6fd422ae91d232ef28faf" },
+    { "path": "packages/coding-agent/docs/security.md", "sha256": "3b1e40a8d28b17c9eb7e496a7ba88fbe04665e3e6ae02873a58b943e325ad504" },
+    { "path": "packages/coding-agent/docs/session-format.md", "sha256": "4f8fc42179b332bcf71fe4c85cc95d914853ff7486d68742954a45316b512a4a" },
+    { "path": "packages/coding-agent/docs/cli.md", "sha256": "c45e59f31574de71770a71c9a7c9b6ac03bf9cad4928aa31bb6614d661733679" },
+    { "path": "packages/coding-agent/docs/configuration.md", "sha256": "fc48d1ce7d885c5253222415fb7a4b46d75f80e6431eb924174657ff775099eb" },
+    { "path": "packages/coding-agent/docs/how-pi-works.md", "sha256": "7d43ab8e2b886cd1047dcee503588a1c828b92333dd4f177526b89e6db8aaa8b" },
+    { "path": "packages/coding-agent/docs/virtual-models.md", "sha256": "5ab04dee3b3712b317522bb0784e28a3fef2e6b7fe1aeb1c1ca27778685a38f7" },
+    { "path": "packages/coding-agent/docs/slash-commands.md", "sha256": "d7e1db36e9186ff146a6c27de31fe169671f52cb6f7b93e1bf8d7fe76209a79c" },
+    { "path": "packages/coding-agent/docs/message-types.md", "sha256": "b832893fb762f87fdbbfd694241d484592942823791f3e81a6c4d915421ff5db" },
+    { "path": "packages/coding-agent/docs/mcp.md", "sha256": "23b9cca35d1340e8adce6bed8b495da0ebb58931179a937db87d610a1b40b9bf" }
+  ],
+  "captureNotes": "2026-10-18 上移至 HEAD（tag v1.3.0）。上一次锚点为 tag v1.0.0（2026-10-01），是课程文档课收口时的近似基点；本次先按 v1.0.0→HEAD 复核全部课程，再移基线：文档课多为概念级、结论未变，仅 lessons/0002 有两处真错（README 定位语 'minimal, extensible agent harness'、MCP 已内建），参照页另有若干修正（自定义地图的 MCP、glossary 的 compaction 落点、包结构图版本标签、usage 的 /share、models 的 classifier 表）。据此把 mcp.md 并入「文档地图与用户主流程」跟踪。源码课（lessons/0010、0016）与 packages/agent 自 v1.1.0 起无实质变化。文件哈希取自 HEAD 提交的字节；锚点后新增/删除的文件由路径比对呈现。"
+}

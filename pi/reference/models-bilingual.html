@@ -154,8 +154,8 @@
 
   <h2 id="classifier">Use classifier models / 用分类模型</h2>
   <div class="bi">
-    <div class="en">Classifier models do not chat. They answer typed questions about JSON state: pick one of several choices, answer yes or no, or give a score, each with probabilities.</div>
-    <div class="zh">分类模型不聊天。它们对 JSON 状态回答类型化问题：多选一、是非题，或打分题，每种都带概率。</div>
+    <div class="en">Classifier models do not chat. They answer typed questions about JSON state: pick one of several choices, answer yes or no, or give a score, each with probabilities. Pi includes TypeSafe's Jev model from these providers, Cloudflare's Clef and Clef Flash models from Workers AI, and OpenAI's GPT-6 Luna through the Decisions API.</div>
+    <div class="zh">分类模型不聊天。它们对 JSON 状态回答类型化问题：多选一、是非题，或打分题，每种都带概率。Pi 从这些 provider 纳入 TypeSafe 的 Jev、Cloudflare Workers AI 的 Clef 与 Clef Flash，以及经 Decisions API 的 OpenAI GPT-6 Luna。</div>
   </div>
   <table>
     <thead><tr><th>Provider</th><th>Model IDs</th><th>Authentication</th></tr></thead>
@@ -165,6 +165,7 @@
       <tr><td><code>cloudflare-workers-ai</code></td><td><code>typesafe/jev</code>, <code>@cf/cloudflare/clef</code>, <code>@cf/cloudflare/clef-flash</code></td><td><code>CLOUDFLARE_API_KEY</code> + <code>CLOUDFLARE_ACCOUNT_ID</code></td></tr>
       <tr><td><code>vercel-ai-gateway</code></td><td><code>typesafe-ai/jev</code></td><td><code>AI_GATEWAY_API_KEY</code></td></tr>
       <tr><td><code>opencode</code></td><td><code>jev-1.13</code>, <code>jev-1.13-free</code></td><td><code>OPENCODE_API_KEY</code></td></tr>
+      <tr><td><code>openai</code></td><td><code>gpt-6-luna</code></td><td><code>OPENAI_API_KEY</code></td></tr>
     </tbody>
   </table>
   <div class="bi">

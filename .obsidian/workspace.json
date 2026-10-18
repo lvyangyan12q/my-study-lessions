@@ -195,8 +195,8 @@
                   "activeTabId": "tab-1789829847941-p97bk38"
                 }
               },
-              "icon": "lucide-ghost",
-              "title": "claudian-view"
+              "icon": "bot",
+              "title": "Claudian"
             }
           }
         ],
@@ -220,26 +220,33 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "4101fabd9d20ddb2",
+  "active": "df6f461487288c10",
   "lastOpenFiles": [
-    "pi/lessons/0016-runloop.html",
-    "pi/lessons/0015-security.html",
-    "pi/lessons/0014-compaction.html",
-    "pi/lessons/0013-sessions.html",
-    "pi/lessons/0012-keybindings.html",
-    "pi/lessons/0011-settings.html",
-    "pi/reference/agent-readme-bilingual.html",
-    "pi/lessons/0010-agent-messages-events.html",
+    "pi/learning-records/0014-js-syntax-prerequisite.md.tmp.34336.eea87380927c",
+    "pi/NOTES.md.tmp.34336.beb4278e2fbc",
+    "pi/LEARNING_PATH.md.tmp.34336.dbc894fd04ed",
+    "pi/reference/js-syntax.html.tmp.34336.bf310fb581db",
+    "pi/learning-records/0014-js-syntax-prerequisite.md",
+    "pi/learning-records/0014-js-syntax-prerequisite.md.tmp.34336.42a45ec6ae6a",
+    "pi/NOTES.md.tmp.34336.268f6684f8c9",
+    "pi/RESOURCES.md.tmp.34336.56a5b5768fbd",
+    "pi/reference/js-syntax.html",
+    "pi/reference/js-syntax.html.tmp.34336.9c4dcce77d8d",
+    "pi/NOTES.md.tmp.34336.27587191a2a1",
+    "pi/NOTES.md.tmp.34336.8768140f7cbe",
+    "pi/learning-records/0013-agent-loop-closed.md",
+    "pi/learning-qa/0003-agent-loop.md",
+    "pi/learning-records/0012-mainline-skip-to-code.md",
+    "deepseek-harness/learning-records/0002-source-drift-assessment.md",
+    "pi/learning-records/0011-source-drift-assessment.md",
+    "pi/tools/README.md",
     "pi/learning-qa/security.md",
     "pi/learning-qa/compaction.md",
     "pi/learning-qa/sessions.md",
     "pi/learning-qa/keybindings.md",
     "pi/learning-qa/settings.md",
     "pi/learning-qa/models.md",
-    "pi/reference/models-bilingual.html",
-    "pi/lessons/0009-models.html",
     "pi/learning-qa/providers.md",
-    "pi/reference/providers-bilingual.html",
     "pi/learning-records/0010-intervention-points-in-the-loop.md",
     "pi/learning-qa/usage.md",
     "pi/learning-qa/quickstart.md",
@@ -250,13 +257,6 @@
     "pi/NOTES.md",
     "pi/LEARNING_PATH.md",
     "AGENT.md",
-    "deepseek-harness/RESOURCES.md",
-    "deepseek-harness/assets/README.md",
-    "deepseek-harness/tools/README.md",
-    "deepseek-harness/README.md",
-    "deepseek-harness/UPDATES.md",
-    "deepseek-harness/learning-qa/0001-agent-cycle.md",
-    "deepseek-harness/LEARNING_PATH.md",
-    "deepseek-harness/learning-records/0001-starting-point.md"
+    "deepseek-harness/RESOURCES.md"
   ]
 }

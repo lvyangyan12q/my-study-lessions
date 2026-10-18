@@ -60,6 +60,21 @@ async function runTool(call) {
 // ============================================================
 async function runLoop(msgs) {
 	throw new Error("TODO: 在这里实现最小 agent 循环");
+	while(true){
+		result=callModel(msgs)
+		msgs.push(result)
+		const calls=result.content.filter(isToolCall)
+		if(calls.length>0){
+			calls.for (let index = 0; index < array.length; index++) {
+				const element = array[index];
+				msgs.push(await runLoop(element))
+			}
+		}else{
+			return
+		}
+
+	}
+
 }
 
 // ============================================================

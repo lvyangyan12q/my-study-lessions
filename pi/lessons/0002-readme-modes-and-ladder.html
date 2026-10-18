@@ -15,7 +15,7 @@
   <p class="lead">README 是 Pi 的官方地图。二次开发者要从里面带走两样东西：这个程序能以哪几种方式运行，以及一个需求应该落在定制阶梯的哪一层。</p>
 
   <h2>Pi 是什么</h2>
-  <p>官方定位一句话：<strong>minimal terminal coding harness</strong>。默认只给模型四个工具：<code>read</code>、<code>write</code>、<code>edit</code>、<code>bash</code>。子代理、计划模式这类别家内建的功能，Pi 故意不做——原话是 <em>adapt pi to your workflows, not the other way around</em>：适配 Pi，而不是被 Pi 适配，且<strong>不必 fork 内核</strong>。这正是一切二次开发的前提。</p>
+  <p>官方定位一句话：<strong>minimal, extensible agent harness</strong>——极简、可扩展，任你改造成自己的样子。默认只给模型四个工具：<code>read</code>、<code>write</code>、<code>edit</code>、<code>bash</code>。子代理、计划模式这类别家内建的功能，Pi 故意不做——原话是 <em>adapt pi to your workflows, not the other way around</em>：适配 Pi，而不是被 Pi 适配，且<strong>不必 fork 内核</strong>。这正是一切二次开发的前提。</p>
 
   <h2>四种运行模式</h2>
   <table>
@@ -64,7 +64,7 @@
   <div class="card"><strong>安全红线：</strong>Pi Package 以完整系统权限运行。扩展就是任意代码，Skill 可以指挥模型执行任何动作——装第三方包前必须读源码。</div>
 
   <h2>设计哲学 → 你的判断框架</h2>
-  <p>核心刻意保持极小：没有内建 MCP，没有内建子代理和计划模式（README 明说这些用扩展实现）。接到一个二次开发需求时，按这个顺序问：</p>
+  <p>核心刻意保持极小：没有内建子代理和计划模式（README 明说这些留给扩展实现）。<strong>MCP 是例外</strong>——它已随内核内建：<code>builtin:mcp</code> 默认加载，读 <code>~/.pi/agent/mcp.json</code> 与 <code>.pi/mcp.json</code>，用 <code>pi mcp add/list</code> 管理、<code>--no-mcp</code> 临时关闭、会话里用 <code>/mcp</code> 查看。但这只是「接上外部服务器」，Pi 自身仍不内建子代理与计划模式。接到一个二次开发需求时，按这个顺序问：</p>
   <ol>
     <li>一段可复用提示词（Template）够吗？</li>
     <li>一份操作说明（Skill）够吗？</li>

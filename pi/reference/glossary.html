@@ -49,7 +49,7 @@
 
 <dt>compaction（上下文压缩）</dt>
 <dd>messages 越来越长会撑爆上下文窗口，于是把早期的对话总结成一段摘要再替换掉。它存在的原因正是"模型无记忆，每轮都要重发全部消息"。
-<span class="src">落点：<code>packages/agent/src/harness/compaction/</code></span></dd>
+<span class="src">落点：<code>packages/coding-agent/src/core/compaction/</code>（不在 agent 包内）</span></dd>
 
 <dt>AgentMessage vs LLM Message</dt>
 <dd>两套消息类型。agent 内部用更宽的 <code>AgentMessage</code>（可以塞 UI 专用消息），发给模型前必须经 <code>convertToLlm()</code> 过滤成模型认识的 <code>user</code> / <code>assistant</code> / <code>toolResult</code>。

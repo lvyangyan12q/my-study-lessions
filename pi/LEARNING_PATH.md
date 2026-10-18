@@ -4,7 +4,9 @@
 >
 > 两条使命不再分行，合并为一条顺序主线。「手搓」从阶段 2 的 agent 最小形态开始贯穿全程：每学一块扩展能力，就回到真实循环看它对应循环里的哪一点。
 >
-> 工作区：`F:/lessons-study/pi/`。源码仓库：`F:/ai-project/pi`（完整 monorepo）。主线文件路径相对于 `packages/coding-agent/`；手搓内容相对于 `packages/agent/`。课程 HTML 已并入此工作区（0001–0004 起），后续课程继续按编号往下写。
+> **主线提速（2026-10-18）**：为尽快进入原理与代码，原「阶段 1：作为用户掌握主流程」与「阶段 14：平台与维护参考」已下沉为**附录**（见文末「附录」节，速查页 `reference/appendix-user-basics.html`），不再阻塞主线。主线现按 **阶段 0 → 2 → 3 → … → 12 → 15** 走。
+>
+> 工作区：本学科目录 `pi/`。源码仓库位置不写死在此，读仓库根 `machine.config.json` 的 `piSourceRoot`（完整 monorepo）。主线文件路径相对于 `packages/coding-agent/`；手搓内容相对于 `packages/agent/`。课程 HTML 已并入此工作区（0001–0004 起），后续课程继续按编号往下写。
 
 ## 学习与考核规则
 
@@ -16,6 +18,7 @@
 6. 阶段结束追加 1 个小任务，要求组合本阶段知识完成。
 7. `CHANGELOG.md`（已直接给答案）的**复测**由教师混入后续 QA（不预告），通过前算未完成；其余文件以问答通过为准。
 8. 手搓线的课程（`lessons/0003` 起的 HTML）自带内嵌反馈（回忆卡 / 选择题 / 练习自判），读完课再顺手做完练习并自己对照判定即可，不阻塞主线前进。
+9. **附录阶段（原阶段 1、14）不逐篇考核**，只作查阅；主线只考核阶段 0 与 2–15 的核心概念与判断链。
 
 ## 阶段 0：认清学习对象
 
@@ -28,28 +31,12 @@
 
 阶段任务（回忆）：默写默认四工具；说出四种运行模式入口（interactive / print+JSON / RPC / SDK）；用一句话说清「程序驱动 Pi」与「Pi 驱动扩展」的区别。
 
-## 阶段 1：作为用户掌握主流程
-
-- [x] `docs/index.md`：文档地图。（配套课：`lessons/0005-docs-map.html`；2026-10-03 考核通过）
-- [x] `docs/quickstart.md`：安装、认证、第一次会话、项目指令。（配套课：`lessons/0006-quickstart.html`；中英对照：`reference/quickstart-bilingual.html`；2026-10-03 通过）
-- [x] `docs/usage.md`：交互、命令、消息队列、上下文文件、CLI 参数。（配套课：`lessons/0007-usage.html`；中英对照：`reference/usage-bilingual.html`；核心考点：三种介入方式 steer / follow-up / abort；2026-10-03 通过）
-- [ ] `docs/providers.md`：认证类型、凭据来源与解析顺序。（配套课：`lessons/0008-providers.html`；中英对照：`reference/providers-bilingual.html`；核心考点：凭据解析四级顺序 + `/logout` 边界；2026-10-03 直接给答案，未考核）
-- [ ] `docs/models.md`：自定义模型与兼容 API 配置。（配套课：`lessons/0009-models.html`；中英对照：`reference/models-bilingual.html`；2026-10-03 直接给答案，未考核）
-- [ ] `docs/models.md`：自定义模型与兼容 API 配置。
-- [ ] `docs/settings.md`：全局/项目配置及覆盖关系。（知识点已给：`learning-qa/settings.md`；配套课：`lessons/0011-settings.html`，未考核）
-- [ ] `docs/keybindings.md`：按键格式、动作和自定义绑定。（知识点已给：`learning-qa/keybindings.md`；配套课：`lessons/0012-keybindings.html`，未考核）
-- [ ] `docs/sessions.md`：会话保存、恢复、分支、fork、clone。（知识点已给：`learning-qa/sessions.md`；配套课：`lessons/0013-sessions.html`，未考核）
-- [ ] `docs/compaction.md`：压缩与分支摘要的触发和结果。（知识点已给：`learning-qa/compaction.md`；配套课：`lessons/0014-compaction.html`，未考核；阶段 7 地基）
-- [ ] `docs/security.md`：项目信任、无内置沙箱的边界。（知识点已给：`learning-qa/security.md`；配套课：`lessons/0015-security.html`，未考核）
-
-阶段任务：不用写代码，配置一个安全、可恢复、能切模型的日常工作流。
-
 ## 阶段 2：Agent 最小形态（第一次读内核）
 
 > 目的：在变成作者之前，先亲眼看见 pi 每轮在做什么。「模型无状态」「上下文就是整个数组」这两个事实，后面所有扩展知识都建立在它们之上。
 
-- [ ] `lessons/0003-agent-loop.html`（已有课）：agent = while 循环 + messages 数组 + 模型调用 + 工具执行。
-- [ ] `exercises/0001-agent-loop.mjs`：补全循环，假模型假工具已备好，`node` 直接跑。
+- [x] `lessons/0003-agent-loop.html`（已有课）：agent = while 循环 + messages 数组 + 模型调用 + 工具执行。（2026-10-18 考核通过，见 `learning-qa/0003-agent-loop.md`；残点「压缩不改数组」列入间隔复测）
+- [x] `exercises/0001-agent-loop.mjs`：补全循环，假模型假工具已备好，`node` 直接跑。（2026-10-18 自判通过；JS 语法缺口见 `reference/js-syntax.html` 与 `learning-records/0014`）
 - [ ] `packages/agent/README.md`：Message Flow、Event Flow、AgentMessage vs LLM Message。（配套课：`lessons/0010-agent-messages-events.html`；中英对照：`reference/agent-readme-bilingual.html`）
 - [ ] `packages/agent/src/agent-loop.ts` 的 `runLoop()`（第一遍，只读结构）：内外双层循环、工具批执行、事件 emit 点。（配套课：`lessons/0016-runloop.html`）
 - [ ] `lessons/0004-tool-failures.html`（已有课）：工具的四种失败 = 一条消息回灌给模型。
@@ -251,18 +238,6 @@
 - [ ] `examples/extensions/doom-overlay/doom/doomgeneric_pi.c`：WASM 宿主接口。
 - [ ] `examples/extensions/doom-overlay/doom/build.sh`：构建脚本。
 
-## 阶段 14：平台与维护参考（按需，不必顺序学）
-
-- [ ] `docs/windows.md`：Windows shell 配置。
-- [ ] `docs/termux.md`：Android/Termux 环境。
-- [ ] `docs/tmux.md`：tmux 键盘协议。
-- [ ] `docs/terminal-setup.md`：各终端键盘设置。
-- [ ] `docs/shell-aliases.md`：shell alias。
-- [ ] `docs/llama-cpp.md`：本地模型路由。
-- [ ] `docs/environment-variables.md`：进程和 shell 环境变量。
-- [ ] `docs/development.md`：完整源码仓库的开发、测试和目录结构。
-- [ ] `docs/docs.json`：官网文档导航配置，不属于运行时逻辑。
-
 ## 阶段 15：手搓 agent 毕业任务（主线终点）
 
 > 此时你已：见过最小循环（阶段 2）、会写扩展拦截循环各环节（阶段 4–8）、会用 SDK 托管同一个循环（阶段 9–10）、懂得工具执行的替换边界（阶段 11）。毕业任务把全部知识放回「从零写一个 agent」。
@@ -282,6 +257,35 @@
 4. 结论段回答 MISSION 的核心题：**这个能力该放扩展层还是核心层？**——用你自己写的那版做对照。
 
 完成即达成 MISSION Success 前四条（二次开发）与后四条（手搓 agent）的全部目标。
+
+## 附录：用户基础与平台维护（按需查阅，不考核）
+
+原「阶段 1：作为用户掌握主流程」与「阶段 14：平台与维护参考」下沉于此。**不逐篇出课与考核、不阻塞主线**；要点与去处统一收在速查页 [`reference/appendix-user-basics.html`](reference/appendix-user-basics.html)。条目与课号原样保留，便于查找。
+
+原阶段 1（用户文档，配套课 / 中英对照 / 问答均已备）：
+
+- [x] `docs/index.md`：文档地图。（课 0005；2026-10-03 通过）
+- [x] `docs/quickstart.md`：安装、认证、第一次会话、项目指令。（课 0006；中英对照；2026-10-03 通过）
+- [x] `docs/usage.md`：交互、命令、消息队列、上下文文件、CLI 参数。核心：三种介入 steer / follow-up / abort。（课 0007；中英对照；2026-10-03 通过）
+- [ ] `docs/providers.md`：认证类型、凭据来源与解析顺序。核心：凭据解析四级顺序 + `/logout` 边界。（课 0008；中英对照；`learning-qa/providers.md`）
+- [ ] `docs/models.md`：自定义模型与兼容 API 配置。（课 0009；中英对照；`learning-qa/models.md`）
+- [ ] `docs/settings.md`：全局/项目配置及覆盖关系。（课 0011；`learning-qa/settings.md`）
+- [ ] `docs/keybindings.md`：按键格式、动作和自定义绑定。（课 0012；`learning-qa/keybindings.md`）
+- [ ] `docs/sessions.md`：会话保存、恢复、分支、fork、clone。（课 0013；`learning-qa/sessions.md`）
+- [ ] `docs/compaction.md`：压缩与分支摘要的触发和结果。**阶段 7 的地基，仍值得回看。**（课 0014；`learning-qa/compaction.md`）
+- [ ] `docs/security.md`：项目信任、无内置沙箱的边界。（课 0015；`learning-qa/security.md`）
+
+原阶段 14（平台与维护参考，按需查，不必顺序学）：
+
+- `docs/windows.md`：Windows shell 配置。
+- `docs/termux.md`：Android/Termux 环境。
+- `docs/tmux.md`：tmux 键盘协议。
+- `docs/terminal-setup.md`：各终端键盘设置。
+- `docs/shell-aliases.md`：shell alias。
+- `docs/llama-cpp.md`：本地模型路由。
+- `docs/environment-variables.md`：进程和 shell 环境变量。
+- `AGENTS.md`（仓库根）：完整源码仓库的开发、测试和目录结构。**注意**：原列 `docs/development.md` 已随文档刷新 `25cc5c7bf`（2026-09-22）移除，内容并入仓库根 `AGENTS.md` / `CONTRIBUTING.md`。
+- `docs/docs.json`：官网文档导航配置，不属于运行时逻辑。
 
 ## 明确跳过：不是学习源码
 

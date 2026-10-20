@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>第十六课：runLoop() —— 双层循环与三条出口</title>
+  <link rel="stylesheet" href="../assets/course.css">
+  <script src="../../workspace.config.js"></script>
+  <script src="../assets/workspace-links.js" defer></script>
+  <script src="../assets/loop-stepper.js" defer></script>
+  <script src="../assets/quiz.js" defer></script>
+</head>
+<body><main>
+  <p class="eyebrow">Lesson 0016 · 约 14 分钟 · 核心：内外双层循环 + 工具批 + 出口</p>
+  <h1><code>runLoop()</code>：双层循环与三条出口</h1>
+  <p class="lead">第 3 课看的是「7 行骨架」，这一课进真实源码：<code>packages/agent/src/agent-loop.ts</code> 的 <code>runLoop()</code>。它比骨架多出来的，几乎全是<strong>边界处理</strong>——这正是「手搓 agent」时要对照的清单。</p>
+
+  <div class="goal"><h2>这一课带走什么</h2><p>画出内外两层循环；说出工具批的执行链；数清循环的三条出口。</p></div>
+
+  <h2>核心一：两层循环</h2>
+  <figure style="margin:1.4rem 0">
+    <svg viewBox="0 0 760 220" role="img" aria-label="runLoop 的内外两层循环" style="width:100%;height:auto">
+      <g font-family="var(--sans)">
+        <rect x="16" y="12" width="728" height="196" rx="8" fill="none" stroke="var(--accent)" stroke-dasharray="6 4"/>
+        <text x="34" y="34" font-size="11" fill="var(--accent)">外层 while (true)：等 follow-up，或 finishTurn 要求的 continue</text>
+        <rect x="52" y="50" width="656" height="118" rx="6" fill="var(--paper-2)" stroke="var(--rule)"/>
+        <text x="68" y="70" font-size="10" fill="var(--ink-soft)">内层 while (hasMoreToolCalls || pendingMessages)：工具调用 + steering</text>
+
+        <g fill="var(--paper)" stroke="var(--rule)">
+          <rect x="76" y="86" width="164" height="40" rx="5"/>
+          <rect x="256" y="86" width="146" height="40" rx="5"/>
+          <rect x="418" y="86" width="146" height="40" rx="5"/>
+          <rect x="580" y="86" width="104" height="40" rx="5"/>
+        </g>
+        <g font-size="9.5" fill="var(--ink)" text-anchor="middle">
+          <text x="158" y="104">prepareNextTurn? </text><text x="158" y="117">→ turn_start</text>
+          <text x="329" y="111">stream 模型回应</text>
+          <text x="491" y="111">执行工具批</text>
+          <text x="632" y="111">turn_end</text>
+        </g>
+        <g stroke="var(--rule-strong)"><line x1="240" y1="106" x2="254" y2="106"/><line x1="402" y1="106" x2="416" y2="106"/><line x1="564" y1="106" x2="578" y2="106"/><line x1="684" y1="106" x2="700" y2="106"/></g>
+        <text x="700" y="96" font-size="14" fill="var(--rule-strong)">↻</text>
+        <text x="70" y="200" font-size="10" fill="var(--accent)">内层停 → 有 follow-up 或 finishTurn 要 continue → 再来一轮；都没有 → break → emit agent_end</text>
+      </g>
+    </svg>
+    <figcaption class="src">依据 <a data-pi="packages/agent/src/agent-loop.ts" href="https://github.com/earendil-works/pi/blob/main/packages/agent/src/agent-loop.ts">agent-loop.ts</a> 的 <code>runLoop()</code>。<strong>内层</strong>管「工具调用 + steering」，<strong>外层</strong>管「follow-up + <code>finishTurn</code> 要求的 continue」。</figcaption>
+  </figure>
+
+  <h2>走一遍：从进循环到 <code>agent_end</code></h2>
+  <p>下面是 <code>runLoop()</code> 的骨架（省掉了 <code>prepareRequest</code>、<code>declareToolChanges</code>、compaction 等旁支）。点「下一步」，看 <code>messages</code> 每步怎么长。</p>
+  <loop-stepper data-code-title="runLoop() 骨架" data-messages-title="messages（状态）">
+    <script type="application/json">
+    {
+      "code": [
+        "while (true) {                                   // 外层",
+        "  let hasMoreToolCalls = true",
+        "  while (hasMoreToolCalls || pendingMessages.length > 0) {   // 内层",
+        "    if (lastCompletedTurn) { prepareNextTurn?.(); emit(turn_start) }",
+        "    for (m of [...preparedMessages, ...pendingMessages]) push(m)",
+        "    message = await streamAssistantResponse(...)",
+        "    if (stopReason === 'error' || 'aborted') { finishTurn(); return }",
+        "    toolCalls = message.content.filter(c => c.type === 'toolCall')",
+        "    batch = stopReason === 'length' ? failTruncated(toolCalls) : executeToolCalls(...)",
+        "    hasMoreToolCalls = !batch.terminate",
+        "    decision = await finishTurn(lastCompletedTurn)",
+        "    emit(turn_end); if (decision?.action === 'end') return",
+        "    pendingMessages = await getSteeringMessages?.()",
+        "  }",
+        "  followUp = await getFollowUpMessages?.()",
+        "  if (followUp.length) { pendingMessages = followUp; continue }",
+        "  if (explicitContinuation) { explicitContinuation = false; continue }",
+        "  break",
+        "}",
+        "await emit({ type: 'agent_end', messages: newMessages })"
+      ],
+      "steps": [
+        { "line": 0, "note": "进入外层。外层只做一件事：内层停下来之后，判断还要不要再跑一轮。", "messages": [ { "role": "user", "text": "统计 README.md 有多少行" } ] },
+        { "line": 2, "note": "内层第一轮。hasMoreToolCalls 初始为 true，所以一定进得来；pendingMessages（steering）此刻是空的。", "messages": [ { "role": "user", "text": "统计 README.md 有多少行" } ] },
+        { "line": 3, "note": "lastCompletedTurn 还是 undefined —— 这是整轮的第一个 turn。所以这里不调 prepareNextTurn、不 emit turn_start：它们在 runAgentLoop() 进入 runLoop() 之前就发过了。", "messages": [ { "role": "user", "text": "统计 README.md 有多少行" } ] },
+        { "line": 4, "note": "steering 消息在这里真正进入 transcript —— 同时进 currentContext.messages 和 newMessages。随后 pendingMessages 被清空。", "messages": [ { "role": "user", "text": "统计 README.md 有多少行" } ] },
+        { "line": 5, "note": "第一次流式回应回来：一条带 toolCall 的 assistant 消息，push 进 newMessages。", "messages": [ { "role": "user", "text": "统计 README.md 有多少行" }, { "role": "assistant", "text": "toolCall → read_file(\"README.md\")" } ] },
+        { "line": 8, "note": "有 toolCall → 进工具批。批内链条：tool_execution_start → prepareToolCall → execute → finalize → tool_execution_end → 生成 toolResult 消息。", "messages": [ { "role": "user", "text": "统计 README.md 有多少行" }, { "role": "assistant", "text": "toolCall → read_file(\"README.md\")" } ] },
+        { "line": 9, "note": "toolResult 被 push 进 messages。terminate 为 false（工具没要求终止整批）→ hasMoreToolCalls = true。", "messages": [ { "role": "user", "text": "统计 README.md 有多少行" }, { "role": "assistant", "text": "toolCall → read_file(\"README.md\")" }, { "role": "toolResult", "text": "128 行" } ] },
+        { "line": 11, "note": "finishTurn 拿到这一轮的完整结果，不返回决定 → 既不是 end 也不是 continue。emit turn_end，不是出口。", "messages": [ { "role": "user", "text": "统计 README.md 有多少行" }, { "role": "assistant", "text": "toolCall → read_file(\"README.md\")" }, { "role": "toolResult", "text": "128 行" } ] },
+        { "line": 12, "note": "查 steering：没有。但 hasMoreToolCalls 还是 true → 内层条件成立，再转一圈。", "messages": [ { "role": "user", "text": "统计 README.md 有多少行" }, { "role": "assistant", "text": "toolCall → read_file(\"README.md\")" }, { "role": "toolResult", "text": "128 行" } ] },
+        { "line": 5, "note": "内层第二轮。这次回来的 assistant 消息没有 toolCall —— 它是最终答案。", "messages": [ { "role": "user", "text": "统计 README.md 有多少行" }, { "role": "assistant", "text": "toolCall → read_file(\"README.md\")" }, { "role": "toolResult", "text": "128 行" }, { "role": "assistant", "text": "README.md 有 128 行。" } ] },
+        { "line": 9, "note": "toolCalls.length === 0 → 第 8 行那个 if 块整个跳过，hasMoreToolCalls 保持 false。", "messages": [ { "role": "user", "text": "统计 README.md 有多少行" }, { "role": "assistant", "text": "toolCall → read_file(\"README.md\")" }, { "role": "toolResult", "text": "128 行" }, { "role": "assistant", "text": "README.md 有 128 行。" } ] },
+        { "line": 12, "note": "steering 依旧为空，hasMoreToolCalls 为 false → 内层条件不成立，退出内层。", "messages": [ { "role": "user", "text": "统计 README.md 有多少行" }, { "role": "assistant", "text": "toolCall → read_file(\"README.md\")" }, { "role": "toolResult", "text": "128 行" }, { "role": "assistant", "text": "README.md 有 128 行。" } ] },
+        { "line": 14, "note": "回到外层。查 follow-up：用户在 agent 本该停下之后又发了一条消息。", "messages": [ { "role": "user", "text": "统计 README.md 有多少行" }, { "role": "assistant", "text": "toolCall → read_file(\"README.md\")" }, { "role": "toolResult", "text": "128 行" }, { "role": "assistant", "text": "README.md 有 128 行。" } ] },
+        { "line": 15, "note": "有 follow-up → 转成 pendingMessages，continue 回到外层顶部，再进内层。这就是「外层等 follow-up」的全部含义。", "messages": [ { "role": "user", "text": "统计 README.md 有多少行" }, { "role": "assistant", "text": "toolCall → read_file(\"README.md\")" }, { "role": "toolResult", "text": "128 行" }, { "role": "assistant", "text": "README.md 有 128 行。" } ] },
+        { "line": 3, "note": "新一轮内层：这次 lastCompletedTurn 有值了，于是 prepareNextTurn 被调用、turn_start 被 emit。follow-up 消息也在下一步进入 transcript。", "messages": [ { "role": "user", "text": "统计 README.md 有多少行" }, { "role": "assistant", "text": "toolCall → read_file(\"README.md\")" }, { "role": "toolResult", "text": "128 行" }, { "role": "assistant", "text": "README.md 有 128 行。" }, { "role": "user", "text": "再统计 docs/ 下有几个文件" } ] },
+        { "line": 16, "note": "假设这一轮也跑完：follow-up 用尽、finishTurn 也没要 continue（explicitContinuation 为 false）→ 走到 break。", "messages": [ { "role": "user", "text": "统计 README.md 有多少行" }, { "role": "assistant", "text": "toolCall → read_file(\"README.md\")" }, { "role": "toolResult", "text": "128 行" }, { "role": "assistant", "text": "README.md 有 128 行。" }, { "role": "user", "text": "再统计 docs/ 下有几个文件" }, { "role": "assistant", "text": "docs/ 下有 12 个文件。" } ] },
+        { "line": 19, "note": "emit agent_end，runLoop 返回。三条出口里，这条是最普通的：正常收敛。", "messages": [ { "role": "user", "text": "统计 README.md 有多少行" }, { "role": "assistant", "text": "toolCall → read_file(\"README.md\")" }, { "role": "toolResult", "text": "128 行" }, { "role": "assistant", "text": "README.md 有 128 行。" }, { "role": "user", "text": "再统计 docs/ 下有几个文件" }, { "role": "assistant", "text": "docs/ 下有 12 个文件。" } ] }
+      ]
+    }
+    </script>
+  </loop-stepper>
+
+  <h2>核心二：一条工具批怎么跑</h2>
+  <figure style="margin:1.4rem 0">
+    <svg viewBox="0 0 760 170" role="img" aria-label="工具批的执行链" style="width:100%;height:auto">
+      <g font-family="var(--sans)">
+        <g fill="var(--paper-2)" stroke="var(--rule)">
+          <rect x="10" y="46" width="170" height="42" rx="5"/><rect x="200" y="46" width="120" height="42" rx="5"/><rect x="340" y="46" width="120" height="42" rx="5"/><rect x="480" y="46" width="150" height="42" rx="5"/><rect x="650" y="46" width="100" height="42" rx="5"/>
+        </g>
+        <g font-size="10" fill="var(--ink)" text-anchor="middle">
+          <text x="95" y="72">prepareToolCall</text><text x="260" y="72">execute</text><text x="400" y="72">finalize</text><text x="555" y="72">tool_execution_end</text><text x="700" y="72">toolResult</text>
+        </g>
+        <g stroke="var(--rule-strong)"><line x1="180" y1="67" x2="198" y2="67"/><line x1="320" y1="67" x2="338" y2="67"/><line x1="460" y1="67" x2="478" y2="67"/><line x1="630" y1="67" x2="648" y2="67"/></g>
+        <text x="95" y="36" text-anchor="middle" font-size="8.5" fill="var(--accent)">找工具 · 校验参数 · beforeToolCall</text>
+        <text x="400" y="36" text-anchor="middle" font-size="8.5" fill="var(--accent)">afterToolCall</text>
+        <rect x="10" y="106" width="740" height="52" rx="5" fill="var(--bad-soft)" stroke="var(--bad)"/>
+        <text x="24" y="126" font-size="9.5" fill="var(--bad)">immediate 分支：工具不存在 / 参数不合法 / 被 beforeToolCall 拦截 / 已中止 → 直接产出一份 isError 结果，不进入 execute。</text>
+        <text x="24" y="146" font-size="9.5" fill="var(--bad)">特例：stopReason === "length" 时，整批走 failToolCallsFromTruncatedMessage——一个都不执行。</text>
+      </g>
+    </svg>
+    <figcaption class="src">工具<strong>默认并行</strong>执行；只要批里有一个工具声明 <code>executionMode: "sequential"</code>，或配置里 <code>toolExecution === "sequential"</code>，整批顺序执行。完成事件按完成顺序，但 toolResult 消息按 assistant 源码顺序。</figcaption>
+  </figure>
+
+  <h2>核心三：三条出口</h2>
+  <table>
+    <thead><tr><th>出口</th><th>触发</th><th>后果</th></tr></thead>
+    <tbody>
+      <tr><td>错误 / 中止</td><td><code>message.stopReason</code> 为 <code>"error"</code> / <code>"aborted"</code></td><td><code>finishTurn</code>（决策被忽略）→ <code>turn_end</code> → <code>agent_end</code> → <strong>直接 return</strong></td></tr>
+      <tr><td><code>finishTurn</code> 决定 end</td><td>钩子返回 <code>{ action: "end" }</code></td><td><code>turn_end</code> 后 → <code>agent_end</code> → return</td></tr>
+      <tr><td>正常收敛</td><td>没有工具调用、没有 steering、没有 follow-up</td><td>跳出外层 → <code>agent_end</code> → return</td></tr>
+    </tbody>
+  </table>
+  <div class="card"><strong><code>finishTurn</code> 的返回值是三值的：</strong>不返回 / 返回 <code>{action:"continue"}</code> / 返回 <code>{action:"end"}</code>。<code>end</code> 是出口；<code>continue</code> 不是出口，而是让外层再跑一轮「只带上下文、不带新用户消息」的 turn。所以外层循环等的是<strong>两个</strong>东西：follow-up 消息，和 <code>continue</code> 决定。</div>
+  <div class="card"><strong>对照手搓：</strong>7 行骨架只处理「正常收敛」这一条出口。真实实现还要接住 <code>error</code> / <code>aborted</code>、还要被 <code>finishTurn</code> 提前喊停、还要能被要求再续一轮——这就是「能跑的 demo」和「能用的 agent」的差距。</div>
+
+  <h2>emit 点速查</h2>
+  <table>
+    <thead><tr><th>阶段</th><th>emit</th></tr></thead>
+    <tbody>
+      <tr><td>开始</td><td><code>agent_start</code>、<code>turn_start</code>（由 <code>runAgentLoop()</code> 在进入 <code>runLoop()</code> 前 emit）</td></tr>
+      <tr><td>每条消息</td><td><code>message_start</code> / <code>message_end</code></td></tr>
+      <tr><td>流式回应</td><td><code>message_update</code>（含 <code>assistantMessageEvent</code>）</td></tr>
+      <tr><td>工具</td><td><code>tool_execution_start</code> / <code>_update</code> / <code>_end</code></td></tr>
+      <tr><td>收尾</td><td><code>turn_end</code>、最后 <code>agent_end</code></td></tr>
+    </tbody>
+  </table>
+
+  <h2>检索练习（合上再答）</h2>
+  <div class="recall">
+    <p class="q">不看上面：内层循环和外层循环各自处理什么？</p>
+    <button class="reveal">想好了，看答案</button>
+    <div class="answer" hidden><p><strong>内层</strong>：工具调用 + steering；<strong>外层</strong>：agent 本会停止时到达的 follow-up 消息。</p></div>
+  </div>
+  <div class="mcq" data-answer="0" data-explain="length 表示输出被 token 上限截断，工具参数可能是半截 JSON；执行会产生静默错误，所以整批标记失败、让模型重新发起。">
+    <p class="q">模型回应 <code>stopReason</code> 是 <code>length</code> 时，这批工具调用怎么处理？</p>
+    <ul class="mcq-options"><li>全部失败</li><li>逐个执行</li><li>重试一次</li><li>忽略跳过</li></ul>
+  </div>
+  <div class="mcq" data-answer="0" data-explain="agent_end 是整轮运行的最后一个事件，之后不再有循环事件（但 await 的 agent_end 订阅者仍要跑完才算 settle）。">
+    <p class="q">哪个事件表示整轮运行结束、之后不再有循环事件？</p>
+    <ul class="mcq-options"><li>代理结束</li><li>轮次结束</li><li>消息结束</li><li>工具结束</li></ul>
+  </div>
+
+  <div class="primary-source"><h2>主要出处</h2><p><a data-pi="packages/agent/src/agent-loop.ts" href="https://github.com/earendil-works/pi/blob/main/packages/agent/src/agent-loop.ts">agent-loop.ts</a>（<code>runLoop()</code>）+ <a data-pi="packages/agent/src/types.ts" href="https://github.com/earendil-works/pi/blob/main/packages/agent/src/types.ts">types.ts</a>（<code>AgentLoopConfig</code>）。配套：<a href="0003-agent-loop.html">第 3 课</a>、<a href="0004-tool-failures.html">第 4 课</a>、<a href="0010-agent-messages-events.html">第 10 课</a>、<a href="../reference/glossary.html">术语表</a>。</p></div>
+  <div class="ask-teacher"><p>核心是「两层循环的分工」与「三条出口」。不清楚直接问教师。</p></div>
+  <nav class="lesson-nav"><span><a href="0010-agent-messages-events.html">← 上一课：Message Flow 与 Event Flow</a></span><span><a data-pi="packages/agent/src/agent-loop.ts" href="https://github.com/earendil-works/pi/blob/main/packages/agent/src/agent-loop.ts">原文</a></span></nav>
+</main></body>
+</html>

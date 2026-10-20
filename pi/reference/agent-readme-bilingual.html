@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Reference · packages/agent/README.md 中英对照</title>
+  <link rel="stylesheet" href="../assets/course.css">
+  <script src="../../workspace.config.js"></script>
+  <script src="../assets/workspace-links.js" defer></script>
+</head>
+<body><main>
+  <p class="eyebrow">Reference · packages/agent/README.md 中英对照</p>
+  <h1>packages/agent/README.md 中英对照</h1>
+  <p class="lead">范围：`@earendil-works/pi-agent-core` 官方 README。英文原文在上、中文译文在下；代码保持原样。</p>
+
+  <div class="card">
+    <strong>使用方式：</strong>先读英文原文，再对照中文；<strong>以英文原文为准</strong>。原文：<a data-pi="packages/agent/README.md" href="https://github.com/earendil-works/pi/blob/main/packages/agent/README.md"><code>packages/agent/README.md</code></a>。配套课程：<a href="../lessons/0010-agent-messages-events.html">第 10 课 · Message Flow 与 Event Flow</a>。
+  </div>
+
+  <h2 id="intro">Stateful agent / 有状态 agent</h2>
+  <div class="bi">
+    <div class="en">Stateful agent with tool execution and event streaming. Built on <code>@earendil-works/pi-ai</code>.</div>
+    <div class="zh">带工具执行与事件流的有状态 agent，构建在 <code>@earendil-works/pi-ai</code> 之上。</div>
+  </div>
+  <pre><code>npm install @earendil-works/pi-agent-core</code></pre>
+
+  <h2 id="core">Core Concepts / 核心概念</h2>
+  <div class="bi">
+    <div class="en">The agent works with <code>AgentMessage</code>, a flexible type that can include:</div>
+    <div class="zh">agent 用 <code>AgentMessage</code>，这是一个灵活的类型，可包含：</div>
+  </div>
+  <div class="bi">
+    <div class="en">Standard LLM messages (<code>user</code>, <code>assistant</code>, <code>toolResult</code>)</div>
+    <div class="zh">标准 LLM 消息（<code>user</code>、<code>assistant</code>、<code>toolResult</code>）</div>
+  </div>
+  <div class="bi">
+    <div class="en">Custom app-specific message types via declaration merging</div>
+    <div class="zh">通过声明合并（declaration merging）加入应用自定义消息类型</div>
+  </div>
+  <div class="bi">
+    <div class="en">LLMs only understand <code>user</code>, <code>assistant</code>, and <code>toolResult</code>. The <code>convertToLlm</code> function bridges this gap by filtering and transforming messages before each LLM call.</div>
+    <div class="zh">LLM 只懂 <code>user</code>、<code>assistant</code>、<code>toolResult</code>。<code>convertToLlm</code> 在每次 LLM 调用前过滤并转换消息，填补这一差距。</div>
+  </div>
+
+  <h3>Message Flow / 消息流</h3>
+  <pre><code>AgentMessage[] → transformContext() → AgentMessage[] → convertToLlm() → Message[] → LLM
+                    (optional)                           (required)</code></pre>
+  <div class="bi">
+    <div class="en">transformContext: Prune old messages, inject external context</div>
+    <div class="zh">transformContext：修剪旧消息、注入外部上下文（可选）</div>
+  </div>
+  <div class="bi">
+    <div class="en">convertToLlm: Filter out UI-only messages, convert custom types to LLM format</div>
+    <div class="zh">convertToLlm：过滤掉 UI 专用消息、把自定义类型转成 LLM 格式（必需）</div>
+  </div>
+
+  <h3>Event Flow / 事件流</h3>
+  <div class="bi">
+    <div class="en">The agent emits events for UI updates. Understanding the event sequence helps build responsive interfaces.</div>
+    <div class="zh">agent 发出事件供 UI 更新；理解事件顺序有助于构建响应式界面。</div>
+  </div>
+  <pre><code>prompt("Hello")
+├─ agent_start
+├─ turn_start
+├─ message_start   { message: userMessage }
+├─ message_end     { message: userMessage }
+├─ message_start   { message: assistantMessage }
+├─ message_update  { message: partial... }
+├─ message_end     { message: assistantMessage }
+├─ turn_end        { message, toolResults: [] }
+└─ agent_end       { messages: [...] }</code></pre>
+  <div class="bi">
+    <div class="en">If the assistant calls tools, the loop continues: after the assistant <code>message_end</code> come <code>tool_execution_start/update/end</code>, the <code>toolResult</code> message, <code>turn_end</code>, then a new <code>turn_start</code> for the next LLM request, until no tool calls remain.</div>
+    <div class="zh">若 assistant 调用工具，循环会继续：assistant 的 <code>message_end</code> 之后是 <code>tool_execution_start/update/end</code>、<code>toolResult</code> 消息、<code>turn_end</code>，然后为下一次 LLM 请求开一个新的 <code>turn_start</code>，直到没有工具调用。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Tool execution mode is configurable. <code>parallel</code> (default): preflight tool calls sequentially, execute allowed tools concurrently, emit <code>tool_execution_end</code> as soon as each tool is finalized, then emit toolResult messages and <code>turn_end.toolResults</code> in assistant source order. <code>sequential</code>: execute tool calls one by one.</div>
+    <div class="zh">工具执行模式可配置。<code>parallel</code>（默认）：顺序预检，并发执行，每个工具定稿就发 <code>tool_execution_end</code>，但 toolResult 消息与 <code>turn_end.toolResults</code> 仍按 assistant 源码顺序。<code>sequential</code>：逐个执行。</div>
+  </div>
+  <div class="bi">
+    <div class="en">If any tool call in a batch targets a tool with <code>executionMode: "sequential"</code>, the entire batch executes sequentially regardless of the global setting.</div>
+    <div class="zh">批里只要有一个调用命中 <code>executionMode: "sequential"</code> 的工具，整批都顺序执行，无视全局设置。</div>
+  </div>
+
+  <h3>Event Types / 事件类型</h3>
+  <table>
+    <thead><tr><th>Event</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td><code>agent_start</code> / <code>agent_end</code></td><td>运行开始 / 结束（<code>agent_end</code> 是最后一个事件）</td></tr>
+      <tr><td><code>turn_start</code> / <code>turn_end</code></td><td>一轮开始 / 结束（一次 LLM 调用 + 工具执行）</td></tr>
+      <tr><td><code>message_start</code> / <code>message_end</code></td><td>任意消息开始 / 结束</td></tr>
+      <tr><td><code>message_update</code></td><td><strong>仅 assistant</strong>：带 <code>assistantMessageEvent</code> 增量</td></tr>
+      <tr><td><code>tool_execution_start</code> / <code>_update</code> / <code>_end</code></td><td>工具开始 / 流式进度 / 结束</td></tr>
+    </tbody>
+  </table>
+
+  <h2 id="options">Agent Options / Agent 选项（要点）</h2>
+  <div class="bi">
+    <div class="en"><code>convertToLlm</code> converts <code>AgentMessage[]</code> to LLM <code>Message[]</code> (required for custom message types).</div>
+    <div class="zh"><code>convertToLlm</code>：把 <code>AgentMessage[]</code> 转成 LLM 的 <code>Message[]</code>（自定义消息类型必需）。</div>
+  </div>
+  <div class="bi">
+    <div class="en"><code>transformContext</code> transforms context before <code>convertToLlm</code> (for pruning, compaction). <code>streamFn</code> is required and receives a <code>TranscriptContext</code>.</div>
+    <div class="zh"><code>transformContext</code>：在 <code>convertToLlm</code> 之前转换上下文（用于修剪、压缩）。<code>streamFn</code> 必需，接收 <code>TranscriptContext</code>。</div>
+  </div>
+  <div class="bi">
+    <div class="en"><code>beforeToolCall</code> runs after args are validated and can block execution. <code>afterToolCall</code> postprocesses each result before final tool events are emitted.</div>
+    <div class="zh"><code>beforeToolCall</code> 在参数校验后、执行前运行，可拦截；<code>afterToolCall</code> 在执行后、发最终工具事件前处理每个结果。</div>
+  </div>
+  <div class="bi">
+    <div class="en"><code>prepareRequest</code> rebuilds finalized context immediately before every provider request. <code>finishTurn</code> finalizes a completed turn before <code>turn_end</code> (<code>continue</code> ensures one next request; <code>end</code> ends the run).</div>
+    <div class="zh"><code>prepareRequest</code> 在每次 provider 请求前重建最终上下文；<code>finishTurn</code> 在 <code>turn_end</code> 前收尾（<code>continue</code> 保证再来一次请求；<code>end</code> 结束运行）。</div>
+  </div>
+
+  <h2 id="state">Agent State / Agent 状态</h2>
+  <div class="bi">
+    <div class="en">Access state via <code>agent.state</code>. Assigning <code>agent.state.tools = [...]</code> or <code>agent.state.messages = [...]</code> copies the top-level array before storing it.</div>
+    <div class="zh">用 <code>agent.state</code> 访问状态。给 <code>agent.state.tools</code> / <code>agent.state.messages</code> 赋值时会先复制顶层数组再存储。</div>
+  </div>
+  <div class="bi">
+    <div class="en">The transcript owns the system prompt and tool declarations. <code>agent.state.systemPrompt</code> is read-only; <code>agent.state.tools</code> is the executable loadout, diffed against declared tools before every request.</div>
+    <div class="zh">transcript 拥有 system prompt 与工具声明。<code>agent.state.systemPrompt</code> 只读；<code>agent.state.tools</code> 是可执行装载，每次请求前都会与声明的工具做差集比对。</div>
+  </div>
+  <div class="bi">
+    <div class="en">During streaming, <code>agent.state.streamingMessage</code> contains the current partial assistant message. <code>isStreaming</code> stays <code>true</code> until the run fully settles, including awaited <code>agent_end</code> subscribers.</div>
+    <div class="zh">流式过程中，<code>agent.state.streamingMessage</code> 是当前的部分 assistant 消息；<code>isStreaming</code> 到运行完全落定（含 await 的 <code>agent_end</code> 订阅者）才变 <code>false</code>。</div>
+  </div>
+
+  <h2 id="steering">Steering and Follow-up / 引导与后续</h2>
+  <div class="bi">
+    <div class="en">Steering messages let you interrupt the agent while tools are running. Follow-up messages let you queue work after the agent would otherwise stop.</div>
+    <div class="zh">steering 消息让你在工具运行时介入；follow-up 消息让你在 agent 本会停止后排入后续工作。（这就是第 7 课那三个介入方式在 API 层的形态。）</div>
+  </div>
+  <div class="bi">
+    <div class="en">When steering messages are detected after a turn completes: all tool calls from the current assistant message have already finished; steering messages are injected; the LLM responds on the next turn.</div>
+    <div class="zh">一轮完成后检测到 steering：当前 assistant 的全部工具调用已完成 → 注入 steering → 下一次回应在下一轮产生。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Follow-up messages are checked only when there are no more tool calls and no steering messages. If any are queued, they are injected and another turn runs.</div>
+    <div class="zh">只有在没有更多工具调用、也没有 steering 时，才检查 follow-up；若有排队，就注入并再跑一轮。</div>
+  </div>
+
+  <h2 id="tools">Tools / 工具</h2>
+  <div class="bi">
+    <div class="en">Define tools using <code>AgentTool</code>. Set <code>executionMode</code> to override the global execution mode for that tool.</div>
+    <div class="zh">用 <code>AgentTool</code> 定义工具；<code>executionMode</code> 可覆盖该工具的执行模式。</div>
+  </div>
+  <div class="bi">
+    <div class="en"><strong>Throw an error</strong> when a tool fails. Do not return error messages as content. Thrown errors are caught by the agent and reported to the LLM as tool errors with <code>isError: true</code>.</div>
+    <div class="zh">工具失败时<strong>抛错</strong>，不要把错误信息当内容返回。抛出的错误会被 agent 捕获，作为 <code>isError: true</code> 的工具错误报告给 LLM。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Return <code>terminate: true</code> from <code>execute()</code>, a blocked <code>beforeToolCall</code>, or <code>afterToolCall</code> to hint that the agent should stop after the current batch. Takes effect only when every finalized result in the batch is terminating.</div>
+    <div class="zh">从 <code>execute()</code>、被拦截的 <code>beforeToolCall</code>、或 <code>afterToolCall</code> 返回 <code>terminate: true</code>，提示在本批后停止。只有当批里每个定稿结果都 terminate 才生效。</div>
+  </div>
+
+  <h2 id="lowlevel">Low-Level API / 底层 API</h2>
+  <div class="bi">
+    <div class="en">For direct control without the Agent class, use <code>agentLoop()</code> and <code>agentLoopContinue()</code>.</div>
+    <div class="zh">不用 Agent 类、直接控制时，用 <code>agentLoop()</code> 与 <code>agentLoopContinue()</code>。</div>
+  </div>
+  <div class="bi">
+    <div class="en">These low-level streams are observational. They preserve event order, but do not wait for your async event handling to settle before later producer phases continue. If you need message processing to act as a barrier before tool preflight, use the <code>Agent</code> class.</div>
+    <div class="zh">这些底层流是「观察式」的：保持事件顺序，但不会等你异步事件处理落定再继续后续生产阶段。若需要「消息处理在工具预检前形成屏障」，用 <code>Agent</code> 类。</div>
+  </div>
+
+  <nav class="lesson-nav">
+    <span><a href="models-bilingual.html">速查：models 中英对照</a> · <a href="providers-bilingual.html">providers 中英对照</a></span>
+    <span><a href="../lessons/0010-agent-messages-events.html">第 10 课 · Message Flow 与 Event Flow</a> · <a data-pi="packages/agent/README.md" href="https://github.com/earendil-works/pi/blob/main/packages/agent/README.md">原文</a></span>
+  </nav>
+</main></body>
+</html>

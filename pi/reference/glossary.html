@@ -49,7 +49,7 @@
 
 <dt>compaction（上下文压缩）</dt>
 <dd>messages 越来越长会撑爆上下文窗口，于是把早期的对话总结成一段摘要再替换掉。它存在的原因正是"模型无记忆，每轮都要重发全部消息"。
-<span class="src">落点：<code>packages/agent/src/harness/compaction/</code></span></dd>
+<span class="src">落点：<code>packages/coding-agent/src/core/compaction/</code>（不在 agent 包内）</span></dd>
 
 <dt>AgentMessage vs LLM Message</dt>
 <dd>两套消息类型。agent 内部用更宽的 <code>AgentMessage</code>（可以塞 UI 专用消息），发给模型前必须经 <code>convertToLlm()</code> 过滤成模型认识的 <code>user</code> / <code>assistant</code> / <code>toolResult</code>。
@@ -78,6 +78,18 @@
 <dt>截断保护（truncated tool call）</dt>
 <dd>stopReason 为 length 时，工具参数可能被 token 上限截半。这类调用能解析、能过校验，但语义残缺，所以整批不执行、全部报错，逼模型重新发起。
 <span class="src">落点：<code>failToolCallsFromTruncatedMessage()</code></span></dd>
+
+<dt>steering message（引导消息 / steer）</dt>
+<dd>Pi 工作中按 <kbd>Enter</kbd> 发的消息。它<b>不打断本轮</b>，而是等「当前回应 + 其工具调用」结束后送达，用来调整方向、引导下一次回应。
+<span class="src">落点：usage.md；how-pi-works.md — steering messages enter after the current assistant turn</span></dd>
+
+<dt>follow-up message（后续消息）</dt>
+<dd>按 <kbd>Alt+Enter</kbd> 发的消息。排进队列，等 Pi 把<b>整个任务</b>做完后才取用，用于追加后续工作；因此不算打断当前任务。
+<span class="src">落点：usage.md；how-pi-works.md — follow-up messages enter after the agent has finished its pending work</span></dd>
+
+<dt>abort（中止）</dt>
+<dd>按 <kbd>Escape</kbd> 立即停止当前运行；排队但未送达的消息会<b>退回编辑器</b>，不会自动发出。
+<span class="src">落点：usage.md；how-pi-works.md — aborting stops the current run and returns queued messages to the editor</span></dd>
 
 </dl>
 

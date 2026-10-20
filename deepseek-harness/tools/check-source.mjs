@@ -6,6 +6,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const baselinePath = fileURLToPath(new URL('../SOURCE_BASELINE.json', import.meta.url));
+const machineConfigPath = fileURLToPath(new URL('../../machine.config.json', import.meta.url));
 
 function relativePath(value) {
   if (typeof value !== 'string' || !value || value.includes('\0')) {
@@ -21,9 +22,10 @@ function relativePath(value) {
 
 function readBaseline() {
   const baseline = JSON.parse(readFileSync(baselinePath, 'utf8'));
-  if (typeof baseline.repositoryPath !== 'string' || !/^[a-f\d]{40,64}$/i.test(baseline.commit)
+  if ((baseline.repositoryPath !== undefined && typeof baseline.repositoryPath !== 'string')
+    || !/^[a-f\d]{40,64}$/i.test(baseline.commit)
     || !Array.isArray(baseline.watchedAreas) || !Array.isArray(baseline.files)) {
-    throw new Error('SOURCE_BASELINE.json 缺少 repositoryPath、完整 commit、watchedAreas 或 files。');
+    throw new Error('SOURCE_BASELINE.json 缺少完整 commit、watchedAreas 或 files。');
   }
   baseline.watchedAreas = baseline.watchedAreas.map(area => {
     if (typeof area.name !== 'string' || !Array.isArray(area.paths)
@@ -37,6 +39,27 @@ function readBaseline() {
     return { path: relativePath(file.path), sha256: file.sha256.toLowerCase() };
   });
   return baseline;
+}
+
+// 本机源码目录不属于仓库内容，放仓库根 machine.config.json（每机一份，已 gitignore）。
+// 读不到就退回 --source，再退回旧基线里的 repositoryPath。
+function readMachineConfigSource() {
+  let raw;
+  try {
+    raw = readFileSync(machineConfigPath, 'utf8');
+  } catch (error) {
+    if (error.code === 'ENOENT') return undefined;
+    throw error;
+  }
+  let config;
+  try {
+    config = JSON.parse(raw);
+  } catch (error) {
+    throw new Error(`machine.config.json 不是合法 JSON：${error.message}`);
+  }
+  return typeof config.deepseekSourceRoot === 'string' && config.deepseekSourceRoot.trim()
+    ? config.deepseekSourceRoot.trim()
+    : undefined;
 }
 
 function isPrivatePath(file) {
@@ -75,16 +98,21 @@ function parseChanges(output) {
 }
 
 function main() {
+  const usage = '用法：node check-source.mjs [--source <源仓库目录>]';
   const args = process.argv.slice(2);
   if (args.length === 1 && args[0] === '--help') {
-    console.log('用法：node check-source.mjs [--source <源仓库目录>]');
+    console.log(`${usage}\n未指定 --source 时，按仓库根 machine.config.json 的 deepseekSourceRoot 解析。`);
     return;
   }
   if (args.length && (args.length !== 2 || args[0] !== '--source' || !args[1])) {
-    throw new Error('用法：node check-source.mjs [--source <源仓库目录>]');
+    throw new Error(usage);
   }
   const baseline = readBaseline();
-  const source = realpathSync(path.resolve(args[1] ?? baseline.repositoryPath));
+  const target = args[1] ?? readMachineConfigSource() ?? baseline.repositoryPath;
+  if (typeof target !== 'string' || !target) {
+    throw new Error('没有可用的源码目录：用 --source 指定，或在仓库根 machine.config.json 写 deepseekSourceRoot。');
+  }
+  const source = realpathSync(path.resolve(target));
   const git = gitArgs => execFileSync('git', ['--no-optional-locks', '-c', 'core.fsmonitor=false', '-c', `safe.directory=${source}`, '-C', source, ...gitArgs], {
     encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], maxBuffer: 32 * 1024 * 1024,
     env: { ...process.env, GIT_OPTIONAL_LOCKS: '0', GIT_NO_LAZY_FETCH: '1' },

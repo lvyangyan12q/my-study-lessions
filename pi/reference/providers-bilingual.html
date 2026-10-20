@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Reference · docs/providers.md 中英对照</title>
+  <link rel="stylesheet" href="../assets/course.css">
+  <script src="../../workspace.config.js"></script>
+  <script src="../assets/workspace-links.js" defer></script>
+</head>
+<body><main>
+  <p class="eyebrow">Reference · docs/providers.md 中英对照</p>
+  <h1>docs/providers.md 中英对照</h1>
+  <p class="lead">范围：provider 认证与专属配置全文。英文原文在上、中文译文在下；环境变量表与代码保持原样。</p>
+
+  <div class="card">
+    <strong>使用方式：</strong>先读英文原文，再对照中文译文；<strong>以英文原文为准</strong>。原始文件：<a data-pi="packages/coding-agent/docs/providers.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/providers.md"><code>packages/coding-agent/docs/providers.md</code></a>。配套课程：<a href="../lessons/0008-providers.html">第 8 课 · Providers：认证与凭据解析</a>。<strong>凭据解析顺序</strong>在 <a data-pi="packages/coding-agent/docs/models.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/models.md">models.md</a>，不在本文。
+  </div>
+
+  <h2 id="intro">Providers / Provider</h2>
+  <div class="bi">
+    <div class="en">Most hosted providers support one or both of these authentication methods:</div>
+    <div class="zh">大多数托管 provider 支持下列认证方式中的一种或两种：</div>
+  </div>
+  <div class="bi">
+    <div class="en">Sign in through a browser or device flow backed by OAuth.</div>
+    <div class="zh">通过 OAuth 支撑的浏览器或设备授权流登录。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Provide an API key.</div>
+    <div class="zh">提供 API key。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Use <code>/login [provider]</code> to see the methods supported by a provider. Amazon Bedrock and Google Vertex AI can also use ambient cloud credentials.</div>
+    <div class="zh">用 <code>/login [provider]</code> 查看某个 provider 支持的方式。Amazon Bedrock 与 Google Vertex AI 还能使用云端 ambient 凭据。</div>
+  </div>
+
+  <h2 id="interactive">Authenticate interactively / 交互式认证</h2>
+  <div class="bi">
+    <div class="en">Run <code>/login</code> and select a provider. Pi guides you through its OAuth or API-key flow and saves the resulting credential in <a data-pi="packages/coding-agent/docs/configuration.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/configuration.md#agent-directory"><code>auth.json</code></a>.</div>
+    <div class="zh">运行 <code>/login</code> 并选一个 provider。Pi 引导你走完它的 OAuth 或 API-key 流程，并把得到的凭据存进 <a data-pi="packages/coding-agent/docs/configuration.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/configuration.md#agent-directory"><code>auth.json</code></a>。</div>
+  </div>
+  <div class="bi">
+    <div class="en">On a remote or headless machine, an OAuth callback may not reach the local process. When prompted, paste the final redirect URL or authorization code back into Pi.</div>
+    <div class="zh">在远端或无头机器上，OAuth 回调可能到不了本地进程。按提示把最终重定向 URL 或授权码粘回 Pi。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Run <code>/logout</code> and select a provider to remove its stored credential. This does not unset environment variables, remove authentication from <code>models.json</code>, or revoke the credential at the provider.</div>
+    <div class="zh">运行 <code>/logout</code> 并选 provider 来移除已存凭据。这<strong>不会</strong>取消环境变量、<strong>不会</strong>移除 <code>models.json</code> 里的认证、<strong>也不会</strong>在 provider 处吊销该凭据。</div>
+  </div>
+  <div class="bi">
+    <div class="en"><code>auth.json</code> can contain API keys and OAuth tokens. Keep it private and do not commit it.</div>
+    <div class="zh"><code>auth.json</code> 可能含 API key 与 OAuth token：保密，别提交。</div>
+  </div>
+
+  <h2 id="env">Use an API key from the environment / 用环境变量提供 API key</h2>
+  <div class="bi">
+    <div class="en">Environment variables are useful in CI and anywhere Pi should not store the key. Set the variable before starting Pi:</div>
+    <div class="zh">在 CI，以及任何不该让 Pi 存下 key 的地方，环境变量很有用。启动 Pi 前设好变量：</div>
+  </div>
+  <pre><code>export ANTHROPIC_API_KEY=sk-ant-...
+pi</code></pre>
+  <div class="bi">
+    <div class="en">This table covers providers with a single primary API-key variable. Providers that need additional configuration or support ambient credentials are covered under <a href="#provider-specific-config">Provider Specific Config</a>.</div>
+    <div class="zh">下表覆盖只有单个主 API-key 变量的 provider。需要额外配置或支持 ambient 凭据的，见 <a href="#provider-specific-config">Provider Specific Config</a>。</div>
+  </div>
+  <table>
+    <thead><tr><th>Provider</th><th>Environment variable</th></tr></thead>
+    <tbody>
+      <tr><td>Anthropic</td><td><code>ANTHROPIC_API_KEY</code></td></tr>
+      <tr><td>Ant Ling</td><td><code>ANT_LING_API_KEY</code></td></tr>
+      <tr><td>OpenAI</td><td><code>OPENAI_API_KEY</code></td></tr>
+      <tr><td>DeepSeek</td><td><code>DEEPSEEK_API_KEY</code></td></tr>
+      <tr><td>NVIDIA NIM</td><td><code>NVIDIA_API_KEY</code></td></tr>
+      <tr><td>Google Gemini</td><td><code>GEMINI_API_KEY</code></td></tr>
+      <tr><td>GitHub Copilot</td><td><code>COPILOT_GITHUB_TOKEN</code></td></tr>
+      <tr><td>Mistral</td><td><code>MISTRAL_API_KEY</code></td></tr>
+      <tr><td>Groq</td><td><code>GROQ_API_KEY</code></td></tr>
+      <tr><td>Cerebras</td><td><code>CEREBRAS_API_KEY</code></td></tr>
+      <tr><td>xAI</td><td><code>XAI_API_KEY</code></td></tr>
+      <tr><td>OpenRouter</td><td><code>OPENROUTER_API_KEY</code></td></tr>
+      <tr><td>Vercel AI Gateway</td><td><code>AI_GATEWAY_API_KEY</code></td></tr>
+      <tr><td>ZAI Coding Plan (Global)</td><td><code>ZAI_API_KEY</code></td></tr>
+      <tr><td>ZAI Coding Plan (China)</td><td><code>ZAI_CODING_CN_API_KEY</code></td></tr>
+      <tr><td>OpenCode Zen and Go</td><td><code>OPENCODE_API_KEY</code></td></tr>
+      <tr><td>Radius</td><td><code>RADIUS_API_KEY</code></td></tr>
+      <tr><td>TypeSafe（classifier 模型）</td><td><code>TYPESAFE_API_KEY</code></td></tr>
+      <tr><td>Hugging Face</td><td><code>HF_TOKEN</code></td></tr>
+      <tr><td>Fireworks</td><td><code>FIREWORKS_API_KEY</code></td></tr>
+      <tr><td>Together AI</td><td><code>TOGETHER_API_KEY</code></td></tr>
+      <tr><td>Baseten</td><td><code>BASETEN_API_KEY</code></td></tr>
+      <tr><td>Kimi For Coding</td><td><code>KIMI_API_KEY</code></td></tr>
+      <tr><td>Meta</td><td><code>META_API_KEY</code></td></tr>
+      <tr><td>MiniMax</td><td><code>MINIMAX_API_KEY</code></td></tr>
+      <tr><td>MiniMax (China)</td><td><code>MINIMAX_CN_API_KEY</code></td></tr>
+      <tr><td>Moonshot AI (Global and China)</td><td><code>MOONSHOT_API_KEY</code></td></tr>
+      <tr><td>Qwen Token Plan and Individual</td><td><code>QWEN_TOKEN_PLAN_API_KEY</code></td></tr>
+      <tr><td>Qwen Token Plan (China)</td><td><code>QWEN_TOKEN_PLAN_CN_API_KEY</code></td></tr>
+      <tr><td>Xiaomi MiMo</td><td><code>XIAOMI_API_KEY</code></td></tr>
+      <tr><td>Xiaomi MiMo Token Plan (China)</td><td><code>XIAOMI_TOKEN_PLAN_CN_API_KEY</code></td></tr>
+      <tr><td>Xiaomi MiMo Token Plan (Amsterdam)</td><td><code>XIAOMI_TOKEN_PLAN_AMS_API_KEY</code></td></tr>
+      <tr><td>Xiaomi MiMo Token Plan (Singapore)</td><td><code>XIAOMI_TOKEN_PLAN_SGP_API_KEY</code></td></tr>
+    </tbody>
+  </table>
+  <div class="bi">
+    <div class="en">Anthropic also recognizes <code>ANTHROPIC_OAUTH_TOKEN</code> as an API credential and <code>ANTHROPIC_AUTH_TOKEN</code> as bearer authentication.</div>
+    <div class="zh">Anthropic 还认 <code>ANTHROPIC_OAUTH_TOKEN</code>（作为 API 凭据）与 <code>ANTHROPIC_AUTH_TOKEN</code>（bearer 认证）。</div>
+  </div>
+  <div class="bi">
+    <div class="en">With no key or token set, Anthropic uses workload identity federation when <code>ANTHROPIC_FEDERATION_RULE_ID</code>, <code>ANTHROPIC_ORGANIZATION_ID</code> and <code>ANTHROPIC_IDENTITY_TOKEN_FILE</code> are set: the Anthropic SDK exchanges the identity token for a short-lived access token and refreshes it itself (re-reading the identity token file, so keep that file fresh for long sessions). <code>ANTHROPIC_SERVICE_ACCOUNT_ID</code> and <code>ANTHROPIC_WORKSPACE_ID</code> are passed through when set.</div>
+    <div class="zh">在没设 key/token 时，只要设了 <code>ANTHROPIC_FEDERATION_RULE_ID</code>、<code>ANTHROPIC_ORGANIZATION_ID</code> 和 <code>ANTHROPIC_IDENTITY_TOKEN_FILE</code>，Anthropic 会使用 workload identity federation：Anthropic SDK 用身份令牌换取短期 access token 并自行刷新（会重新读身份令牌文件，所以长会话要让该文件保持新鲜）。设了 <code>ANTHROPIC_SERVICE_ACCOUNT_ID</code> 与 <code>ANTHROPIC_WORKSPACE_ID</code> 时会透传。</div>
+  </div>
+
+  <h2 id="command">Load an API key from a command / 从命令加载 API key</h2>
+  <div class="bi">
+    <div class="en">To use a secret manager without writing the resolved key to disk, set a provider's <code>key</code> in <code>auth.json</code> to a command prefixed with <code>!</code>:</div>
+    <div class="zh">想用密钥管理器、又不把解析出的 key 写到磁盘，就把 <code>auth.json</code> 里某 provider 的 <code>key</code> 设成以 <code>!</code> 开头的命令：</div>
+  </div>
+  <pre><code>{
+  "anthropic": {
+    "type": "api_key",
+    "key": "!security find-generic-password -ws 'anthropic'"
+  }
+}</code></pre>
+  <div class="bi">
+    <div class="en">Pi runs the command when the key is first needed and caches its standard output for the process lifetime. Empty output, a timeout, or a nonzero exit leaves the key unresolved until Pi restarts.</div>
+    <div class="zh">Pi 在首次需要该 key 时运行命令，并把它的标准输出缓存到本进程结束。空输出、超时或非零退出 → key 维持未解析，直到 Pi 重启。</div>
+  </div>
+
+  <h2 id="provider-specific-config">Provider Specific Config / Provider 专属配置</h2>
+  <div class="bi">
+    <div class="en">The providers below have additional setup, need additional settings, or can use credentials supplied by their platform.</div>
+    <div class="zh">下面这些 provider 有额外安装步骤、额外设置，或能用其平台提供的凭据。</div>
+  </div>
+  <div class="bi">
+    <div class="en">A stored API-key credential can include an <code>env</code> object. Its values take priority over the process environment for that provider:</div>
+    <div class="zh">存下的 API-key 凭据可带一个 <code>env</code> 对象，其值对该 provider 而言<strong>优先于进程环境</strong>：</div>
+  </div>
+  <pre><code>{
+  "cloudflare-workers-ai": {
+    "type": "api_key",
+    "key": "...",
+    "env": {
+      "CLOUDFLARE_ACCOUNT_ID": "account-id"
+    }
+  }
+}</code></pre>
+
+  <h3>Radius</h3>
+  <div class="bi">
+    <div class="en">Radius is a service crafted for Pi by the builders of Pi, Earendil Works. It provides a customizable AI gateway with organization-level controls and analytics built in, and artifacts for sharing what you create with Pi.</div>
+    <div class="zh">Radius 是 Pi 的构建者 Earendil Works 为 Pi 打造的服务：可定制的 AI 网关，内置组织级管控与分析，并提供分享产物的机制。</div>
+  </div>
+  <div class="bi">
+    <div class="en">To get started, run <code>/login radius</code> in Pi. This adds Radius as a provider, and its models appear in <code>/model</code> like any other provider's.</div>
+    <div class="zh">入门：在 Pi 里运行 <code>/login radius</code>。这会把 Radius 加为 provider，其模型像其它 provider 一样出现在 <code>/model</code>。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Radius also has an MCP server, so Pi can manage Radius for you.</div>
+    <div class="zh">Radius 也有 MCP server，Pi 可以替你管理 Radius。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Radius is currently in early alpha and evolving quickly. See <a href="https://radius.earendil.com">radius.earendil.com</a> for more.</div>
+    <div class="zh">Radius 目前是 early alpha、变化很快。更多见 <a href="https://radius.earendil.com">radius.earendil.com</a>。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Radius authentication uses its gateway catalog and caches refreshed model metadata for later offline startup. A custom Radius gateway configured in <code>models.json</code> uses its own catalog rather than inheriting the public <code>radius.pi.dev</code> catalog.</div>
+    <div class="zh">Radius 认证使用它的网关目录，并缓存刷新后的模型元数据供之后离线启动。在 <code>models.json</code> 里配置的自定义 Radius 网关使用自己的目录，不继承公共 <code>radius.pi.dev</code> 目录。</div>
+  </div>
+
+  <h3>Azure OpenAI</h3>
+  <div class="bi">
+    <div class="en">Set an API key plus either a base URL or resource name:</div>
+    <div class="zh">设置 API key，外加 base URL 或 resource name 二选一：</div>
+  </div>
+  <pre><code>export AZURE_OPENAI_API_KEY=...
+export AZURE_OPENAI_BASE_URL=https://your-resource.ai.azure.com
+# Or:
+export AZURE_OPENAI_RESOURCE_NAME=your-resource</code></pre>
+  <div class="bi">
+    <div class="en">Resource root URLs under <code>ai.azure.com</code>, <code>cognitiveservices.azure.com</code>, and <code>openai.azure.com</code> are normalized to the OpenAI API path.</div>
+    <div class="zh">位于 <code>ai.azure.com</code>、<code>cognitiveservices.azure.com</code>、<code>openai.azure.com</code> 下的资源根 URL 会被规范化为 OpenAI API 路径。</div>
+  </div>
+
+  <h3>Amazon Bedrock</h3>
+  <div class="bi">
+    <div class="en">Bedrock can use a bearer token or an ambient AWS credential source:</div>
+    <div class="zh">Bedrock 可用 bearer token，或用 ambient AWS 凭据来源：</div>
+  </div>
+  <pre><code># Named profile
+export AWS_PROFILE=your-profile
+
+# IAM keys
+export AWS_ACCESS_KEY_ID=AKIA...
+export AWS_SECRET_ACCESS_KEY=...
+# Required for temporary credentials
+export AWS_SESSION_TOKEN=...
+
+# Bedrock bearer token
+export AWS_BEARER_TOKEN_BEDROCK=...
+
+# Region, when not supplied by the profile or AWS SDK configuration
+export AWS_REGION=us-west-2
+# AWS_DEFAULT_REGION is also supported</code></pre>
+  <div class="bi">
+    <div class="en">Pi also supports ECS task credentials and IRSA through the standard <code>AWS_CONTAINER_CREDENTIALS_*</code> and <code>AWS_WEB_IDENTITY_TOKEN_FILE</code> variables.</div>
+    <div class="zh">Pi 还通过标准的 <code>AWS_CONTAINER_CREDENTIALS_*</code> 与 <code>AWS_WEB_IDENTITY_TOKEN_FILE</code> 变量支持 ECS 任务凭据与 IRSA。</div>
+  </div>
+
+  <h3>Cloudflare AI Gateway</h3>
+  <div class="bi">
+    <div class="en">The gateway requires a token, account ID, and gateway ID:</div>
+    <div class="zh">该网关需要 token、account ID、gateway ID：</div>
+  </div>
+  <pre><code>export CLOUDFLARE_API_KEY=...
+export CLOUDFLARE_ACCOUNT_ID=...
+export CLOUDFLARE_GATEWAY_ID=...</code></pre>
+  <div class="bi">
+    <div class="en">The account and gateway IDs can come from the process environment or the credential's <code>env</code> object in <code>auth.json</code>.</div>
+    <div class="zh">account 与 gateway ID 可来自进程环境，或 <code>auth.json</code> 里凭据的 <code>env</code> 对象。</div>
+  </div>
+  <div class="bi">
+    <div class="en"><code>CLOUDFLARE_API_KEY</code> authenticates Pi to the gateway. Upstream access can use Cloudflare unified billing, credentials stored in the gateway, or an <code>Authorization</code> header configured for the provider in <code>models.json</code>.</div>
+    <div class="zh"><code>CLOUDFLARE_API_KEY</code> 用于 Pi 认证到该网关。上游访问可用 Cloudflare 统一计费、网关内存的凭据，或 <code>models.json</code> 中为该 provider 配置的 <code>Authorization</code> 头。</div>
+  </div>
+
+  <h3>Cloudflare Workers AI</h3>
+  <div class="bi">
+    <div class="en">Workers AI requires a token and account ID:</div>
+    <div class="zh">Workers AI 需要 token 与 account ID：</div>
+  </div>
+  <pre><code>export CLOUDFLARE_API_KEY=...
+export CLOUDFLARE_ACCOUNT_ID=...</code></pre>
+  <div class="bi">
+    <div class="en">The account ID can also be stored in the credential's <code>env</code> object.</div>
+    <div class="zh">account ID 也可存在凭据的 <code>env</code> 对象里。</div>
+  </div>
+
+  <h3>Google Vertex AI</h3>
+  <div class="bi">
+    <div class="en">Use a Google Cloud API key:</div>
+    <div class="zh">用 Google Cloud API key：</div>
+  </div>
+  <pre><code>export GOOGLE_CLOUD_API_KEY=...</code></pre>
+  <div class="bi">
+    <div class="en">To use Application Default Credentials, configure a project and location:</div>
+    <div class="zh">要用 Application Default Credentials，则配置 project 与 location：</div>
+  </div>
+  <pre><code>export GOOGLE_CLOUD_PROJECT=your-project
+# GCLOUD_PROJECT is also supported
+export GOOGLE_CLOUD_LOCATION=us-central1</code></pre>
+  <div class="bi">
+    <div class="en">Then authenticate:</div>
+    <div class="zh">然后认证：</div>
+  </div>
+  <pre><code>gcloud auth application-default login</code></pre>
+  <div class="bi">
+    <div class="en">To use a service-account key file instead, set <code>GOOGLE_APPLICATION_CREDENTIALS</code> along with the project and location.</div>
+    <div class="zh">若改用 service-account key 文件，则设置 <code>GOOGLE_APPLICATION_CREDENTIALS</code>，并同样给出 project 与 location。</div>
+  </div>
+
+  <nav class="lesson-nav">
+    <span><a href="usage-bilingual.html">速查：usage 中英对照</a> · <a href="quickstart-bilingual.html">quickstart 中英对照</a></span>
+    <span><a href="../lessons/0008-providers.html">第 8 课 · Providers</a> · <a data-pi="packages/coding-agent/docs/providers.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/providers.md">原文</a></span>
+  </nav>
+</main></body>
+</html>

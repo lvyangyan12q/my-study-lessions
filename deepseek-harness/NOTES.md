@@ -4,10 +4,9 @@
 
 - 2026-09-20：目标是了解 DeepSeek Harness 的原理机制，后续开发插件和二次开发；特别要求考虑持续更新。
 - 起点：用户能读代码，但 agent 工具调用循环不熟。
-- 学习目录已随总仓库迁移到 `F:/lessons-study/deepseek-harness`（原 `D:/learning-lessons/deepseek-harness`）。
-- 源码目录已迁到 `F:/ai-project/deepseek-harness`（原 `D:/programming/workspace/deepseek-harness`）；已核对 remote 为 `deepseek-ai/deepseek-harness`，HEAD 与基线提交相同、工作区干净。
-- 2026-09-21：`SOURCE_BASELINE.json` 的 `repositoryPath` 已更新为新源码目录；在 WSL 里运行时用 `--source /mnt/f/ai-project/deepseek-harness`。
-- 每次继续教学前先跑 `check-source.mjs`；2026-09-21 复检结果：关注区域 0 变化、29 个基线文件哈希一致，第一课依据仍然有效。
+- 本机路径不写死在本文件：仓库根 `machine.config.json` 存 `repoRoot` / `deepseekSourceRoot`（每机一份，已 gitignore）。
+- 当前学习目录 = `machine.config.json.repoRoot` 下的 `deepseek-harness/`；当前源码目录 = `machine.config.json.deepseekSourceRoot`。
+- 其他学科记录里出现过的旧盘符（`D:`、`F:`）不代表本任务环境；一律以 `machine.config.json` 为准。
 
 ## 教学决策
 

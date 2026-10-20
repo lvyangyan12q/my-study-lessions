@@ -32,4 +32,14 @@
 		link.href = `${base}/${relative}`;
 		link.setAttribute("data-resolved", "local");
 	}
+
+	// 图片同理：<img data-pi="packages/.../images/x.png" src="https://raw.githubusercontent.com/...">
+	// 没配置就保留远程 src；配置了就读本地。
+	const images = document.querySelectorAll("img[data-pi]");
+	for (const img of images) {
+		const relative = (img.getAttribute("data-pi") || "").replace(/^\/+/, "");
+		if (!relative) continue;
+		img.src = `${base}/${relative}`;
+		img.setAttribute("data-resolved", "local");
+	}
 })();

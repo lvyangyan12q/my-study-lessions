@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Reference · docs/models.md 中英对照</title>
+  <link rel="stylesheet" href="../assets/course.css">
+  <script src="../../workspace.config.js"></script>
+  <script src="../assets/workspace-links.js" defer></script>
+</head>
+<body><main>
+  <p class="eyebrow">Reference · docs/models.md 中英对照</p>
+  <h1>docs/models.md 中英对照</h1>
+  <p class="lead">范围：选择模型与连接方式全文。英文原文在上、中文译文在下；代码与表格保持原样。</p>
+
+  <div class="card">
+    <strong>使用方式：</strong>先读英文原文，再对照中文译文；<strong>以英文原文为准</strong>。原始文件：<a data-pi="packages/coding-agent/docs/models.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/models.md"><code>packages/coding-agent/docs/models.md</code></a>。配套课程：<a href="../lessons/0009-models.html">第 9 课 · Choose a Model</a>。
+  </div>
+
+  <h2 id="intro">Choose a Model / 选择模型</h2>
+  <div class="bi">
+    <div class="en">For a built-in provider, start with <code>/login</code>, then choose a model with <code>/model</code>. Use custom model configuration only when Pi does not already include the provider or endpoint you need.</div>
+    <div class="zh">对内置 provider：先用 <code>/login</code>，再用 <code>/model</code> 选模型。只有当 Pi 没有你要的 provider / endpoint 时，才做自定义模型配置。</div>
+  </div>
+
+  <h2 id="connection">Choose a connection / 选择连接方式</h2>
+  <table>
+    <thead><tr><th>What you have / 你手里有什么</th><th>Recommended setup / 推荐做法</th></tr></thead>
+    <tbody>
+      <tr><td>A supported subscription<br>受支持的订阅</td><td>Sign in through <code>/login</code></td></tr>
+      <tr><td>A provider API key<br>provider 的 API key</td><td>Store it through <code>/login</code> or set its environment variable</td></tr>
+      <tr><td>A local GGUF model<br>本地 GGUF 模型</td><td>Connect Pi to the llama.cpp router</td></tr>
+      <tr><td>An OpenAI-, Anthropic-, or Google-compatible endpoint<br>兼容端点</td><td>Add it to <code>models.json</code></td></tr>
+      <tr><td>A provider with a custom protocol or authentication flow<br>自定义协议 / 认证</td><td>Build or install a provider extension</td></tr>
+    </tbody>
+  </table>
+  <div class="bi">
+    <div class="en">Browse the <a href="https://pi.dev/models">model catalog</a> for current providers, model IDs, capabilities, context limits, and pricing. Pi starts with its bundled catalog and can overlay newer catalog data from pi.dev. Cached catalog data remains available offline; run <code>pi update --models</code> to force a refresh.</div>
+    <div class="zh">在 <a href="https://pi.dev/models">模型目录</a> 查看 provider、模型 ID、能力、上下文上限与价格。Pi 从内置目录启动，并能覆盖 pi.dev 的更新数据；缓存数据可离线使用，用 <code>pi update --models</code> 强制刷新。</div>
+  </div>
+
+  <h2 id="auth">Authenticate / 认证</h2>
+  <div class="bi">
+    <div class="en">Run <code>/login</code> and select a provider. Pi stores credentials in <a data-pi="packages/coding-agent/docs/configuration.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/configuration.md#agent-directory"><code>auth.json</code></a>. Run <code>/logout</code> to remove stored credentials for a provider.</div>
+    <div class="zh">运行 <code>/login</code> 并选 provider，Pi 把凭据存进 <a data-pi="packages/coding-agent/docs/configuration.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/configuration.md#agent-directory"><code>auth.json</code></a>；用 <code>/logout</code> 移除某 provider 已存凭据。</div>
+  </div>
+  <div class="bi">
+    <div class="en">You can instead provide an API key through the provider's environment variable. This is useful in CI and other environments where Pi should not write credentials. <a data-pi="packages/coding-agent/docs/providers.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/providers.md">Providers</a> lists the variables and provider-specific setup.</div>
+    <div class="zh">也可以改用 provider 的环境变量提供 API key；这在 CI 等不该让 Pi 写凭据的环境有用。变量清单与 provider 专属设置见 <a data-pi="packages/coding-agent/docs/providers.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/providers.md">Providers</a>。</div>
+  </div>
+  <div class="bi">
+    <div class="en">When several credential sources are configured, Pi uses a runtime <code>--api-key</code> first, then a stored <code>auth.json</code> credential, an <code>apiKey</code> from <code>models.json</code>, and finally the provider's environment variables or ambient cloud credentials. Provider extensions can define their own authentication behavior.</div>
+    <div class="zh">当配置了多个凭据来源时，Pi 先用运行时 <code>--api-key</code>，其次 <code>auth.json</code> 里存储的凭据，再是 <code>models.json</code> 里的 <code>apiKey</code>，最后是 provider 的环境变量或云端 ambient 凭据。Provider 扩展可定义自己的认证行为。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Keep <code>auth.json</code> and any credential commands private. Project settings and extensions can execute inside the Pi process after you trust a project. Review <a data-pi="packages/coding-agent/docs/security.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/security.md">Security</a> before loading configuration from an untrusted directory.</div>
+    <div class="zh">把 <code>auth.json</code> 和任何凭据命令保密。信任某个项目后，项目设置与扩展会在 Pi 进程内执行。从不可信目录加载配置前先读 <a data-pi="packages/coding-agent/docs/security.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/security.md">Security</a>。</div>
+  </div>
+
+  <h2 id="select">Select a model / 选模型</h2>
+  <div class="bi">
+    <div class="en">Run <code>/model</code> to search available models. The picker shows models whose providers have usable authentication. Press <code>Ctrl+S</code> on a model to save it as the default for new sessions.</div>
+    <div class="zh">运行 <code>/model</code> 搜索可用模型；选择器只显示认证可用的模型。在某模型上按 <code>Ctrl+S</code> 存为新会话默认值。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Run <code>/thinking</code> to select the thinking level for the current model. Press <code>Ctrl+S</code> there to save the startup level. Pi limits the choices to levels supported by the selected model.</div>
+    <div class="zh">运行 <code>/thinking</code> 选当前模型的思考级别，按 <code>Ctrl+S</code> 存为启动级别；选项受所选模型支持范围限制。</div>
+  </div>
+  <div class="bi">
+    <div class="en"><code>Ctrl+P</code> cycles through available models. Use <code>/scoped-models</code> to control that cycle and save the selection, or configure model patterns through <a data-pi="packages/coding-agent/docs/settings.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/settings.md#model-cycling">Settings</a>.</div>
+    <div class="zh"><code>Ctrl+P</code> 循环切换可用模型；用 <code>/scoped-models</code> 控制该循环并保存选择，或通过 <a data-pi="packages/coding-agent/docs/settings.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/settings.md#model-cycling">Settings</a> 配置模型模式。</div>
+  </div>
+  <div class="bi">
+    <div class="en">A session records model and thinking-level changes. Resuming the session restores them without changing defaults for new sessions.</div>
+    <div class="zh">会话会记录模型与思考级别的变更；恢复会话会恢复它们，但不改新会话的默认值。</div>
+  </div>
+
+  <h2 id="local">Connect local models / 连接本地模型</h2>
+  <div class="bi">
+    <div class="en">Pi integrates directly with the llama.cpp router. The router discovers GGUF files and loads models on demand. Pi's <code>/llama</code> command manages the router, while <code>/model</code> selects one of its loaded models.</div>
+    <div class="zh">Pi 直接集成 llama.cpp router：router 发现 GGUF 文件并按需加载模型。<code>/llama</code> 管理 router，<code>/model</code> 选它已加载的模型。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Follow <a data-pi="packages/coding-agent/docs/llama-cpp.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/llama-cpp.md">Local Models with llama.cpp</a> for server startup, model layout, downloads, and connection troubleshooting.</div>
+    <div class="zh">服务启动、模型布局、下载与连接排错见 <a data-pi="packages/coding-agent/docs/llama-cpp.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/llama-cpp.md">Local Models with llama.cpp</a>。</div>
+  </div>
+  <div class="bi">
+    <div class="en">For Ollama, LM Studio, vLLM, SGLang, and other compatible servers, <a href="#compatible-endpoint">configure a compatible endpoint</a> in <code>models.json</code>.</div>
+    <div class="zh">Ollama、LM Studio、vLLM、SGLang 等兼容服务器，在 <code>models.json</code> 里 <a href="#compatible-endpoint">配置兼容端点</a>。</div>
+  </div>
+
+  <h2 id="compatible-endpoint">Configure a compatible endpoint / 配置兼容端点</h2>
+  <div class="bi">
+    <div class="en">Use <a data-pi="packages/coding-agent/docs/configuration.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/configuration.md#agent-directory"><code>models.json</code></a> when an endpoint speaks an API Pi already supports. This includes most Ollama, LM Studio, vLLM, SGLang, and proxy deployments.</div>
+    <div class="zh">当端点说的是 Pi 已支持的 API 时，用 <a data-pi="packages/coding-agent/docs/configuration.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/configuration.md#agent-directory"><code>models.json</code></a>；涵盖多数 Ollama、LM Studio、vLLM、SGLang 与代理部署。</div>
+  </div>
+  <pre><code>{
+  "providers": {
+    "ollama": {
+      "baseUrl": "http://localhost:11434/v1",
+      "api": "openai-completions",
+      "apiKey": "ollama",
+      "models": [
+        { "id": "qwen2.5-coder:7b" }
+      ]
+    }
+  }
+}</code></pre>
+  <div class="bi">
+    <div class="en">The dummy key makes the model available to Pi; Ollama ignores it. For an authenticated endpoint, <code>apiKey</code> and header values can use <code>$NAME</code> or <code>${NAME}</code> environment interpolation, a literal value, or a leading <code>!command</code>. Commands in <code>models.json</code> run at request time and are not cached by Pi.</div>
+    <div class="zh">占位 key 只是让模型对 Pi 可见，Ollama 不看它。需要认证的端点，<code>apiKey</code> 与 header 值可用 <code>$NAME</code> / <code>${NAME}</code> 环境插值、字面值，或以 <code>!command</code> 开头的命令；<strong>models.json 里的命令在请求时执行、不被缓存</strong>。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Opening <code>/model</code> reloads the file. A <code>models</code> entry adds or replaces a model with the same ID on that provider. Use <code>modelOverrides</code> to change metadata for an existing built-in or extension-provided model without replacing the provider's model list. Unknown override IDs are ignored.</div>
+    <div class="zh">打开 <code>/model</code> 会重新加载该文件。<code>models</code> 条目增/替同 ID 模型；用 <code>modelOverrides</code> 改内置或扩展提供模型的元数据、而不替换整个列表；未知 override ID 被忽略。</div>
+  </div>
+
+  <h3>Describe model input and caching / 描述模型输入与缓存</h3>
+  <div class="bi">
+    <div class="en">Use <code>inputLimits.images.resize</code> to control how Pi encodes new image attachments, <code>read</code> results, and tool-result images before storing them in conversation history:</div>
+    <div class="zh">用 <code>inputLimits.images.resize</code> 控制 Pi 在把新的图片附件、<code>read</code> 结果、工具结果图片存入对话历史前如何编码：</div>
+  </div>
+  <pre><code>{
+  "id": "vision-model",
+  "input": ["text", "image"],
+  "inputLimits": {
+    "images": {
+      "resize": {
+        "maxWidth": 1568,
+        "maxHeight": 1568,
+        "maxBytes": 524288,
+        "jpegQuality": 75
+      }
+    }
+  }
+}</code></pre>
+  <div class="bi">
+    <div class="en"><code>maxBytes</code> limits the base64-encoded payload. Omitted resize fields use conservative defaults of 2000 by 2000 pixels, 4.5 MiB encoded, and JPEG quality 80. Images are encoded once; changing models does not rewrite historical images.</div>
+    <div class="zh"><code>maxBytes</code> 限制 base64 编码后的载荷。未写的 resize 字段用保守默认：2000×2000 像素、编码后 4.5 MiB、JPEG 质量 80。图片只编码一次；换模型不会重写历史图片。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Use <code>promptCache</code> to declare the provider's best-effort cache lifetime in seconds for the <code>short</code> or <code>long</code> retention tier:</div>
+    <div class="zh">用 <code>promptCache</code> 声明 provider 在 <code>short</code> / <code>long</code> 档的最优缓存寿命（秒）：</div>
+  </div>
+  <pre><code>{ "id": "claude-sonnet-5", "promptCache": { "short": 300, "long": 3600 } }</code></pre>
+  <div class="bi">
+    <div class="en">Choose the conservative end of any published range. A model without a lifetime for the active tier is not eligible for cache warming. A <code>modelOverrides</code> entry can set <code>inputLimits</code> or <code>promptCache</code> for a built-in or extension model.</div>
+    <div class="zh">取官方区间的保守端。没有当前档寿命的模型不参与 cache warming。<code>modelOverrides</code> 可为内置或扩展模型设置 <code>inputLimits</code> 或 <code>promptCache</code>。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Compatibility settings should describe verified differences in the endpoint's request or response behavior. Do not enable them based only on an endpoint advertising OpenAI or Anthropic compatibility.</div>
+    <div class="zh">兼容性设置应描述端点请求/响应行为的**已验证**差异；不要仅凭端点自称 OpenAI / Anthropic 兼容就打开。</div>
+  </div>
+
+  <h2 id="classifier">Use classifier models / 用分类模型</h2>
+  <div class="bi">
+    <div class="en">Classifier models do not chat. They answer typed questions about JSON state: pick one of several choices, answer yes or no, or give a score, each with probabilities. Pi includes TypeSafe's Jev model from these providers, Cloudflare's Clef and Clef Flash models from Workers AI, and OpenAI's GPT-6 Luna through the Decisions API.</div>
+    <div class="zh">分类模型不聊天。它们对 JSON 状态回答类型化问题：多选一、是非题，或打分题，每种都带概率。Pi 从这些 provider 纳入 TypeSafe 的 Jev、Cloudflare Workers AI 的 Clef 与 Clef Flash，以及经 Decisions API 的 OpenAI GPT-6 Luna。</div>
+  </div>
+  <table>
+    <thead><tr><th>Provider</th><th>Model IDs</th><th>Authentication</th></tr></thead>
+    <tbody>
+      <tr><td><code>typesafe</code></td><td><code>jev-latest</code></td><td><code>TYPESAFE_API_KEY</code></td></tr>
+      <tr><td><code>openrouter</code></td><td><code>typesafe/jev-1.13</code>, <code>~typesafe/jev-latest</code></td><td><code>OPENROUTER_API_KEY</code> or <code>/login</code></td></tr>
+      <tr><td><code>cloudflare-workers-ai</code></td><td><code>typesafe/jev</code>, <code>@cf/cloudflare/clef</code>, <code>@cf/cloudflare/clef-flash</code></td><td><code>CLOUDFLARE_API_KEY</code> + <code>CLOUDFLARE_ACCOUNT_ID</code></td></tr>
+      <tr><td><code>vercel-ai-gateway</code></td><td><code>typesafe-ai/jev</code></td><td><code>AI_GATEWAY_API_KEY</code></td></tr>
+      <tr><td><code>opencode</code></td><td><code>jev-1.13</code>, <code>jev-1.13-free</code></td><td><code>OPENCODE_API_KEY</code></td></tr>
+      <tr><td><code>openai</code></td><td><code>gpt-6-luna</code></td><td><code>OPENAI_API_KEY</code></td></tr>
+    </tbody>
+  </table>
+  <div class="bi">
+    <div class="en">Classifier models do not appear in <code>/model</code>. The model reaches them through the <a data-pi="packages/coding-agent/docs/cli.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/cli.md#enable-codemode"><code>codemode</code></a> tool, which is off unless an MCP server turned it on. Enable it with <code>"defaultTools": ["+codemode"]</code> in <a data-pi="packages/coding-agent/docs/settings.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/settings.md#tools">settings</a>.</div>
+    <div class="zh">分类模型不出现在 <code>/model</code> 中；由模型通过 <a data-pi="packages/coding-agent/docs/cli.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/cli.md#enable-codemode"><code>codemode</code></a> 工具访问。该工具默认关闭（除非 MCP server 开启），用 settings 里的 <code>"defaultTools": ["+codemode"]</code> 启用。</div>
+  </div>
+  <pre><code>const jev = await models.getModelOfType("classifier", "typesafe", "jev-latest");
+const result = await models.classify(jev, {
+  state: { message: "The change works, thanks." },
+  questions: {
+    approved: {
+      type: "bool",
+      instructions: "Does the user approve of the result?",
+      criteria: { true: "Approval", false: "No approval" },
+    },
+  },
+});
+return result.answers;</code></pre>
+  <div class="bi">
+    <div class="en">When the service reports token counts, as all System One services do, <code>result.usage</code> carries them with their cost. Pi adds the usage of a script's classifier calls to the <code>codemode</code> tool result, so it counts toward the session cost.</div>
+    <div class="zh">当服务报告 token 数（所有 System One 服务都会），<code>result.usage</code> 会带上用量与花费。Pi 把脚本的分类调用用量计入 <code>codemode</code> 工具结果，从而计入会话花费。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Extensions call classifiers through <code>ctx.modelRegistry.classify()</code>, without codemode. <a data-pi="packages/coding-agent/docs/virtual-models.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/virtual-models.md#route-requests">Virtual models</a> can use them to route requests.</div>
+    <div class="zh">扩展通过 <code>ctx.modelRegistry.classify()</code> 调用分类模型，不用 codemode。<a data-pi="packages/coding-agent/docs/virtual-models.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/virtual-models.md#route-requests">虚拟模型</a> 可用它们做请求路由。</div>
+  </div>
+
+  <h2 id="image">Use image models / 用图像模型</h2>
+  <div class="bi">
+    <div class="en">Image models generate images from a prompt and optional input images. Pi lists OpenRouter's image models under the <code>openrouter</code> provider; they use the same <code>OPENROUTER_API_KEY</code> or <code>/login</code> credential as its chat models.</div>
+    <div class="zh">图像模型从提示词（可带输入图）生成图片。Pi 把 OpenRouter 的图像模型列在 <code>openrouter</code> provider 下，复用与聊天模型相同的 <code>OPENROUTER_API_KEY</code> 或 <code>/login</code> 凭据。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Like classifier models, image models do not appear in <code>/model</code>; the model reaches them through the <a data-pi="packages/coding-agent/docs/cli.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/cli.md#enable-codemode"><code>codemode</code></a> tool.</div>
+    <div class="zh">与分类模型一样，图像模型不出现在 <code>/model</code> 中，由模型通过 <a data-pi="packages/coding-agent/docs/cli.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/cli.md#enable-codemode"><code>codemode</code></a> 访问。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Extensions generate images through <code>ctx.modelRegistry.generateImages()</code>, without codemode.</div>
+    <div class="zh">扩展通过 <code>ctx.modelRegistry.generateImages()</code> 生成图片，不用 codemode。</div>
+  </div>
+
+  <h2 id="custom-provider">Add a custom provider / 加自定义 provider</h2>
+  <div class="bi">
+    <div class="en">Use an extension when the provider needs custom streaming, model discovery, or authentication behavior. See <a data-pi="packages/coding-agent/docs/custom-provider.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/custom-provider.md">Custom Providers</a>.</div>
+    <div class="zh">当 provider 需要自定义流式、模型发现或认证行为时，用扩展。见 <a data-pi="packages/coding-agent/docs/custom-provider.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/custom-provider.md">Custom Providers</a>。</div>
+  </div>
+
+  <h2 id="troubleshooting">Troubleshooting / 排错</h2>
+  <div class="bi">
+    <div class="en">A model does not appear: confirm that its provider has usable authentication. Custom models can load from <code>models.json</code> but remain unavailable in <code>/model</code> until Pi can resolve credentials.</div>
+    <div class="zh">模型不出现：确认其 provider 认证可用。自定义模型能从 <code>models.json</code> 载入，但在 Pi 解析出凭据前不会出现在 <code>/model</code>。</div>
+  </div>
+  <div class="bi">
+    <div class="en">Authentication works in one shell only: check whether the key came from an environment variable rather than <code>auth.json</code>. Environment variables must be present in the process that starts Pi.</div>
+    <div class="zh">只在某个 shell 里认证有效：检查 key 是否来自环境变量而非 <code>auth.json</code>——环境变量必须存在于启动 Pi 的那个进程里。</div>
+  </div>
+  <div class="bi">
+    <div class="en">A compatible endpoint rejects requests: check its API type and compatibility settings in <code>models.json</code>.</div>
+    <div class="zh">兼容端点拒绝请求：检查 <code>models.json</code> 里的 API 类型与兼容性设置。</div>
+  </div>
+
+  <nav class="lesson-nav">
+    <span><a href="providers-bilingual.html">速查：providers 中英对照</a> · <a href="usage-bilingual.html">usage 中英对照</a></span>
+    <span><a href="../lessons/0009-models.html">第 9 课 · Choose a Model</a> · <a data-pi="packages/coding-agent/docs/models.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/models.md">原文</a></span>
+  </nav>
+</main></body>
+</html>

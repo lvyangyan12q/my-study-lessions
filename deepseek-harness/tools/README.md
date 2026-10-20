@@ -6,10 +6,10 @@
 node .\deepseek-harness\tools\check-source.mjs
 ```
 
-源仓库移动后，用参数覆盖本次检查的路径：
+不传参数时，脚本按仓库根 `machine.config.json` 的 `deepseekSourceRoot` 找源仓库（该文件 gitignore，每台机器一份）。源仓库临时换位置时，用参数覆盖本次检查的路径：
 
 ```powershell
-node .\deepseek-harness\tools\check-source.mjs --source "D:\programming\workspace\deepseek-harness"
+node .\deepseek-harness\tools\check-source.mjs --source "<源仓库目录>"
 ```
 
 脚本固定读取自身上一级的 `SOURCE_BASELINE.json`，因此从其他工作目录调用也能找到基线。`watchedAreas[].paths` 接受仓库内的文件或目录相对路径，不使用 glob；目录会匹配其下的所有路径。

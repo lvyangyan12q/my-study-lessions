@@ -12,7 +12,19 @@
 - [packages/coding-agent/README.md](https://github.com/earendil-works/pi/blob/main/packages/coding-agent/README.md)
   Pi 的官方总览：定位、四种运行模式、定制阶梯、Philosophy、CLI 参考。用途：任何「Pi 是什么／怎么用」问题的第一入口。
 - [packages/coding-agent/docs/](https://github.com/earendil-works/pi/tree/main/packages/coding-agent/docs)
-  官方文档集（约 30 篇）。用途：`index.md` 是文档地图；扩展看 `extensions.md`+`tui.md`，嵌入看 `sdk.md`+`json.md`+`rpc.md`。
+  官方文档集（约 40 篇）。用途：`index.md` 是文档地图；扩展看 `extensions.md`+`tui.md`，嵌入看 `sdk.md`+`json.md`+`rpc.md`。
+- 附录「用户基础」的单点来源（`reference/appendix-user-basics.html` 每条要点的出处，均在 `packages/coding-agent/docs/` 下）：
+  [`quickstart.md`](https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/quickstart.md)、
+  [`usage.md`](https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/usage.md)、
+  [`models.md`](https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/models.md)、
+  [`providers.md`](https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/providers.md)、
+  [`settings.md`](https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/settings.md)、
+  [`keybindings.md`](https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/keybindings.md)、
+  [`sessions.md`](https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/sessions.md)、
+  [`compaction.md`](https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/compaction.md)、
+  [`security.md`](https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/security.md)、
+  [`mcp.md`](https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/mcp.md)。
+  平台维护类（windows / tmux / termux / terminal-setup / shell-aliases / llama-cpp / environment-variables）同目录；仓库开发与测试见根 [AGENTS.md](https://github.com/earendil-works/pi/blob/main/AGENTS.md)。
 - [packages/coding-agent/examples/](https://github.com/earendil-works/pi/tree/main/packages/coding-agent/examples)
   官方示例源码。用途：`extensions/` 是扩展 API 的事实标准（文档偏薄时以此为准）；`sdk/01-minimal.ts` 起是嵌入范例。
 - [packages/coding-agent/CHANGELOG.md](https://github.com/earendil-works/pi/blob/main/packages/coding-agent/CHANGELOG.md)
@@ -36,6 +48,8 @@
   Skill 遵循的开放标准（frontmatter、渐进加载）。用途：写 Skill 时的规范来源。
 - [Node.js 文档 · Package entry points](https://nodejs.org/api/packages.html#package-entry-points)
   `exports`/`main`/`types`/`bin` 的权威语义。用途：`package.json` 边界最终依据。
+- [MDN · JavaScript 参考](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference)
+  语法与内建对象的权威参考。用途：阶段 2 起写 JS/TS（`const` / `async` `await` / 箭头函数 / `Array.filter`、`some`、`push` / `for...of` 等）时的最终依据——`reference/js-syntax.html` 的每一条都能在这里查到。
 - [Mario Zechner：Why you don't need MCP](https://mariozechner.at/posts/2025-11-02-what-if-you-dont-need-mcp/)
   Philosophy 中「No MCP」的原始论证。
 - [Mario Zechner：Pi coding agent 设计说明](https://mariozechner.at/posts/2025-11-30-pi-coding-agent/)
@@ -59,5 +73,5 @@
 
 ## 教学主线
 
-主线（阶段 0–13，按文件推进）：见 `LEARNING_PATH.md`。
-主线阶段 2 起：`lessons/0003`、`0004` → `packages/agent/` 源码 + 官方概念文档；阶段 15 是毕业任务（≤150 行手搓 agent）。
+主线（阶段 0、2–12、15；原阶段 1/14 已下沉附录，按文件推进）：见 `LEARNING_PATH.md`。
+主线阶段 2 起：`lessons/0003`、`0004` → `packages/agent/` 源码 + 官方概念文档；阶段 15 是毕业任务（≤150 行手搓 agent）。附录（用户基础 / 平台维护）要点见 `reference/appendix-user-basics.html`。

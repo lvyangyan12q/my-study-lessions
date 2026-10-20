@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>第八课：Providers —— 认证与凭据解析</title>
+  <link rel="stylesheet" href="../assets/course.css">
+  <script src="../../workspace.config.js"></script>
+  <script src="../assets/workspace-links.js" defer></script>
+  <script src="../assets/quiz.js" defer></script>
+</head>
+<body><main>
+  <p class="eyebrow">Lesson 0008 · 约 12 分钟 · 核心：凭据从哪来、按什么顺序</p>
+  <h1>Providers：认证与凭据解析</h1>
+  <p class="lead">这篇讲「Pi 怎么拿到访问模型的凭据」。它本身是清单，但有<strong>一个核心判断</strong>：当好几处都配了凭据时，Pi 按固定顺序挑——先命中的胜出。搞清这个顺序，后面接自定义 provider、排查「为什么它不用我的 Key」都靠它。</p>
+
+  <div class="goal">
+    <h2>这一课带走什么</h2>
+    <p>能说出四种认证来源、凭据存在哪；能背出<strong>凭据解析的四级优先级</strong>；知道 <code>/logout</code> 到底删了什么、没删什么。</p>
+  </div>
+
+  <h2>核心：凭据解析顺序（高一低，第一个命中即胜出）</h2>
+  <figure style="margin:1.4rem 0">
+    <svg viewBox="0 0 760 232" role="img" aria-label="凭据解析顺序：--api-key、auth.json、models.json 的 apiKey、环境变量或云端凭据" style="width:100%;height:auto">
+      <g font-family="var(--sans)">
+        <rect x="40" y="40" width="520" height="34" rx="5" fill="var(--accent-soft)" stroke="var(--accent)"/>
+        <text x="54" y="62" font-size="12" fill="var(--accent)">① <tspan font-family="var(--mono)">--api-key</tspan>（运行时命令行传入）</text>
+
+        <rect x="40" y="84" width="520" height="34" rx="5" fill="var(--paper-2)" stroke="var(--rule)"/>
+        <text x="54" y="106" font-size="12" fill="var(--ink)">② <tspan font-family="var(--mono)">auth.json</tspan>（<tspan font-family="var(--mono)">/login</tspan> 存下的凭据）</text>
+
+        <rect x="40" y="128" width="520" height="34" rx="5" fill="var(--paper-2)" stroke="var(--rule)"/>
+        <text x="54" y="150" font-size="12" fill="var(--ink)">③ <tspan font-family="var(--mono)">models.json</tspan> 里的 <tspan font-family="var(--mono)">apiKey</tspan></text>
+
+        <rect x="40" y="172" width="520" height="34" rx="5" fill="var(--paper-2)" stroke="var(--rule)"/>
+        <text x="54" y="194" font-size="12" fill="var(--ink)">④ 环境变量 / 云端 ambient 凭据（如 <tspan font-family="var(--mono)">ANTHROPIC_API_KEY</tspan>）</text>
+
+        <text x="628" y="120" text-anchor="middle" font-size="20" fill="var(--rule-strong)">↓</text>
+        <text x="628" y="150" text-anchor="middle" font-size="9" fill="var(--ink-faint)">先命中的胜出</text>
+      </g>
+    </svg>
+    <figcaption class="src">依据 <a data-pi="packages/coding-agent/docs/models.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/models.md">docs/models.md</a>：「a runtime <code>--api-key</code> first, then a stored <code>auth.json</code> credential, an <code>apiKey</code> from <code>models.json</code>, and finally the provider's environment variables or ambient cloud credentials」。注意：这条顺序写在 <strong>models.md</strong>，不在 providers.md。</figcaption>
+  </figure>
+  <div class="card"><strong>一个补充优先级：</strong>存下的 API-key 凭据里可以带一个 <code>env</code> 对象，它的值<strong>优先于进程环境</strong>（同一 provider）。例：把 <code>CLOUDFLARE_ACCOUNT_ID</code> 放进凭据的 <code>env</code>，就盖过 shell 里的同名环境变量。</div>
+
+  <h2>认证方式</h2>
+  <table>
+    <thead><tr><th>方式</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>OAuth 登录</td><td>浏览器或设备授权流；<code>/login</code> 引导并保存结果</td></tr>
+      <tr><td>API key</td><td>直接在 <code>/login</code> 里存入，或用环境变量提供</td></tr>
+      <tr><td>云端 ambient 凭据</td><td>Amazon Bedrock、Google Vertex AI 可用平台自带凭据</td></tr>
+    </tbody>
+  </table>
+  <p>用 <code>/login [provider]</code> 查看某个 provider 支持哪些方式。</p>
+
+  <h2>凭据存在哪：<code>auth.json</code></h2>
+  <ul>
+    <li><code>/login</code> 走完 OAuth 或 API-key 流程后，凭据存进 <a data-pi="packages/coding-agent/docs/configuration.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/configuration.md#agent-directory"><code>auth.json</code></a>（agent 目录下）。</li>
+    <li>远端 / 无头机器上 OAuth 回调可能回不到本进程：按提示把**最终重定向 URL 或授权码**粘回 Pi。</li>
+    <li><code>/logout</code> 只移除存下的凭据——它<strong>不会</strong>取消环境变量、<strong>不会</strong>删 <code>models.json</code> 里的认证、<strong>也不会</strong>在 provider 那边吊销该凭据。</li>
+    <li><code>auth.json</code> 里可能有 API key 和 OAuth token：<strong>保密、别提交</strong>。</li>
+  </ul>
+
+  <h2>不落盘的两条路</h2>
+  <h3>用环境变量（CI 首选）</h3>
+  <pre><code>export ANTHROPIC_API_KEY=sk-ant-...
+pi</code></pre>
+  <p>单主变量示例：Anthropic→<code>ANTHROPIC_API_KEY</code>、OpenAI→<code>OPENAI_API_KEY</code>、Gemini→<code>GEMINI_API_KEY</code>、DeepSeek→<code>DEEPSEEK_API_KEY</code>（完整表见原文）。Anthropic 还认 <code>ANTHROPIC_OAUTH_TOKEN</code>（API 凭据）与 <code>ANTHROPIC_AUTH_TOKEN</code>（bearer）。</p>
+  <h3>用命令取 key（不写进磁盘）</h3>
+  <pre><code>{
+  "anthropic": {
+    "type": "api_key",
+    "key": "!security find-generic-password -ws 'anthropic'"
+  }
+}</code></pre>
+  <p><code>key</code> 以 <code>!</code> 开头时，Pi 在**首次需要该 key 时**执行命令、并缓存它的标准输出到进程结束。空输出、超时或非零退出 → key 保持未解析，直到重启。</p>
+
+  <h2>Provider 专属配置（速览）</h2>
+  <table>
+    <thead><tr><th>Provider</th><th>额外需要</th></tr></thead>
+    <tbody>
+      <tr><td>Azure OpenAI</td><td><code>AZURE_OPENAI_API_KEY</code> + <code>..._BASE_URL</code> 或 <code>..._RESOURCE_NAME</code></td></tr>
+      <tr><td>Amazon Bedrock</td><td>AWS 凭据（profile / IAM key / <code>AWS_BEARER_TOKEN_BEDROCK</code>）+ 区域</td></tr>
+      <tr><td>Cloudflare AI Gateway</td><td><code>CLOUDFLARE_API_KEY</code> + account id + gateway id</td></tr>
+      <tr><td>Cloudflare Workers AI</td><td><code>CLOUDFLARE_API_KEY</code> + account id</td></tr>
+      <tr><td>Google Vertex AI</td><td><code>GOOGLE_CLOUD_API_KEY</code>，或 ADC + project + location</td></tr>
+      <tr><td>Radius</td><td><code>/login radius</code>（early alpha）</td></tr>
+    </tbody>
+  </table>
+
+  <h2>检索练习（合上再答）</h2>
+  <div class="recall">
+    <p class="q">不看上面，写出凭据解析的四级顺序（从高到低）。</p>
+    <button class="reveal">想好了，看答案</button>
+    <div class="answer" hidden><p>① 运行时 <code>--api-key</code> → ② 存好的 <code>auth.json</code> 凭据 → ③ <code>models.json</code> 的 <code>apiKey</code> → ④ 环境变量 / 云端 ambient 凭据。</p></div>
+  </div>
+  <div class="mcq" data-answer="0" data-explain="凭据解析从高到低：运行时 --api-key → auth.json → models.json 的 apiKey → 环境变量 / 云端 ambient 凭据。所以最低（兜底）的是环境变量。">
+    <p class="q">凭据解析顺序中，优先级最低（最后兜底）的是哪一类？</p>
+    <ul class="mcq-options">
+      <li>环境变量</li>
+      <li>运行参数</li>
+      <li>已存凭据</li>
+      <li>模型配置</li>
+    </ul>
+  </div>
+  <div class="mcq" data-answer="0" data-explain="/logout 只移除存下的凭据。它不会取消环境变量、不会删 models.json 里的认证、也不会在 provider 那边吊销。">
+    <p class="q">运行 /logout 后，被移除的是哪一项？</p>
+    <ul class="mcq-options">
+      <li>已存凭据</li>
+      <li>环境变量</li>
+      <li>模型配置</li>
+      <li>会话记录</li>
+    </ul>
+  </div>
+
+  <div class="primary-source">
+    <h2>主要出处</h2>
+    <p><a data-pi="packages/coding-agent/docs/providers.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/providers.md">docs/providers.md</a>（认证与 provider 专属配置）+ <a data-pi="packages/coding-agent/docs/models.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/models.md">docs/models.md</a>（凭据解析顺序）。中英对照见 <a href="../reference/providers-bilingual.html">providers 中英对照</a>。</p>
+  </div>
+
+  <div class="ask-teacher">
+    <p>核心考点是「凭据解析顺序」和「<code>/logout</code> 的边界」。不清楚直接问教师。</p>
+  </div>
+
+  <nav class="lesson-nav">
+    <span><a href="0007-usage.html">← 上一课：在终端里用 Pi</a></span>
+    <span><a href="../reference/providers-bilingual.html">providers 中英对照</a> · <a data-pi="packages/coding-agent/docs/providers.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/providers.md">原文</a></span>
+  </nav>
+</main></body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "_comment": "本机路径配置模板。复制本文件为 machine.config.json，按本机实际情况修改；machine.config.json 已在 .gitignore，不上传。",
+  "repoRoot": "D:/learning-lessons",
+  "piSourceRoot": "D:/programming/workspace/pi",
+  "deepseekSourceRoot": "D:/programming/workspace/deepseek-harness",
+  "gitBashPath": "D:\\programming\\Git\\bin\\bash.exe",
+  "gitRemote": "https://github.com/lvyangyan12q/my-study-lessions.git",
+  "branch": "main",
+  "_constraints": "machine.config.json 里的 piSourceRoot 必须与根目录 workspace.config.js 的 piSourceRoot 一致（课程 HTML 用它把 GitHub 链接改写成 file://）。pi 的 ~/.pi/agent/settings.json 中 shellPath 应与 gitBashPath 一致，否则 pi 的 bash 工具找不到 Git Bash。"
+}

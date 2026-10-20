@@ -2,6 +2,8 @@
 
 每课的解释都有版本依据。首个基线是 `0.1.6-alpha.2`、提交 `ddefc45fbc7f8e46dd73185e68295696d1297887`，采集于 2026-09-20。它表示本机当前检出的版本，不表示上游最新版本。
 
+> **2026-10-18 已复核并上移基线**：本机 HEAD `687f282e8`（`0.2.1-rc.2`，2026-10-17）已成为新基线。第 1 课经逐句复核**正文无需改**（初评疑为失效的两处，对照实际文本后均成立：§4 本就是「设计要求」措辞、§2 省略清单非穷尽），详见 `learning-records/0002-source-drift-assessment.md`。运行 `node .\deepseek-harness\tools\check-source.mjs` 现报 0 变化。
+
 ## 继续学习前
 
 在学习仓库运行：
@@ -13,10 +15,10 @@ node .\deepseek-harness\tools\check-source.mjs
 换一份源码目录时：
 
 ```powershell
-node .\deepseek-harness\tools\check-source.mjs --source "D:\another\deepseek-harness"
+node .\deepseek-harness\tools\check-source.mjs --source "<源仓库目录>"
 ```
 
-脚本读取 [SOURCE_BASELINE.json](SOURCE_BASELINE.json)，比较已关注目录的提交差异、未提交变化和关键文件 SHA-256。它只读本地，不联网，不拉取，不切换分支，也不更新学习基线。
+脚本读取 [SOURCE_BASELINE.json](SOURCE_BASELINE.json)，比较已关注目录的提交差异、未提交变化和关键文件 SHA-256。不传 `--source` 时，源仓库位置取自仓库根 `machine.config.json` 的 `deepseekSourceRoot`。它只读本地，不联网，不拉取，不切换分支，也不更新学习基线。
 
 ## 如何处理结果
 

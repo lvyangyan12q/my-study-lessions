@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>第七课：在终端里用 Pi —— 界面、介入、命令</title>
+  <link rel="stylesheet" href="../assets/course.css">
+  <script src="../../workspace.config.js"></script>
+  <script src="../assets/workspace-links.js" defer></script>
+  <script src="../assets/quiz.js" defer></script>
+</head>
+<body><main>
+  <p class="eyebrow">Lesson 0007 · 约 10 分钟 · 核心：三种介入方式</p>
+  <h1>在终端里用 Pi：界面、介入、命令</h1>
+  <p class="lead">这一篇是 Pi 交互模式的操作手册。它本身没什么深渊，但有<strong>一个点值得记住</strong>：Pi 干活时你可以用三种方式介入，而它们分别落在 agent 循环的不同时刻——这正是「系统提示 + 事件」之外，人能实时影响循环的三个入口。</p>
+
+  <div class="goal">
+    <h2>这一课带走什么</h2>
+    <p>看懂界面三块；记住三种介入方式（Enter / Alt+Enter / Escape）各自何时生效；常用斜杠命令和 <code>!</code> 命令能随手用。</p>
+  </div>
+
+  <h2>界面三块</h2>
+  <figure style="margin:1.4rem 0">
+    <img data-pi="packages/coding-agent/docs/images/interactive-mode.png" src="https://raw.githubusercontent.com/earendil-works/pi/main/packages/coding-agent/docs/images/interactive-mode.png" alt="Pi 交互界面：对话、编辑器、状态栏" style="width:100%;height:auto;border:1px solid var(--rule);border-radius:4px">
+    <figcaption class="src">官方截图。自下而上：状态栏 / 编辑器 / 对话。</figcaption>
+  </figure>
+  <table>
+    <thead><tr><th>区域</th><th>显示什么</th></tr></thead>
+    <tbody>
+      <tr><td>对话（transcript）</td><td>你的提示、Pi 的回应、工具调用与结果、错误</td></tr>
+      <tr><td>编辑器（editor）</td><td>写提示和命令的地方；边框颜色表示当前 thinking 级别</td></tr>
+      <tr><td>状态栏（footer）</td><td>当前目录、会话、模型、上下文用量、累计用量与花费</td></tr>
+    </tbody>
+  </table>
+  <p>启动头（startup header）列出 Pi 本次加载的指令和资源。Pi <strong>不会在每次工具调用前都问你</strong>——所以要自己 review 命令与改动，不可信场景用沙箱（见 <a data-pi="packages/coding-agent/docs/security.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/security.md">security.md</a>）。</p>
+
+  <h2>输入与引用</h2>
+  <ul>
+    <li>输入后按 <kbd>Enter</kbd> 发送；<kbd>Shift+Enter</kbd> 换行；<kbd>Ctrl+G</kbd> 用外部编辑器写长提示。</li>
+    <li><code>@</code> 搜索文件并加入提示；<kbd>Tab</kbd> 补全路径；图片可直接粘贴或拖进支持的终端。</li>
+  </ul>
+  <p>工作中：<kbd>Ctrl+O</kbd> 展开/折叠工具输出；<kbd>Ctrl+T</kbd> 显示/隐藏 thinking 块。</p>
+
+  <h2>三种介入方式（重点）</h2>
+  <p>Pi 正在干活时，你仍能发消息。区别在于<strong>消息在什么时刻生效</strong>：</p>
+  <figure style="margin:1.4rem 0">
+    <svg viewBox="0 0 760 160" role="img" aria-label="三种介入方式在循环中的送达时机" style="width:100%;height:auto">
+      <g font-family="var(--sans)">
+        <line x1="20" y1="70" x2="740" y2="70" stroke="var(--rule-strong)" stroke-dasharray="4 4"/>
+        <rect x="20" y="50" width="120" height="40" rx="6" fill="var(--accent-soft)" stroke="var(--accent)"/>
+        <text x="80" y="74" text-anchor="middle" font-size="11" fill="var(--accent)">你发任务</text>
+        <rect x="180" y="50" width="180" height="40" rx="6" fill="var(--paper-2)" stroke="var(--rule)"/>
+        <text x="270" y="68" text-anchor="middle" font-size="10.5" fill="var(--ink)">模型回应 + 工具调用</text>
+        <text x="270" y="82" text-anchor="middle" font-size="9" fill="var(--ink-soft)">（本轮进行中）</text>
+        <rect x="400" y="50" width="120" height="40" rx="6" fill="var(--paper-2)" stroke="var(--rule)"/>
+        <text x="460" y="74" text-anchor="middle" font-size="10.5" fill="var(--ink)">本轮结束</text>
+        <rect x="560" y="50" width="180" height="40" rx="6" fill="var(--paper-2)" stroke="var(--rule)"/>
+        <text x="650" y="74" text-anchor="middle" font-size="10.5" fill="var(--ink)">…直到任务结束</text>
+
+        <text x="460" y="30" text-anchor="middle" font-size="9.5" fill="var(--accent)">Enter：本轮结束后送达</text>
+        <line x1="460" y1="36" x2="460" y2="50" stroke="var(--accent)"/>
+        <text x="650" y="132" text-anchor="middle" font-size="9.5" fill="var(--accent)">Alt+Enter：整个任务结束后才送达</text>
+        <line x1="650" y1="118" x2="650" y2="92" stroke="var(--accent)"/>
+        <text x="270" y="132" text-anchor="middle" font-size="9.5" fill="var(--bad)">Escape：立即停止，排队消息回编辑器</text>
+        <line x1="270" y1="118" x2="270" y2="92" stroke="var(--bad)"/>
+      </g>
+    </svg>
+  </figure>
+  <table>
+    <thead><tr><th>你想</th><th>操作</th><th>送达时机</th></tr></thead>
+    <tbody>
+      <tr><td>调整当前任务</td><td><kbd>Enter</kbd></td><td>当前回应及其工具调用结束后——引导下一次回应（steer）</td></tr>
+      <tr><td>追加后续工作</td><td><kbd>Alt+Enter</kbd></td><td>Pi 完成当前任务后（follow-up）</td></tr>
+      <tr><td>把排队消息收回编辑器</td><td><kbd>Alt+Up</kbd></td><td>—</td></tr>
+      <tr><td>停止当前任务</td><td><kbd>Escape</kbd></td><td>立即；排队消息回到编辑器</td></tr>
+    </tbody>
+  </table>
+  <p class="src">这套「steer / follow-up / abort」的语义，与 <a data-pi="packages/coding-agent/docs/how-pi-works.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/how-pi-works.md">how-pi-works.md</a> 里 agent 循环的描述一一对应——阶段 2 会回到它。Windows Terminal 保留了部分 Alt 快捷键，替代方案见 <a data-pi="packages/coding-agent/docs/terminal-setup.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/terminal-setup.md">terminal-setup.md</a>。</p>
+
+  <h2>常用命令（输入 <code>/</code> 搜索）</h2>
+  <table>
+    <thead><tr><th>命令</th><th>作用</th></tr></thead>
+    <tbody>
+      <tr><td><code>/model</code></td><td>选模型（<kbd>Ctrl+L</kbd> 同效）</td></tr>
+      <tr><td><code>/thinking</code></td><td>设置推理投入级别（<kbd>Shift+Tab</kbd> 循环）</td></tr>
+      <tr><td><code>/login</code> · <code>/logout</code></td><td>管理 provider 访问</td></tr>
+      <tr><td><code>/settings</code></td><td>改常用偏好</td></tr>
+      <tr><td><code>/new</code> · <code>/resume</code> · <code>/name</code> · <code>/session</code></td><td>新会话 / 打开旧会话 / 命名 / 查看会话信息</td></tr>
+      <tr><td><code>/tree</code> · <code>/fork</code> · <code>/clone</code> · <code>/compact</code></td><td>探索分支而不丢工作 / 压缩发给模型的历史</td></tr>
+      <tr><td><code>/copy</code> · <code>/export</code> · <code>/share</code></td><td>复制上一条回应 / 导出 HTML 或 JSONL / 上传拿查看链接</td></tr>
+      <tr><td><code>/hotkeys</code> · <code>/debug</code></td><td>查看当前快捷键 / 写诊断日志 <code>pi-debug.log</code></td></tr>
+    </tbody>
+  </table>
+  <p>Prompt template、Skill、Extension 都能往这个 <code>/</code> 菜单里加命令——这就是后面的定制线。</p>
+
+  <h2>跑命令、分享、诊断（要点）</h2>
+  <ul>
+    <li>命令前加 <code>!</code>：执行并把输出带进对话（<code>!git status</code>）；<code>!!</code> 只执行、输出不给模型。</li>
+    <li><code>/share</code> 会把会话上传并生成查看链接（Radius 组织内可见，否则经 GitHub CLI 建私有 gist）——<strong>分享前先自查</strong>，会话里可能有提示、工具输出、文件内容甚至凭据。</li>
+    <li>全屏（默认）固定编辑器与状态区；普通模式用终端自身回滚。<code>/settings</code> 或 <code>--tui-mode</code> 切换。</li>
+    <li><code>/debug</code> 把渲染行和当前会话消息写到 agent 目录下的 <code>pi-debug.log</code>；<strong>分享前也先自查</strong>。</li>
+  </ul>
+
+  <h2>检索练习（合上再答）</h2>
+  <div class="recall">
+    <p class="q">不看上面，说出 Pi 工作中三种介入方式：按键、何时生效、术语。</p>
+    <button class="reveal">想好了，看答案</button>
+    <div class="answer" hidden><p><kbd>Enter</kbd> = <strong>steer</strong>（等当前回应 + 其工具调用结束再送达）；<kbd>Alt+Enter</kbd> = <strong>follow-up</strong>（等整个任务结束才取）；<kbd>Escape</kbd> = <strong>abort</strong>（立即停止，排队消息退回编辑器）。</p></div>
+  </div>
+  <div class="mcq" data-answer="0" data-explain="Enter 发的引导消息（steer）不打断本轮：等当前回应及其工具调用结束后送达，引导下一次回应。">
+    <p class="q">按 Enter 发的引导消息，什么时候送达？</p>
+    <ul class="mcq-options">
+      <li>本轮结束后</li>
+      <li>整个任务后</li>
+      <li>立即就中止</li>
+      <li>收回编辑区</li>
+    </ul>
+  </div>
+  <div class="mcq" data-answer="0" data-explain="abort 会把排队但未送达的消息退回编辑器，不会自动发出，也不会丢弃。">
+    <p class="q">按 Escape 中止后，排队但未送达的消息会怎样？</p>
+    <ul class="mcq-options">
+      <li>收回编辑区</li>
+      <li>立即发出去</li>
+      <li>自动丢弃掉</li>
+      <li>排到下一轮</li>
+    </ul>
+  </div>
+
+  <div class="primary-source">
+    <h2>主要出处</h2>
+    <p>读原文：<a data-pi="packages/coding-agent/docs/usage.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/usage.md">docs/usage.md</a>。中英对照见 <a href="../reference/usage-bilingual.html">usage 中英对照</a>。</p>
+  </div>
+
+  <div class="ask-teacher">
+    <p>核心考点是「三种介入方式」——会对它重点出题。有不清楚的（尤其 steer 和 follow-up 到底差在哪）直接问教师。</p>
+  </div>
+
+  <nav class="lesson-nav">
+    <span><a href="0006-quickstart.html">← 上一课：Quickstart</a></span>
+    <span><a href="../reference/usage-bilingual.html">usage 中英对照</a> · <a data-pi="packages/coding-agent/docs/usage.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/usage.md">原文</a></span>
+  </nav>
+</main></body>
+</html>

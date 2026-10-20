@@ -1,8 +1,7 @@
 {
-  "repositoryPath": "F:/ai-project/deepseek-harness",
-  "commit": "ddefc45fbc7f8e46dd73185e68295696d1297887",
-  "version": "0.1.6-alpha.2",
-  "capturedAt": "2026-09-20",
+  "commit": "687f282e8625c6b8d11ff58211a90524be2e4317",
+  "version": "0.2.1-rc.2",
+  "capturedAt": "2026-10-18",
   "watchedAreas": [
     {
       "name": "课程规则与架构",
@@ -68,11 +67,11 @@
   "files": [
     {
       "path": "docs/architecture.md",
-      "sha256": "a381d3b3cb3af59f9be1075b009d5fd0b65b926c2dadd59965af0b1d9d1d2b0a"
+      "sha256": "95a7722c7096d665d8adedeb733b8f5ad7740e67cb5c6e9dc91ec05f430cb760"
     },
     {
       "path": "docs/architecture.zh.md",
-      "sha256": "38100980ac6a824e46d7c31fcd800de1635f772d11ae9ee3a1d3e0e00c0982dc"
+      "sha256": "50167dd1435ca402f11aa0ae27dc642456a7a6e511faa76b81f1fed25c7e12de"
     },
     {
       "path": "docs/cordis-primer.md",
@@ -96,39 +95,39 @@
     },
     {
       "path": "docs/cookbook/adding-a-tool.md",
-      "sha256": "0827eecbe49a980201b42e2210237f567a6ac307fd0411083ffb5c72e91f65db"
+      "sha256": "e6c6ff0d8186b6bb05956e43e518ae4a6efada22a198c8436fe97f48870b7af5"
     },
     {
       "path": "docs/cookbook/extension-cookbook.md",
-      "sha256": "09801c5941eaa67533aec0616017942cc2ac3e3eaa6d1310aee6fa26e5fb5639"
+      "sha256": "1c971d49d500c118608171c8778ad8e0659a548bc818388688bde6ea757167e5"
     },
     {
       "path": "docs/session-format-status.md",
-      "sha256": "1f545974c1f3eb4defa8f68d8c7899812c8a2b47975da613ebea42cc583a5bdc"
+      "sha256": "8cd3dcfbdfec3a5333e15f1edaf2136b7d27007ff571d15d8095289d46ffe863"
     },
     {
       "path": "docs/cookbook/reviewing-persistence-type-changes.md",
-      "sha256": "71dd780627497b6f8796f426c70fb767f61b71b064cfb736b27aa648f5fbab0d"
+      "sha256": "a56aeed38c5ac05cd0be7ba2d215fa7cbf4a4904f997853e6fcd906731c325ef"
     },
     {
       "path": "docs/development.md",
-      "sha256": "e0f76afaa90594cdbe02df50772101e6cc3281777fc2e521c21379bd8292bd7e"
+      "sha256": "000af23978ba79aabe41c4895bd6cc002a1de2c69b1c175e54e8557555929cba"
     },
     {
       "path": "docs/testing.md",
-      "sha256": "48163d0455a688794c97dd782aaacc30089437c5f8f4ce05360baa8cdd6e8913"
+      "sha256": "d51726817f87d7599e9d59e376435f3dbdd37fe0bba799ac0def348a0e7b5ea1"
     },
     {
       "path": "AGENTS.md",
-      "sha256": "e232924a880ba8bada12657fe40d1d9fdc85a4e16f2ba7dfe7aab033be745f60"
+      "sha256": "1eea3932544766e8a4ccc2d88dcba14ad0a3bd4e28fa660f920b9183f63e7196"
     },
     {
       "path": "package.json",
-      "sha256": "a9cc164c4d922d74571e09c04be4e0f85a318685d410bb1c56072258a19a6f1d"
+      "sha256": "12bb41cd8212021a784b33a20c2b84372189a9505b42081d5e3869e21ff5cffc"
     },
     {
       "path": "packages/core/agent-loop/src/agent.ts",
-      "sha256": "2b238998e1b63ac7ceffa20190caaaa4806a9ae275112807424d176244dfd014"
+      "sha256": "4add12f5c22bb1b8cf1dbc239c9b09fa3351feff2c936cb2b8900036468bd01b"
     },
     {
       "path": "packages/core/agent-loop/src/assistant-stream.ts",
@@ -140,39 +139,39 @@
     },
     {
       "path": "packages/core/agent-loop/src/tool-calls.ts",
-      "sha256": "1f8984127d4245b6a08c1e4b0c8b9d8fa7ce30ffcf08184187f16dc1bf57ae6d"
+      "sha256": "5c7e8d8ff0028b436efdd13e5dffa4801d2311c211c3af039e7dab705f87b303"
     },
     {
       "path": "packages/core/agent-loop/src/index.ts",
-      "sha256": "c112ecabe3711092821cefd76f285a185fcf7bcf6be7b5599ff8b86bf28e1b4a"
+      "sha256": "3ea0262656c8ddcaa3be315c150bdc2af09371031c3c471d4ded511e21c6e86b"
     },
     {
       "path": "packages/core/session/src/index.ts",
-      "sha256": "c6ded93fde2c64e87a313f27877bbf37390e280ff90c3012ef575181e553e1fe"
+      "sha256": "c1f08f7dcf4075eeebb13e6ea06b3f348bfeb85b8a5d4e4bfd1c3b93c1959332"
     },
     {
       "path": "packages/core/session/src/types.ts",
-      "sha256": "312580d4e2ab568eeec466dbbcff5117cff84a932aeee5d10214bc6a087812eb"
+      "sha256": "515cba50f366b06dc3caaab45e8ce98c48c80fc07684437aba014df13ce04f2f"
     },
     {
       "path": "packages/core/tools/src/index.ts",
-      "sha256": "e040cf44c7a4c1b74650cc32f67503b8881cc1d5b1f47f1cb38cf0167a9bb3da"
+      "sha256": "398bcdeb221e450d088510830b77d99a513e65ab31e40ade71688a19cdf5e6aa"
     },
     {
       "path": "packages/core/tools/src/schema.ts",
-      "sha256": "be6e4b3fa18fe633c6c83ed4f9072da5a2a203f64bf0b70c9066fd58b0e2c897"
+      "sha256": "096f679e38626cc52536b8ecb9eef4c551c1a8a095c8e84f7a3b6156ee533653"
     },
     {
       "path": "packages/llm/llm/src/index.ts",
-      "sha256": "2260ce28e29fddeaa0b78a273292b6f5c7194adf6226f38ff9e59a50b808cf09"
+      "sha256": "12863e4b6419825e2600a63110379c5c6bbab18b3a2365ca45645baca5f96db2"
     },
     {
       "path": "packages/interaction/tool-ask-user/src/index.ts",
-      "sha256": "4aea338a641ddd90846c7ec61508eafa123aafcc8861c85574e13a28e9591fc5"
+      "sha256": "592f5b7b2e8528180b1bce69b33010d38b1e4352514484cada991c0add0e5bef"
     },
     {
       "path": "packages/interaction/user-questions/src/index.ts",
-      "sha256": "2d8e7899f9763b308cf3fab3cc1018f5026af8c06a6b39925982ccdb8d934668"
+      "sha256": "5bf54301a5560daf36a75ec12496a57dc7d2f20d741e17895df3c03584673106"
     },
     {
       "path": "packages/session/session-checkpoint-policy/src/index.ts",
@@ -180,8 +179,8 @@
     },
     {
       "path": "packages/session/session-persistence-jsonl/src/storage.ts",
-      "sha256": "41d6e4af01d3f613eb9d4e89e3d8ddded5070b4e73c7b3f858a61cbbd3b43b33"
+      "sha256": "57d5fa1d7efd17789d6a223f6aa5e06b79092665bea13f8a23d3bab644d066c3"
     }
   ],
-  "captureNotes": "Tracked lesson sources matched HEAD at capture; hashes describe working-tree bytes. Untracked local runtime/configuration files are excluded."
+  "captureNotes": "2026-10-18 上移至 HEAD（`0.2.1-rc.2`）。上一次锚点为 `0.1.6-alpha.2`（2026-09-20）。移基线前先复核第 1 课：主叙事与两处曾疑失效之处均成立（§4 用的是「设计要求」措辞、§2 省略清单非穷尽），故课程正文一行未改。29 个文件中 8 个未变、21 个哈希变化，均由接口/实现迭代引起而非不兼容。docs/user/develop/basic/tool.md 与基线为同一 blob。文件哈希取自 HEAD 提交的字节；锚点后新增/删除的文件由路径比对呈现。"
 }

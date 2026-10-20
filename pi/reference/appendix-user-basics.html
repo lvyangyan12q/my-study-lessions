@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>附录 · Pi 用户基础速查</title>
+<link rel="stylesheet" href="../assets/course.css">
+<script src="../../workspace.config.js"></script>
+<script src="../assets/workspace-links.js" defer></script>
+</head>
+<body>
+<main class="page">
+
+<p class="eyebrow">Reference · 附录（供查阅）</p>
+<h1>Pi 用户基础速查</h1>
+<p class="lead">主线已提速到代码（阶段 2 起）。原「阶段 1：用户文档」与「阶段 14：平台维护」下沉到本页，<strong>供随时查阅，不逐篇考核、不阻塞主线</strong>。深度内容仍在各自课程与中英对照页，本页只给要点与去处。</p>
+
+<div class="callout">
+<span class="callout__label">怎么用这页</span>
+<p>先扫要点定位，再点每节末尾的<strong>来源 / 深读</strong>链接看细节。事实来源都是 pi 源码仓库里的实际文档（链接指向 <code>packages/coding-agent/docs/</code>），不是记忆。改过键位或设置后要 <code>/reload</code>。</p>
+</div>
+
+<nav>
+<p class="src">A 安装与首次运行 · B 运行模式与定制阶梯 · C 文档地图 · D 交互与介入 · E 模型与 Provider · F 配置与按键 · G 会话与压缩 · H 安全边界 · I 平台与维护</p>
+</nav>
+
+<h2 id="a">A · 安装与首次运行</h2>
+<ul>
+<li><strong>三种安装（各自怎么更新是差别关键）</strong>：脚本 <code>curl -fsSL https://pi.dev/install.sh \| sh</code>（macOS/Linux，锁定全部依赖，用 <code>pi update</code> 更新）；npm <code>npm install -g --ignore-scripts @earendil-works/pi-coding-agent</code>（需 Node 22.19+，<strong>不</strong>锁传递依赖）；Nix <code>nix profile add github:earendil-works/pi/stable</code>（从源码构建，<code>pi update</code> <strong>管不了</strong>，用 <code>nix profile upgrade pi</code>）。</li>
+<li><strong>首次流程</strong>：<code>cd &lt;工作目录&gt;</code> → <code>pi</code> → <code>/login</code> 选 provider 并认证 → 直接给任务。</li>
+<li><strong>工作目录的两个作用</strong>：帮助 Pi 发现相关文件 / 指令 / 配置；给保存的会话<strong>分组</strong>。<code>pi --continue</code> 恢复的是「同一工作目录下最近一次会话」——靠工作目录，不是靠 session id。</li>
+<li>编辑器里输入 <code>@</code> 可搜索并插入文件路径。</li>
+<li><strong>定制选型器（决策变量 = 触发机制）</strong>：仓库常驻规则 → <code>AGENTS.md</code>；用户手动展开固定提示词 → Prompt template（<code>/name</code>）；模型按需加载的能力包 → Skill；事件驱动的代码 → Extension。能用轻的不用重的。</li>
+</ul>
+<p class="src">来源：<a data-pi="packages/coding-agent/docs/quickstart.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/quickstart.md">docs/quickstart.md</a> · 深读 <a href="../lessons/0006-quickstart.html">课 0006</a> · <a href="quickstart-bilingual.html">中英对照</a> · <a href="../learning-qa/quickstart.md">问答</a></p>
+
+<h2 id="b">B · 运行模式与定制阶梯</h2>
+<p>定位：<strong>minimal, extensible agent harness</strong>——极简、可扩展，用 Extension / Skill / Prompt Template / Theme 扩展，不必 fork 内核。默认给模型四个工具 <code>read</code>、<code>bash</code>、<code>edit</code>、<code>write</code>。</p>
+<table>
+<thead><tr><th>模式</th><th>入口</th><th>适合谁</th></tr></thead>
+<tbody>
+<tr><td>interactive</td><td><code>pi</code></td><td>人在终端里边聊边干活</td></tr>
+<tr><td>print</td><td><code>pi -p "..."</code>（可读 stdin）</td><td>脚本 / CI，一次性输出</td></tr>
+<tr><td>JSON</td><td><code>pi --mode json</code></td><td>程序消费一次性 JSON 事件流</td></tr>
+<tr><td>RPC</td><td><code>pi --mode rpc</code></td><td>跨进程、<strong>非 Node.js</strong> 集成（LF 分帧 JSONL）</td></tr>
+<tr><td>SDK</td><td><code>import { createAgentSession } from "@earendil-works/pi-coding-agent"</code></td><td>把 Pi 嵌进自己的 TS / Node 应用</td></tr>
+</tbody>
+</table>
+<p><strong>定制阶梯（轻 → 重）</strong>：Prompt Template → Skill → Extension → Theme → Pi Package。落层先问「谁触发、何时触发」。</p>
+<p class="src">来源：<a data-pi="packages/coding-agent/README.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/README.md">README.md</a> · 深读 <a href="../lessons/0002-readme-modes-and-ladder.html">课 0002</a> · <a href="pi-customization-map.html">运行模式与定制阶梯速查</a> · <a href="changelog-bilingual.html">CHANGELOG 中英对照</a> · <a href="../learning-qa/README.md">问答</a></p>
+
+<h2 id="c">C · 文档地图</h2>
+<ul>
+<li>官方文档分五组：<strong>开始用 Pi / 定制 Pi / 自动化或嵌入 Pi / 查阅与安装信息 / 安全地使用</strong>。</li>
+<li>「定制 Pi」组的资源类型名：Prompt Templates、Skills、Extensions、Themes，由 Pi Package 分发。</li>
+<li>运行模式 ↔ 文档：print → <code>cli.md</code>；JSON → <code>json.md</code>；RPC → <code>rpc.md</code>；SDK → <code>sdk.md</code>。</li>
+<li>渲染 / TUI / 消息对齐类问题 → 定制组的 <code>extensions.md</code>（消息渲染器一节）。</li>
+</ul>
+<p class="src">来源：<a data-pi="packages/coding-agent/docs/index.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/index.md">docs/index.md</a> · 深读 <a href="../lessons/0005-docs-map.html">课 0005</a> · <a href="docs-index-bilingual.html">中英对照</a> · <a href="../learning-qa/docs-index.md">问答</a></p>
+
+<h2 id="d">D · 交互与介入：steer / follow-up / abort</h2>
+<table>
+<thead><tr><th>按键</th><th>术语</th><th>生效时刻</th></tr></thead>
+<tbody>
+<tr><td><kbd>Enter</kbd></td><td><strong>steer</strong>（引导）</td><td>等当前回应 + 其工具调用结束后送达，调整下一次回应</td></tr>
+<tr><td><kbd>Alt+Enter</kbd></td><td><strong>follow-up</strong>（后续）</td><td>排进队列，等 Pi 把<strong>整个任务</strong>做完才取用</td></tr>
+<tr><td><kbd>Escape</kbd></td><td><strong>abort</strong>（中止）</td><td>立即停止；排队未送达的消息<strong>退回编辑器</strong>，不自动发出</td></tr>
+</tbody>
+</table>
+<p>补充：<kbd>Alt+Up</kbd> 是把排队消息收回编辑器（不属于上面三种介入）。</p>
+<p class="src">来源：<a data-pi="packages/coding-agent/docs/usage.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/usage.md">docs/usage.md</a> · 深读 <a href="../lessons/0007-usage.html">课 0007</a> · <a href="usage-bilingual.html">中英对照</a> · <a href="../learning-qa/usage.md">问答</a></p>
+
+<h2 id="e">E · 模型与 Provider</h2>
+<ul>
+<li><strong>凭据解析四级（高 → 低，第一个命中胜出）</strong>：① 运行时 <code>--api-key</code> → ② <code>auth.json</code> 已存凭据 → ③ <code>models.json</code> 的 <code>apiKey</code> → ④ provider 环境变量 / 云端 ambient。所以「设了环境变量它却不用」通常是因为已存凭据优先。</li>
+<li><strong>五种连接方式</strong>：受支持订阅 → <code>/login</code>；API key → <code>/login</code> 或设环境变量；本地 GGUF → 接 llama.cpp router；OpenAI/Anthropic/Google 兼容端点 → 写 <code>models.json</code>；自定义协议 → 写/装 provider 扩展。</li>
+<li><code>!command</code> 密钥的差别：在 <code>auth.json</code> 里<strong>缓存到进程结束</strong>（空输出 / 超时 / 非零退出 → 保持未解析直到重启）；在 <code>models.json</code> 里<strong>请求时执行、不缓存</strong>。</li>
+<li>分类 / 图像模型不进 <code>/model</code>，经 <code>codemode</code> 工具访问（设置 <code>"defaultTools": ["+codemode"]</code> 打开）；扩展可直接用 <code>ctx.modelRegistry.classify()</code>。</li>
+<li><code>/logout</code> 移除 <code>auth.json</code> 里该 provider 的已存凭据（含 <code>!command</code>），但<strong>不</strong>取消环境变量、<strong>不</strong>改 <code>models.json</code> 的认证、也<strong>不</strong>在 provider 处吊销。</li>
+</ul>
+<p class="src">来源：<a data-pi="packages/coding-agent/docs/models.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/models.md">docs/models.md</a> · <a data-pi="packages/coding-agent/docs/providers.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/providers.md">docs/providers.md</a> · 深读 <a href="../lessons/0009-models.html">课 0009</a> · <a href="../lessons/0008-providers.html">课 0008</a> · <a href="models-bilingual.html">模型对照</a> · <a href="providers-bilingual.html">凭据对照</a> · <a href="../learning-qa/models.md">问答</a></p>
+
+<h2 id="f">F · 配置与按键</h2>
+<ul>
+<li><strong>覆盖关系（最该记）</strong>：项目设置覆盖 agent 目录（用户）设置；但<strong>资源列表是合并</strong>，不是替换。少数项只能写在 agent 目录：<code>defaultProjectTrust</code>、<code>httpProxy</code>；<code>cacheWarming</code> 只能全局。</li>
+<li><code>defaultTools</code> 语法：<strong>纯名替换</strong>默认；<code>+name</code> 加、<code>-name</code> 减；空数组禁用所有内置工具。项目叠用户：只含 <code>+</code>/<code>-</code> 的列表<strong>改</strong>用户选择，含纯名的<strong>替换</strong>。<code>/reload</code> 只启用<strong>新增</strong>的工具，不关闭被移除的。</li>
+<li>内置扩展名：<code>builtin:mcp</code>、<code>builtin:llama.cpp</code>、<code>builtin:codemode</code>、<code>builtin:tool-search</code>（默认加载，可用 <code>-builtin:mcp</code> 关）。</li>
+<li><strong>按键</strong>：文件 <code>&lt;agent-dir&gt;/keybindings.json</code>，格式「动作 id → 一个键或键数组」，值<strong>替换</strong>默认键，写 <code>[]</code> 可禁用；改完 <code>/reload</code> 生效，<code>/hotkeys</code> 查看。修饰键 <code>ctrl</code>/<code>shift</code>/<code>alt</code>/<code>super</code> 可叠；<code>super</code> 绑定需要终端支持 Kitty 键盘协议。</li>
+<li>常用默认键：<kbd>Escape</kbd>=interrupt、<kbd>Ctrl+L</kbd>=模型选择、<kbd>Shift+Tab</kbd>=思考级别、<kbd>Ctrl+P</kbd>=循环模型、<kbd>Ctrl+O</kbd>=工具输出折叠。</li>
+</ul>
+<p class="src">来源：<a data-pi="packages/coding-agent/docs/settings.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/settings.md">docs/settings.md</a> · <a data-pi="packages/coding-agent/docs/keybindings.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/keybindings.md">docs/keybindings.md</a> · 深读 <a href="../lessons/0011-settings.html">课 0011</a> · <a href="../lessons/0012-keybindings.html">课 0012</a> · <a href="../learning-qa/settings.md">设置问答</a> · <a href="../learning-qa/keybindings.md">按键问答</a></p>
+
+<h2 id="g">G · 会话与压缩</h2>
+<ul>
+<li><strong>会话</strong>：一次对话 = 一个 session；只有<strong>活动分支</strong>提供下一次模型请求的历史。<code>pi --continue</code>（当前工作目录最近）/ <code>pi --resume</code>（选择器，交互里 <code>/resume</code> 同效）/ <code>--no-session</code>（临时，退出不可恢复）。</li>
+<li><strong>三种分叉</strong>：<code>/tree</code> 在<strong>同一会话文件内</strong>移动；<code>/fork</code> 从更早的<strong>用户消息</strong>新建会话；<code>/clone</code> 把<strong>当前活动分支</strong>复制进新会话。</li>
+<li><strong>存储</strong>：默认 <code>~/.pi/agent/sessions/</code>，按工作目录分组。改位置优先级 <code>--session-dir</code> &gt; <code>PI_CODING_AGENT_SESSION_DIR</code> &gt; <code>sessionDir</code> 设置。</li>
+<li><strong>两种摘要别混</strong>：Compaction（上下文超阈值或 <code>/compact</code>，把旧消息摘要掉腾上下文）vs Branch summarization（<code>/tree</code> 导航时，保留你离开那条分支的上下文）。</li>
+<li><strong>触发阈值</strong>：<code>contextTokens &gt; contextWindow - reserveTokens</code>；默认 <code>reserveTokens = 16384</code>、<code>keepRecentTokens = 20000</code>。</li>
+<li><strong>切点规则（最该记）</strong>：可在 user / assistant / BashExecution / 自定义消息处切，<strong>绝不在 tool 结果处切</strong>（工具结果必须和它的工具调用待在一起）。原始条目全部保留，压缩只让它们不再发给模型；重复压缩从上一次的 <code>firstKeptEntryId</code> 起。这段是<strong>阶段 7 的地基</strong>。</li>
+</ul>
+<p class="src">来源：<a data-pi="packages/coding-agent/docs/sessions.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/sessions.md">docs/sessions.md</a> · <a data-pi="packages/coding-agent/docs/compaction.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/compaction.md">docs/compaction.md</a> · 深读 <a href="../lessons/0013-sessions.html">课 0013</a> · <a href="../lessons/0014-compaction.html">课 0014</a> · <a href="../learning-qa/sessions.md">会话问答</a> · <a href="../learning-qa/compaction.md">压缩问答</a></p>
+
+<h2 id="h">H · 安全边界：信任 ≠ 沙箱</h2>
+<ul>
+<li><strong>核心立场</strong>：把模型生成的命令与代码当作<strong>不可信</strong>。Pi 以启动它的账户权限读 / 改 / 执行文件，且<strong>不会在每次工具调用前征求同意</strong>；扩展、包安装器、LSP 等子进程同样拥有这些权限。</li>
+<li><strong>三种运行方式的边界</strong>：直接用（受 OS 用户权限限制）；整个跑在容器 / VM / 沙箱里（通常最稳）；主体在外、只有内置工具在隔离环境（较窄）。工作目录只影响资源发现与工具默认位置，<strong>不阻止</strong>命令访问进程能访问的其它路径。</li>
+<li><strong>项目信任只管「启动时加载哪些项目资源」</strong>——既不让内容变安全，也<strong>不是沙箱</strong>。需信任决策的资源：<code>.pi/settings.json</code>、<code>.pi/mcp.json</code>、<code>.pi/extensions|skills|prompts|themes</code>、<code>.pi/SYSTEM.md</code>/<code>APPEND_SYSTEM.md</code>、项目 <code>.agents/skills</code>；裸 <code>.pi</code> 目录不需要。</li>
+<li><strong>决策顺序</strong>：<code>--approve</code>/<code>--no-approve</code> → 扩展的 <code>project_trust</code> 事件 → 保存的决策（<code>~/.pi/agent/trust.json</code>，取最近父目录）→ <code>defaultProjectTrust</code>（默认 <code>"ask"</code>）。非交互模式（print / JSON / RPC）弹不出提示，只有 <code>always</code> 才加载受保护资源。</li>
+<li><strong>上下文文件</strong>（<code>AGENTS.md</code>、<code>CLAUDE.md</code> 等）<strong>不受信任控制</strong>，始终加载——即使拒绝信任也要把其中的指令当不可信输入。</li>
+</ul>
+<p class="src">来源：<a data-pi="packages/coding-agent/docs/security.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/security.md">docs/security.md</a> · 深读 <a href="../lessons/0015-security.html">课 0015</a> · <a href="../learning-qa/security.md">问答</a></p>
+
+<h2 id="i">I · 平台与维护（按需查，不必顺序学）</h2>
+<table>
+<thead><tr><th>文档</th><th>用途</th></tr></thead>
+<tbody>
+<tr><td><a data-pi="packages/coding-agent/docs/windows.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/windows.md"><code>windows.md</code></a></td><td>Windows shell 配置</td></tr>
+<tr><td><a data-pi="packages/coding-agent/docs/termux.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/termux.md"><code>termux.md</code></a></td><td>Android / Termux 环境</td></tr>
+<tr><td><a data-pi="packages/coding-agent/docs/tmux.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/tmux.md"><code>tmux.md</code></a></td><td>tmux 键盘协议</td></tr>
+<tr><td><a data-pi="packages/coding-agent/docs/terminal-setup.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/terminal-setup.md"><code>terminal-setup.md</code></a></td><td>各终端键盘设置</td></tr>
+<tr><td><a data-pi="packages/coding-agent/docs/shell-aliases.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/shell-aliases.md"><code>shell-aliases.md</code></a></td><td>shell alias</td></tr>
+<tr><td><a data-pi="packages/coding-agent/docs/llama-cpp.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/llama-cpp.md"><code>llama-cpp.md</code></a></td><td>本地模型路由</td></tr>
+<tr><td><a data-pi="packages/coding-agent/docs/environment-variables.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/environment-variables.md"><code>environment-variables.md</code></a></td><td>进程和 shell 环境变量</td></tr>
+<tr><td><a data-pi="AGENTS.md" href="https://github.com/earendil-works/pi/blob/main/AGENTS.md"><code>AGENTS.md</code></a>（仓库根）</td><td>完整源码仓库的开发规则、命令、测试与目录结构</td></tr>
+<tr><td><a data-pi="CONTRIBUTING.md" href="https://github.com/earendil-works/pi/blob/main/CONTRIBUTING.md"><code>CONTRIBUTING.md</code></a>（仓库根）</td><td>贡献门禁；「改 pi 本体」与「写扩展」是两条不同的路</td></tr>
+</tbody>
+</table>
+<div class="callout">
+<span class="callout__label">一处已修正的漂移</span>
+<p>原阶段 14 列的 <code>docs/development.md</code> 在当前源码仓库<strong>已不存在</strong>：它随文档刷新提交 <code>25cc5c7bf</code>（2026-09-22）被移除，内容并入仓库根 <code>AGENTS.md</code> 与 <code>CONTRIBUTING.md</code>。本表已改指真实文件。</p>
+</div>
+
+<hr>
+<p>相关：<a href="pi-customization-map.html">运行模式与定制阶梯速查</a> ｜ <a href="pi-package-map.html">包结构速查</a> ｜ <a href="glossary.html">阶段 2 词汇表</a> ｜ <a href="../LEARNING_PATH.md">主学路线</a> ｜ <a href="../RESOURCES.md">资源清单</a></p>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>第十三课：Sessions —— 树、分叉与上下文</title>
+  <link rel="stylesheet" href="../assets/course.css">
+  <script src="../../workspace.config.js"></script>
+  <script src="../assets/workspace-links.js" defer></script>
+  <script src="../assets/quiz.js" defer></script>
+</head>
+<body><main>
+  <p class="eyebrow">Lesson 0013 · 约 10 分钟 · 核心：树 / 分叉 / 活动分支</p>
+  <h1>Sessions：树、分叉与上下文</h1>
+  <p class="lead">会话不是一条直线，是一棵**树**。分叉不会删掉你离开的那条；模型每次只看到**当前活动分支**。这两点决定了「探索多条路」为什么安全。</p>
+
+  <div class="goal"><h2>这一课带走什么</h2><p>分清 <code>/tree</code>、<code>/fork</code>、<code>/clone</code>；说清模型收到的是「活动分支」而不是整个文件。</p></div>
+
+  <h2>三种分叉</h2>
+  <figure style="margin:1.4rem 0">
+    <svg viewBox="0 0 760 200" role="img" aria-label="会话树分叉：tree 同文件移动、fork 从早期消息新建、clone 复制活动分支" style="width:100%;height:auto">
+      <g font-family="var(--sans)" font-size="10" fill="var(--ink)">
+        <circle cx="60" cy="100" r="16" fill="var(--paper-2)" stroke="var(--rule)"/><text x="60" y="104" text-anchor="middle">A</text>
+        <line x1="76" y1="100" x2="200" y2="60" stroke="var(--rule-strong)"/><line x1="76" y1="100" x2="200" y2="140" stroke="var(--rule-strong)"/>
+        <circle cx="216" cy="60" r="16" fill="var(--paper-2)" stroke="var(--rule)"/><text x="216" y="64" text-anchor="middle">B</text>
+        <circle cx="216" cy="140" r="16" fill="var(--accent-soft)" stroke="var(--accent)"/><text x="216" y="144" text-anchor="middle" fill="var(--accent)">D</text>
+        <line x1="232" y1="60" x2="360" y2="60" stroke="var(--rule-strong)"/>
+        <circle cx="376" cy="60" r="16" fill="var(--paper-2)" stroke="var(--rule)"/><text x="376" y="64" text-anchor="middle">C</text>
+        <text x="470" y="52" font-size="10" fill="var(--accent)">/tree：在同一会话文件内从 C 移回 B、改走 D</text>
+        <text x="470" y="76" font-size="10" fill="var(--ink-soft)">（A→B→C 保留，不动）</text>
+
+        <text x="470" y="120" font-size="10" fill="var(--accent)">/fork：从更早的**用户消息**新建一个会话</text>
+        <text x="470" y="144" font-size="10" fill="var(--accent)">/clone：把**当前活动分支**复制成新会话</text>
+      </g>
+    </svg>
+    <figcaption class="src">依据 <a data-pi="packages/coding-agent/docs/sessions.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/sessions.md">docs/sessions.md</a>。离开一条分支时，Pi 可摘要它并挂到你进入的分支上。</figcaption>
+  </figure>
+  <table>
+    <thead><tr><th>动作</th><th>结果</th><th>何时用</th></tr></thead>
+    <tbody>
+      <tr><td><code>/tree</code></td><td>在同一个会话文件内移动</td><td>相关备选应留在一起</td></tr>
+      <tr><td><code>/fork</code></td><td>从更早的用户消息新建会话</td><td>该备选应成为独立工作</td></tr>
+      <tr><td><code>/clone</code></td><td>复制当前活动分支成新会话</td><td>想要当前状态的独立副本</td></tr>
+    </tbody>
+  </table>
+
+  <h2>核心：模型看到的是「活动分支」</h2>
+  <div class="card">模型收到的<strong>不是整个会话文件的所有分支</strong>，而是**当前活动分支**：它 + 系统提示 + 上下文文件 + 工具 + skill 描述，才组成这次请求。所以「探索另一条路」不会污染当前上下文。</div>
+  <ul>
+    <li>会话默认自动保存；<code>--no-session</code> 开临时会话（退出后不能恢复）。</li>
+    <li><code>pi --continue</code> 恢复**当前工作目录**最近会话；<code>pi --resume</code> / <code>/resume</code> 开选择器。</li>
+    <li>存储默认 <code>~/.pi/agent/sessions/</code>，按工作目录分组；优先级：<code>--session-dir</code> &gt; <code>PI_CODING_AGENT_SESSION_DIR</code> &gt; <code>sessionDir</code>。</li>
+    <li>接近上限时自动压缩；<code>/compact</code> 手动；**压缩不删除原始条目**。</li>
+  </ul>
+
+  <h2>检索练习（合上再答）</h2>
+  <div class="recall">
+    <p class="q">不看上面，说清 <code>/tree</code>、<code>/fork</code>、<code>/clone</code> 各做什么。</p>
+    <button class="reveal">想好了，看答案</button>
+    <div class="answer" hidden><p><code>/tree</code> 在同一会话文件内移动；<code>/fork</code> 从更早的用户消息新建会话；<code>/clone</code> 把当前活动分支复制成新会话。</p></div>
+  </div>
+  <div class="mcq" data-answer="0" data-explain="/tree 在当前会话文件内移动，离开的分支（A→B→C）保留不动；/fork 与 /clone 才会新建会话文件。">
+    <p class="q"><code>/tree</code> 的作用是？</p>
+    <ul class="mcq-options"><li>同内移动</li><li>另建会话</li><li>复制分支</li><li>压缩历史</li></ul>
+  </div>
+  <div class="mcq" data-answer="0" data-explain="模型每次只拿到当前活动分支 + 系统提示 + 上下文文件 + 工具 + skill 描述，不是整棵会话树。">
+    <p class="q">模型收到的上下文是？</p>
+    <ul class="mcq-options"><li>活动分支</li><li>全部分支</li><li>整个文件</li><li>所有会话</li></ul>
+  </div>
+
+  <div class="primary-source"><h2>主要出处</h2><p><a data-pi="packages/coding-agent/docs/sessions.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/sessions.md">docs/sessions.md</a>；知识点卡：<a href="../learning-qa/sessions.md">learning-qa/sessions.md</a>；深入见 <a data-pi="packages/coding-agent/docs/session-format.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/session-format.md">session-format.md</a>。</p></div>
+  <div class="ask-teacher"><p>核心是三种分叉的区别 + 「活动分支」。不清楚直接问教师。</p></div>
+  <nav class="lesson-nav"><span><a href="0012-keybindings.html">← 上一课：Keybindings</a></span><span><a data-pi="packages/coding-agent/docs/sessions.md" href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/sessions.md">原文</a> · <a href="0014-compaction.html">下一课：Compaction →</a></span></nav>
+</main></body>
+</html>

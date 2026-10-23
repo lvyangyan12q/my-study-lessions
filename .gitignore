@@ -11,3 +11,10 @@ desktop.ini
 *.log
 *.tmp
 *~
+
+# Obsidian：每台机器各自的界面布局，不随仓库同步
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+
+# Obsidian Git 插件的临时冲突清单
+conflict-files-obsidian-git.md

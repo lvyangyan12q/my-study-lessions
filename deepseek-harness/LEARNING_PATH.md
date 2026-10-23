@@ -2,17 +2,17 @@
 
 目标见 [MISSION.md](MISSION.md)。这是按能力推进的顺序，不要求按目录通读。只有用户能解释原因或提交实践证据，阶段才标记通过。
 
-| 阶段 | 核心问题 | 产出与通过标准 | 首选依据 |
-|---|---|---|---|
-| 0 · 当前 | 模型调用工具后发生什么？ | 画出一次 turn 的两个 step；解释工具结果为何必须回到下一次模型请求 | [第一课](lessons/0001-agent-cycle.html)，architecture 的 Turn flow |
-| 1 | 插件如何活起来、停下来？ | 解释 apply、inject、ctx 和 effect；预测依赖卸载时消费者会发生什么 | cordis-primer；cordis-tutorial 01–04 |
-| 2 | 一个工具如何被模型看到和调用？ | 实现最小 greet 类工具，分清 parameters、execute、output.schema、output.render；覆盖有效与无效输入 | user/develop/basic/tool；core/tools |
-| 3 | 插件如何装进应用？ | 用 profile + patch 加载本地插件；说明配置层次、替换规则和卸载结果 | user/develop/basic/index；architecture；boot/app-boot |
-| 4 | 如何把功能换成另一种实现？ | 沿一个真实能力识别 Definition / Provider / Consumer；替换 provider 而保持调用接口 | user/develop/practice；capability-seams |
-| 5 | 权限、失败和中断由谁处理？ | 追一次拒绝、异常与取消；写事件监听器时能解释 next() 与 signal | tool-execution-pipeline；core/tools；interaction |
-| 6 | 会话如何恢复，模型为何“记得”？ | 从日志指出模型可见输入来源；区分临时流、日志事件、投影与落盘 | core/session；session persistence；agent-loop |
-| 7 | 如何做一次有价值的二次开发？ | 选择真实需求，比较工具、事件、provider 和 SDK 方案，交付一个完整功能及验证证据 | extension-cookbook；sdk；相关 subsystem |
-| 8 | 上游更新后如何继续维护？ | 读一次基线差异，修订依赖接口，运行与变更有关的验证，记录新基线 | [更新方法](UPDATES.md)，development，testing |
+| 阶段     | 核心问题             | 产出与通过标准                                                                    | 首选依据                                                          |
+| ------ | ---------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| 0 · 当前 | 模型调用工具后发生什么？     | 画出一次 turn 的两个 step；解释工具结果为何必须回到下一次模型请求                                     | [第一课](lessons/0001-agent-cycle.html)，architecture 的 Turn flow |
+| 1      | 插件如何活起来、停下来？     | 解释 apply、inject、ctx 和 effect；预测依赖卸载时消费者会发生什么                               | cordis-primer；cordis-tutorial 01–04                           |
+| 2      | 一个工具如何被模型看到和调用？  | 实现最小 greet 类工具，分清 parameters、execute、output.schema、output.render；覆盖有效与无效输入 | user/develop/basic/tool；core/tools                            |
+| 3      | 插件如何装进应用？        | 用 profile + patch 加载本地插件；说明配置层次、替换规则和卸载结果                                  | user/develop/basic/index；architecture；boot/app-boot           |
+| 4      | 如何把功能换成另一种实现？    | 沿一个真实能力识别 Definition / Provider / Consumer；替换 provider 而保持调用接口             | user/develop/practice；capability-seams                        |
+| 5      | 权限、失败和中断由谁处理？    | 追一次拒绝、异常与取消；写事件监听器时能解释 next() 与 signal                                     | tool-execution-pipeline；core/tools；interaction                |
+| 6      | 会话如何恢复，模型为何“记得”？ | 从日志指出模型可见输入来源；区分临时流、日志事件、投影与落盘                                             | core/session；session persistence；agent-loop                   |
+| 7      | 如何做一次有价值的二次开发？   | 选择真实需求，比较工具、事件、provider 和 SDK 方案，交付一个完整功能及验证证据                             | extension-cookbook；sdk；相关 subsystem                           |
+| 8      | 上游更新后如何继续维护？     | 读一次基线差异，修订依赖接口，运行与变更有关的验证，记录新基线                                            | [更新方法](UPDATES.md)，development，testing                        |
 
 阶段 8 的检查从第一课起贯穿使用，不必等到最后才处理更新。
 
